@@ -255,12 +255,34 @@
 
         .header {
             background: #1f100a;
-            padding: 10px;
+            padding: 8px 10px;
             text-align: center;
             border-bottom: 1px solid var(--accent-gold);
             color: var(--accent-gold);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bgm-toggle-btn {
+            background: #3e2217;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 3px 7px;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .bgm-toggle-btn.playing {
+            background: var(--accent-gold);
+            color: #120a05;
+            font-weight: bold;
         }
 
         .time-bar {
@@ -603,9 +625,23 @@
             color: #fff;
             border: 1px solid #444;
         }
+
+        /* マスターの感謝メッセージ専用カード */
+        .master-thanks-box {
+            background: #fdfbf7;
+            border: 1px solid var(--accent-gold);
+            padding: 14px;
+            border-radius: 4px;
+            text-align: center;
+            margin: 10px 0;
+            box-shadow: inset 0 0 10px rgba(197,160,89,0.15);
+        }
     </style>
 </head>
 <body>
+
+    <!-- バックグラウンドBGM音声エレメント (ループ再生・消音可) -->
+    <audio id="cafe-bgm" loop preload="none" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3"></audio>
 
     <div class="role-switch-bar">
         <span>👁️ モード:</span>
@@ -619,7 +655,10 @@
 
         <!-- 0. ポータル画面 -->
         <div id="scr-portal" class="screen portal-view active">
-            <div class="header">☕ メモリアル・カフェ ポータル</div>
+            <div class="header">
+                <span>☕ ポータル</span>
+                <button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>
+            </div>
             
             <div style="margin: 8px 0;">
                 <button class="btn" style="background: #2563eb; color: #fff;" onclick="testCreateCafe()">🧪 Supabase接続テスト（カフェを作る）</button>
@@ -656,7 +695,10 @@
 
         <!-- 2. 店内カウンター画面 -->
         <div id="scr-counter" class="screen counter-view">
-            <div class="header" id="counter-header-title">メモリアル・カフェ 佐藤</div>
+            <div class="header">
+                <span id="counter-header-title">メモリアル・カフェ 佐藤</span>
+                <button class="bgm-toggle-btn" id="bgm-btn-counter" onclick="toggleBgm()">🎵 BGM: OFF</button>
+            </div>
             
             <div class="time-bar">
                 <span>⏱️ 時間テスト:</span>
@@ -689,7 +731,10 @@
 
         <!-- 3. アルバム＆ノート画面 -->
         <div id="scr-album" class="screen album-view">
-            <div class="header">📖 思い出ノート ＆ 写真ギャラリー</div>
+            <div class="header">
+                <span>📖 思い出ノート ＆ 写真館</span>
+                <button class="bgm-toggle-btn" id="bgm-btn-album" onclick="toggleBgm()">🎵 BGM: OFF</button>
+            </div>
             
             <div style="margin-bottom: 4px;">
                 <button class="share-banner-btn" style="padding: 7px; font-size: 0.75rem;" onclick="openShareModal()">🔗 カフェをご案内する</button>
@@ -763,6 +808,18 @@
     </div>
 
     <!-- 各種モーダル -->
+    <!-- マスターからの感謝カード・お礼モーダル -->
+    <div id="modal-thanks" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:0.9rem; margin-bottom:6px; color:var(--accent-gold);">☕ マスターからの伝言</h3>
+            <div class="master-thanks-box">
+                <p id="thanks-master-msg" style="font-size:0.8rem; line-height:1.6; color:#332211; font-style:italic;">「いつもの席で、ゆっくりしていってくださいね。」</p>
+                <div id="thanks-master-name" style="font-size:0.65rem; color:#886655; margin-top:8px; text-align:right;">— マスターより</div>
+            </div>
+            <button class="btn" style="margin-top:8px;" onclick="closeModals()">そっとカウンターへ戻る</button>
+        </div>
+    </div>
+
     <div id="modal-share" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.9rem; margin-bottom:6px; color:var(--accent-gold);">🔗 カフェをご案内する</h3>
@@ -862,6 +919,9 @@
                 </div>
             </div>
 
+            <label style="font-size:0.7rem;">マスターからの感謝の一言 (お供え時に表示):</label>
+            <input type="text" id="reg-thanks" placeholder="例: いつもの席で、ゆっくりしていってくださいね。">
+
             <label style="font-size:0.7rem;">フリーコメント (職業・趣味・人柄など):</label>
             <textarea id="reg-desc" placeholder="例: 珈琲とジャズを愛した職人。いつも穏やかな笑顔でした。" style="height:50px;"></textarea>
             
@@ -875,8 +935,42 @@
 
     <script>
         // --------------------------------------------------
-        // 効果音再生関数 (消音設定)
+        // BGM 制御機能
         // --------------------------------------------------
+        let isBgmPlaying = false;
+
+        function toggleBgm() {
+            const audio = document.getElementById('cafe-bgm');
+            if (!audio) return;
+
+            if (isBgmPlaying) {
+                audio.pause();
+                isBgmPlaying = false;
+                updateBgmButtons("🎵 BGM: OFF", false);
+            } else {
+                audio.volume = 0.25; // 控えめで穏やかな音量（25%）
+                audio.play().then(() => {
+                    isBgmPlaying = true;
+                    updateBgmButtons("🎵 BGM: ON", true);
+                }).catch(err => {
+                    console.log("BGM自動再生エラー:", err);
+                    alert("ブラウザの音声制限のため、音声を有効にできませんでした。");
+                });
+            }
+        }
+
+        function updateBgmButtons(text, playing) {
+            const btnIds = ['bgm-btn-portal', 'bgm-btn-counter', 'bgm-btn-album'];
+            btnIds.forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.innerText = text;
+                    btn.classList.toggle('playing', playing);
+                }
+            });
+        }
+
+        // 効果音は消音設定
         function playSound(soundType) {}
 
         // --------------------------------------------------
@@ -938,6 +1032,7 @@
                 birth: '1955-04-12',
                 death: '2025-10-01',
                 desc: '「いつもの珈琲の香る温かい場所で、お待ちしています。」',
+                thanks: '「いつもの席で、ゆっくりしていってくださいね。」',
                 img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
                 fav: false
             }],
@@ -1016,6 +1111,7 @@
                     birth: item.birth || '',
                     death: item.death || '',
                     desc: item.description || '',
+                    thanks: item.thanks_message || '「いつもの席で、ゆっくりしていってくださいね。」',
                     img: item.image_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
                     fav: false
                 }));
@@ -1272,9 +1368,19 @@
             if (store) store.sales++;
             saveData();
 
-            alert("「マスターのカウンターに、温かい想いが届きました。」");
             closeModals();
+            showMasterThanksModal(); // マスターからの「お礼伝言モーダル」を表示
             loadOfferingsFromSupabase();
+        }
+
+        function showMasterThanksModal() {
+            const c = db.cafes.find(x => x.id === curId);
+            const masterName = c ? c.master : 'マスター';
+            const thanksMsg = (c && c.thanks) ? c.thanks : '「いつもの席で、ゆっくりしていってくださいね。」';
+
+            document.getElementById('thanks-master-msg').innerText = thanksMsg;
+            document.getElementById('thanks-master-name').innerText = `— ${masterName} より`;
+            document.getElementById('modal-thanks').style.display = 'flex';
         }
 
         async function loadOfferingsFromSupabase() {
@@ -1668,6 +1774,7 @@
             document.getElementById('reg-master').value = '';
             document.getElementById('reg-birth').value = '';
             document.getElementById('reg-death').value = '';
+            document.getElementById('reg-thanks').value = '';
             document.getElementById('reg-desc').value = '';
             document.getElementById('reg-file').value = '';
             selectedRegFile = null;
@@ -1686,6 +1793,7 @@
             let master = document.getElementById('reg-master').value.trim();
             let birth = document.getElementById('reg-birth').value;
             let death = document.getElementById('reg-death').value;
+            let thanks = document.getElementById('reg-thanks').value.trim();
             let desc = document.getElementById('reg-desc').value.trim();
 
             if (!title || !master) {
@@ -1732,6 +1840,7 @@
                         birth: birth,
                         death: death,
                         description: desc,
+                        thanks_message: thanks,
                         image_url: imageUrl
                     }
                 ]);
