@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メモリアル・カフェ</title>
+
+    <!-- Supabaseの通信プログラムのみ読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bg-color: #120a05;
+            --paper-bg: #f7f4ed;
+            --text-main: #332211;
+            --accent-gold: #c5a059;
+            --master-bg: #15191d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Hiragino Mincho ProN", "Yu Mincho", "Shippori Mincho", Georgia, serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #e6dfd5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .role-switch-bar {
+            width: 100%;
+            max-width: 420px;
+            background: #1c0e07;
+            border: 3px solid #2b170e;
+            border-bottom: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            color: #d1c7bd;
+        }
+
+        .role-btn {
+            background: #3e2217;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 3px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        .role-btn.active {
+            background: var(--accent-gold);
+            color: #2b170e;
+            font-weight: bold;
+        }
+
+        .app-box {
+            width: 100%;
+            max-width: 420px;
+            height: 760px;
+            background: #0f0804;
+            border: 3px solid #2b170e;
+            border-top: none;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+        }
+
+        .screen {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            padding: 12px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .btn {
+            background: #3e2217;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 9px;
+            margin: 4px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.8rem;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        /* ご案内（シェア）専用の目立つ大きめボタン */
+        .share-banner-btn {
+            background: linear-gradient(135deg, #422315, #2b170e);
+            color: var(--accent-gold);
+            border: 2px solid var(--accent-gold);
+            padding: 10px 14px;
+            margin: 6px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .share-banner-btn:hover {
+            transform: scale(1.02);
+            background: #522c1b;
+        }
+
+        .card {
+            background: rgba(40,20,10,0.9);
+            border: 1px solid var(--accent-gold);
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        /* ポータル */
+        .portal-view {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80') center/cover;
+        }
+
+        .search-area {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .search-area input {
+            margin: 0;
+        }
+
+        .filter-btn {
+            background: #2b170e;
+            color: #b5a28f;
+            border: 1px solid #b5a28f;
+            padding: 0 10px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-btn.active {
+            background: var(--accent-gold);
+            color: #120a05;
+            border-color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        .cafe-card {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            position: relative;
+        }
+
+        .cafe-thumb {
+            width: 55px;
+            height: 70px;
+            object-fit: cover;
+            border: 1px solid var(--accent-gold);
+            cursor: pointer;
+        }
+
+        .fav-star {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: #b5a28f;
+        }
+
+        .fav-star.active {
+            color: #e11d48;
+        }
+
+        /* エントランス */
+        .entrance-view {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: #0d0603;
+        }
+
+        .signboard {
+            background: linear-gradient(135deg, #2b170e, #1a0f08);
+            border: 2px solid var(--accent-gold);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.6);
+            padding: 8px 16px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            width: 90%;
+            max-width: 320px;
+        }
+
+        .signboard-title {
+            color: var(--accent-gold);
+            font-size: 0.95rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .signboard-sub {
+            color: #b5a28f;
+            font-size: 0.65rem;
+            margin-top: 2px;
+        }
+
+        /* ドア画像 */
+        .door {
+            width: 200px;
+            height: 270px;
+            background: url('door.png') center/cover no-repeat;
+            border: 4px solid var(--accent-gold);
+            margin: 6px auto;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.9);
+            transition: transform 0.1s;
+        }
+        .door:active {
+            transform: scale(0.98);
+        }
+
+        /* カウンター画面 */
+        .counter-view {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80') center/cover;
+            justify-content: space-between;
+            padding: 0;
+        }
+
+        .header {
+            background: #1f100a;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+            z-index: 20;
+        }
+
+        .time-bar {
+            background: #1f100a;
+            padding: 4px 8px;
+            font-size: 0.65rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3a1f14;
+            color: var(--accent-gold);
+            z-index: 20;
+        }
+
+        .time-bar button {
+            background: #3e2217;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            cursor: pointer;
+        }
+
+        .counter-stage {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .photo-frame {
+            width: 130px;
+            height: 170px;
+            border: 5px solid var(--accent-gold);
+            background: #1f100a;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+            position: relative;
+            z-index: 10;
+            margin-bottom: 20px;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .flower-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 12;
+        }
+
+        .rand-flower {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            pointer-events: auto;
+            cursor: pointer;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.9));
+            transition: transform 0.2s;
+            animation: softAppear 0.8s ease-out forwards;
+        }
+        .rand-flower:hover {
+            transform: scale(1.15);
+        }
+
+        .counter-surface {
+            width: 100%;
+            background: linear-gradient(180deg, #422315 0%, #221008 100%);
+            border-top: 6px solid #6b3c27;
+            padding: 10px 12px 14px 12px;
+            position: relative;
+            z-index: 15;
+            box-shadow: 0 -10px 20px rgba(0,0,0,0.8);
+        }
+
+        .offerings-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 20px;
+            min-height: 90px;
+            margin-bottom: 8px;
+        }
+
+        .offering-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            animation: softAppear 0.6s ease-out forwards;
+        }
+        .offering-item:hover {
+            transform: scale(1.08);
+        }
+
+        .offering-img-transparent {
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.9));
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            padding: 4px;
+        }
+
+        /* 湯気・煙のアニメーション */
+        @keyframes steamRise {
+            0% {
+                transform: translateY(0) scaleX(1);
+                opacity: 0;
+            }
+            30% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-25px) scaleX(1.5);
+                opacity: 0;
+            }
+        }
+
+        .steam-effect {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: steamRise 2.5s infinite ease-out;
+        }
+
+        /* アルバム＆ノート画面 */
+        .album-view {
+            background: #1a0f08;
+            gap: 6px;
+            padding: 8px;
+        }
+
+        .closed-notebook {
+            background: linear-gradient(135deg, #3e2217, #2b170e);
+            border: 3px solid var(--accent-gold);
+            border-radius: 6px;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.7);
+            margin-bottom: 2px;
+        }
+
+        .open-notebook-container {
+            display: none;
+            flex-direction: column;
+            background: var(--paper-bg);
+            border: 3px solid #4a271a;
+            border-radius: 4px;
+            color: var(--text-main);
+            padding: 8px;
+            height: 200px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+            position: relative;
+            margin-bottom: 2px;
+        }
+
+        .notebook-pages {
+            display: flex;
+            flex: 1;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .notebook-page {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 6px;
+            border-right: 1px dashed #d1c7bd;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .notebook-page:last-child {
+            border-right: none;
+        }
+
+        .notebook-nav {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #4a271a;
+            margin-top: 4px;
+            border-top: 1px solid #d1c7bd;
+            padding-top: 4px;
+        }
+
+        .album-grid-area {
+            background: rgba(15, 8, 4, 0.85);
+            border: 2px solid #5a3222;
+            border-radius: 4px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 2px;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            min-height: 140px;
+        }
+
+        .grid-photo-card {
+            background: #fff;
+            border: 1px solid #b5a28f;
+            padding: 4px 4px 8px 4px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .grid-photo-card img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+        }
+
+        .album-pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--accent-gold);
+            border-top: 1px solid #3a1f14;
+            padding-top: 4px;
+            margin-top: 4px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 7px;
+            margin: 4px 0;
+            background: #fff;
+            color: #332211;
+            border: 1px solid #b5a28f;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+
+        .nav-bar {
+            display: flex;
+            background: #110b07;
+            border-top: 1px solid #2b170e;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 8px;
+            background: none;
+            border: none;
+            color: #b5a28f;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .nav-btn.active {
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        .modal {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 15px;
+        }
+        .modal-card {
+            background: var(--paper-bg);
+            color: var(--text-main);
+            padding: 15px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 4px;
+            border: 2px solid var(--accent-gold);
+            text-align: left;
+        }
+
+        /* お供え物がふわっと現れるアニメーション */
+        @keyframes softAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .share-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn-line {
+            background: #06C755;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-x {
+            background: #000;
+            color: #fff;
+            border: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="role-switch-bar">
+        <span>👁️ モード:</span>
+        <div>
+            <button class="role-btn active" id="btn-guest" onclick="switchRole('guest')">ゲスト視点</button>
+            <button class="role-btn" id="btn-master" onclick="switchRole('master')">マスター管理</button>
+        </div>
+    </div>
+
+    <div class="app-box">
+
+        <!-- 0. ポータル画面 -->
+        <div id="scr-portal" class="screen portal-view active">
+            <div class="header">☕ メモリアル・カフェ ポータル</div>
+            
+            <div style="margin: 8px 0;">
+                <button class="btn" style="background: #2563eb; color: #fff;" onclick="testCreateCafe()">🧪 Supabase接続テスト（カフェを作る）</button>
+            </div>
+
+            <div style="margin: 4px 0 8px 0;">
+                <button class="btn" onclick="openRegModal()">＋ 新しいカフェを開店する</button>
+            </div>
+            
+            <div class="search-area">
+                <input type="text" id="search-input" placeholder="店名やマスター名で検索..." oninput="renderPortal()">
+                <button class="filter-btn" id="filter-fav-btn" onclick="toggleFavFilter()">❤️ お気に入り</button>
+            </div>
+
+            <div id="cafe-list" style="display:flex; flex-direction:column; gap:8px; overflow-y:auto; flex:1;"></div>
+        </div>
+
+        <!-- 1. エントランス画面 -->
+        <div id="scr-entrance" class="screen entrance-view">
+            <div class="signboard">
+                <div class="signboard-title" id="ent-cafe-title">メモリアル・カフェ</div>
+                <div class="signboard-sub" id="ent-cafe-sub">カフェへ、ようこそ</div>
+            </div>
+
+            <div class="door" onclick="knockDoor()"></div>
+            <p style="font-size:0.7rem; color:var(--accent-gold); margin-top:2px;">🚪 ドアをノックして店内へ</p>
+            
+            <!-- 大切な方を招くための目立つご案内ボタン -->
+            <div style="width: 90%; max-width: 280px; margin-top: 8px;">
+                <button class="share-banner-btn" onclick="openShareModal()">🔗 このカフェをご案内する（シェア）</button>
+                <button class="btn" style="margin-top:4px; background:#2b170e; font-size:0.75rem;" onclick="navTo('portal')">◀ ポータルへ戻る</button>
+            </div>
+        </div>
+
+        <!-- 2. 店内カウンター画面 -->
+        <div id="scr-counter" class="screen counter-view">
+            <div class="header" id="counter-header-title">メモリアル・カフェ 佐藤</div>
+            
+            <div class="time-bar">
+                <span>⏱️ 時間テスト:</span>
+                <div>
+                    <button onclick="fastForward(30)">+30分</button>
+                    <button onclick="fastForward(60)">+1時間</button>
+                    <button onclick="fastForward(1440)">+1日</button>
+                </div>
+            </div>
+
+            <div class="counter-stage">
+                <div class="flower-area" id="flower-container"></div>
+                <div class="photo-frame">
+                    <img id="master-photo" src="">
+                </div>
+            </div>
+
+            <div class="counter-surface">
+                <!-- カウンター下部にも目立つご案内ボタンを配置 -->
+                <button class="share-banner-btn" style="padding: 7px; font-size: 0.75rem; margin-bottom: 6px;" onclick="openShareModal()">🔗 大切な方をこのカフェへご案内する</button>
+                
+                <div class="offerings-row" id="offerings-container"></div>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn" onclick="openGiftModal('coffee')">☕ 珈琲を淹れる</button>
+                    <button class="btn" onclick="openGiftModal('flower')">💐 お花を飾る</button>
+                    <button class="btn" onclick="openGiftModal('incense')">🕯️ お線香を手向ける</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. アルバム＆ノート画面 -->
+        <div id="scr-album" class="screen album-view">
+            <div class="header">📖 思い出ノート ＆ 写真ギャラリー</div>
+            
+            <div style="margin-bottom: 4px;">
+                <button class="share-banner-btn" style="padding: 7px; font-size: 0.75rem;" onclick="openShareModal()">🔗 カフェをご案内する</button>
+            </div>
+
+            <div id="notebook-closed" class="closed-notebook" onclick="openNotebookView()">
+                <div style="font-size: 0.95rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 2px;">📖 思い出ノート</div>
+                <div style="font-size: 0.65rem; color: #b5a28f;">タッチして思い出ノートを開く</div>
+            </div>
+
+            <div id="notebook-open" class="open-notebook-container">
+                <div style="font-size:0.65rem; font-weight:bold; color:#4a271a; text-align:center; border-bottom:1px solid #d1c7bd; padding-bottom:2px;">📖 思い出ノート</div>
+                <div class="notebook-pages">
+                    <div class="notebook-page" onclick="prevNotebookPage()" title="前のページ">
+                        <div style="font-size:0.55rem; color:#886655; margin-bottom:2px;">[ ◀ 左ページ ]</div>
+                        <div id="note-page-left" style="width:100%;"></div>
+                    </div>
+                    <div class="notebook-page" onclick="nextNotebookPage()" title="次のページ">
+                        <div style="font-size:0.55rem; color:#886655; margin-bottom:2px;">[ 右ページ ▶ ]</div>
+                        <div id="note-page-right" style="width:100%;"></div>
+                    </div>
+                </div>
+                <div class="notebook-nav">
+                    <span style="cursor:pointer;" onclick="prevNotebookPage()">◀ 戻る</span>
+                    <span style="cursor:pointer; color:#7a2211;" onclick="closeNotebookView()">[ 戻る ]</span>
+                    <span style="cursor:pointer;" onclick="nextNotebookPage()">次へ ▶</span>
+                </div>
+            </div>
+            <button class="btn" style="background:#4a271a; font-size:0.7rem; margin:1px 0;" onclick="openNoteModal()">🖋️ 思い出ノートにメッセージを綴る</button>
+
+            <div class="album-grid-area">
+                <div style="font-size:0.75rem; color:var(--accent-gold); margin-bottom:2px; font-weight:bold;">📸 想い出の写真館</div>
+                <div class="photo-grid" id="photo-grid-container"></div>
+                <div class="album-pagination">
+                    <span style="cursor:pointer;" onclick="prevPhotoPage()">◀ 前へ</span>
+                    <span id="photo-page-indicator">1 / 1</span>
+                    <span style="cursor:pointer;" onclick="nextPhotoPage()">次へ ▶</span>
+                </div>
+            </div>
+            <button class="btn" style="background:#3e2217; font-size:0.75rem; margin:1px 0;" onclick="openPhotoModal()">📷 アルバムに写真を投稿</button>
+        </div>
+
+        <!-- 4. マスター管理画面 -->
+        <div id="scr-master" class="screen" style="background:var(--master-bg);">
+            <div class="header" style="color:#38bdf8;">🔒 マスター専用管理画面</div>
+            <div class="card" style="text-align:center; margin-top:10px;">
+                <div style="font-size:0.7rem; color:#94a3b8;">マスター受取可能 還元額 (50%)</div>
+                <div id="stat-revenue" style="font-size:1.3rem; color:#34d399; font-weight:bold; margin-top:4px;">¥0</div>
+                <div id="stat-count" style="font-size:0.65rem; color:#64748b; margin-top:2px;">累計お供え 0 件</div>
+            </div>
+            
+            <div class="card">
+                <div style="font-size:0.75rem; color:#38bdf8; font-weight:bold; margin-bottom:4px;">🚪 入店申請・承認待ちゲスト</div>
+                <div id="pending-list" style="font-size:0.7rem; color:#cbd5e1; max-height:100px; overflow-y:auto;"></div>
+            </div>
+
+            <div class="card" style="font-size:0.7rem; line-height:1.4; color:#cbd5e1;">
+                <strong style="color:#38bdf8;">💰 還元金のお受け取りについて</strong><br>
+                • 銀行口座振込（毎月末自動振込）<br>
+                • デジタルギフト（Amazonギフト券等）
+            </div>
+            <button class="btn" style="margin-top:auto;" onclick="navTo('portal')">🏠 ポータルへ戻る</button>
+        </div>
+
+        <!-- 下部ナビ -->
+        <div class="nav-bar" id="main-nav" style="display:none;">
+            <button class="nav-btn active" id="nav-c" onclick="navTo('counter')">☕ カウンター</button>
+            <button class="nav-btn" id="nav-a" onclick="navTo('album')">📖 ノート・写真</button>
+            <button class="nav-btn" onclick="navTo('portal')">🏠 ホーム</button>
+        </div>
+    </div>
+
+    <!-- 各種モーダル -->
+    <div id="modal-share" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:0.9rem; margin-bottom:6px; color:var(--accent-gold);">🔗 カフェをご案内する</h3>
+            <p style="font-size:0.72rem; color:#555; margin-bottom:10px;" id="share-modal-sub">大切な方をこのメモリアル・カフェへご招待します。</p>
+
+            <label style="font-size:0.65rem; display:block; text-align:left; color:#666;">カフェのご案内URL:</label>
+            <input type="text" id="share-url-input" readonly style="font-size:0.7rem; text-align:center; background:#eee; cursor:pointer;" onclick="copyShareUrl()">
+
+            <div class="share-btn-group">
+                <button class="btn" onclick="copyShareUrl()">📋 URLをコピーする</button>
+                <button class="btn btn-line" onclick="shareToLine()">💬 LINEで案内を送信</button>
+                <button class="btn btn-x" onclick="shareToX()">🐦 X (Twitter) で共有</button>
+            </div>
+            
+            <button class="btn" style="background:#886655; margin-top:12px;" onclick="closeModals()">閉じる</button>
+        </div>
+    </div>
+
+    <div id="modal-knock" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:0.9rem; margin-bottom:8px; color:var(--accent-gold);">🚪 ドアをノックしました</h3>
+            <p style="font-size:0.75rem; margin-bottom:10px; color:#555;">マスターへ届けるお名前と関係性をご入力ください。</p>
+            
+            <label style="font-size:0.7rem; display:block; text-align:left;">お名前:</label>
+            <input type="text" id="knock-name" placeholder="例: 山田 太郎">
+            
+            <label style="font-size:0.7rem; display:block; text-align:left; margin-top:4px;">関係性:</label>
+            <input type="text" id="knock-relation" placeholder="例: 友人 / 家族 / かつての常連">
+            
+            <button class="btn" style="margin-top:10px;" onclick="submitKnock()">マスターに承認を乞う</button>
+            <button class="btn" style="background:#886655; margin-top:4px;" onclick="closeModals()">やめる</button>
+        </div>
+    </div>
+
+    <div id="modal-waiting" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:0.9rem; margin-bottom:8px; color:var(--accent-gold);">⏳ 承認待ち</h3>
+            <p style="font-size:0.78rem; line-height:1.5; margin-bottom:15px;">マスターが扉を開けるのを待っています...。<br><span style="font-size:0.65rem; color:#666;">（マスター管理画面モードに切り替えて承認することができます）</span></p>
+            <button class="btn" onclick="closeModals()">閉じる</button>
+        </div>
+    </div>
+
+    <div id="modal-gift" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 id="modal-gift-title" style="font-size:0.9rem; margin-bottom:8px;">『マスターへ、想いを届ける』</h3>
+            <textarea id="gift-msg" placeholder="「いつもの席で、マスターに話しかけるように…」..."></textarea>
+            <button class="btn" type="button" onclick="submitGift()">そっとお供えする</button>
+            <button class="btn" style="background:#886655; margin-top:4px;" onclick="closeModals()">戻る</button>
+        </div>
+    </div>
+
+    <div id="modal-note" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:0.9rem; margin-bottom:8px;">思い出ノートに言葉を綴る</h3>
+            <textarea id="note-msg" placeholder="マスターとの思い出や、今日の出来事を教えてください…"></textarea>
+            <button class="btn" onclick="submitNote()">書き込む</button>
+            <button class="btn" style="background:#886655; margin-top:4px;" onclick="closeModals()">戻る</button>
+        </div>
+    </div>
+
+    <div id="modal-photo" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:0.9rem; margin-bottom:8px;">アルバムに写真を投稿</h3>
+            <input type="file" id="photo-file" accept="image/*" style="font-size:0.75rem;">
+            <input type="text" id="photo-cap" placeholder="写真の思い出メモ...">
+            <button class="btn" onclick="submitPhoto()">アルバムに追加</button>
+            <button class="btn" style="background:#886655; margin-top:4px;" onclick="closeModals()">戻る</button>
+        </div>
+    </div>
+
+    <div id="modal-photo-zoom" class="modal" onclick="closeModals()">
+        <div class="modal-card" style="text-align:center;" onclick="event.stopPropagation()">
+            <img id="zoom-img" src="" style="width:100%; max-height:220px; object-fit:contain; border:2px solid var(--accent-gold); border-radius:4px; margin-bottom:8px;">
+            <div id="zoom-cap" style="font-size:0.85rem; font-weight:bold; margin-bottom:6px;"></div>
+            <button class="btn" onclick="closeModals()">戻る</button>
+        </div>
+    </div>
+
+    <div id="modal-reg" class="modal">
+        <div class="modal-card">
+            <h3 style="font-size:0.9rem; margin-bottom:8px; text-align:center; color:var(--accent-gold);">☕ 新しいカフェを開店</h3>
+            
+            <label style="font-size:0.7rem;">店名:</label>
+            <input type="text" id="reg-title" placeholder="例: メモリアル・カフェ 鈴木">
+            
+            <label style="font-size:0.7rem;">マスターのお名前:</label>
+            <input type="text" id="reg-master" placeholder="例: 鈴木 太郎">
+            
+            <div style="display:flex; gap:6px;">
+                <div style="flex:1;">
+                    <label style="font-size:0.7rem;">生年月日:</label>
+                    <input type="date" id="reg-birth">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-size:0.7rem;">没年月日:</label>
+                    <input type="date" id="reg-death">
+                </div>
+            </div>
+
+            <label style="font-size:0.7rem;">フリーコメント (職業・趣味・人柄など):</label>
+            <textarea id="reg-desc" placeholder="例: 珈琲とジャズを愛した職人。いつも穏やかな笑顔でした。" style="height:50px;"></textarea>
+            
+            <label style="font-size:0.7rem;">マスターの写真 (遺影):</label>
+            <input type="file" id="reg-file" accept="image/*" style="font-size:0.75rem;">
+            
+            <button class="btn" style="margin-top:8px;" onclick="submitNewCafe()">オープンする</button>
+            <button class="btn" style="background:#886655; margin-top:4px;" onclick="closeModals()">戻る</button>
+        </div>
+    </div>
+
+    <script>
+        // --------------------------------------------------
+        // 効果音再生関数 (消音設定)
+        // --------------------------------------------------
+        function playSound(soundType) {}
+
+        // --------------------------------------------------
+        // Supabase 初期化
+        // --------------------------------------------------
+        const SUPABASE_URL = 'https://rwkqhtvieictjlnwwndz.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3a3FodHZpZWljdGpsbnd3bmR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyOTkxNzMsImV4cCI6MjEwNzg3NTE3M30.JfuaXANkv_2TN_7OlhMXvQeumFfAlRPx0c6rEDA2nMw';
+        
+        let mySupabaseClient = null;
+        try {
+            mySupabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch(e) {
+            console.error("Supabase初期化エラー: ", e);
+        }
+
+        async function testCreateCafe() {
+            if (!mySupabaseClient) {
+                alert("Supabaseが準備できていません。");
+                return;
+            }
+
+            const { data, error } = await mySupabaseClient
+                .from('cafes')
+                .insert([
+                    { title: 'テスト喫茶', master_name: 'テストマスター' }
+                ])
+                .select();
+
+            if (error) {
+                console.error('通信エラー:', error);
+                alert("【通信エラー】\n" + JSON.stringify(error, null, 2));
+            } else {
+                console.log('保存成功:', data);
+                alert("🎉 大成功！Supabaseに『テスト喫茶』が保存されました！");
+            }
+        }
+
+        // --------------------------------------------------
+        // アプリ共通ロジック
+        // --------------------------------------------------
+        const FLOWER_TRANSPARENT_IMAGES = [
+            'flower1.png',
+            'flower2.png',
+            'flower3.png',
+            'flower4.png',
+            'flower5.png'
+        ];
+
+        const ITEM_TRANSPARENT_IMAGES = {
+            coffee: 'coffee.png',
+            incense: 'incense.png'
+        };
+
+        let db = {
+            cafes: [{
+                id: 'sato',
+                title: 'メモリアル・カフェ 佐藤',
+                master: '佐藤 健一',
+                birth: '1955-04-12',
+                death: '2025-10-01',
+                desc: '「いつもの珈琲の香る温かい場所で、お待ちしています。」',
+                img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+                fav: false
+            }],
+            data: {
+                'sato': {
+                    gifts: [],
+                    notes: [],
+                    photos: [],
+                    sales: 0,
+                    pending: [],
+                    approved: {}
+                }
+            },
+            guest: { name: 'ゲスト', relation: '来訪者' }
+        };
+
+        let curId = 'sato';
+        let giftType = '';
+        let selectedPhotoFile = null;
+        let selectedRegFile = null;
+        let showOnlyFav = false;
+        let notebookSpreadIdx = 0;
+        let photoPageIdx = 0;
+
+        window.onload = async function() {
+            try {
+                let saved = localStorage.getItem('memorial_cafe_perfect_v20');
+                if (saved) db = JSON.parse(saved);
+            } catch(e) {}
+            
+            renderPortal();
+
+            try {
+                await loadCafesFromSupabase();
+            } catch(e) {
+                console.error("Supabase読み込みエラー:", e);
+            }
+
+            // URLパラメータ（?cafe=sato等）による直接来店判定
+            const urlParams = new URLSearchParams(window.location.search);
+            const directCafeId = urlParams.get('cafe');
+            if (directCafeId) {
+                const targetCafe = db.cafes.find(c => c.id === directCafeId);
+                if (targetCafe) {
+                    selectCafe(directCafeId);
+                }
+            }
+        };
+
+        function saveData() {
+            try { localStorage.setItem('memorial_cafe_perfect_v20', JSON.stringify(db)); } catch(e) {}
+        }
+
+        async function loadCafesFromSupabase() {
+            if (!mySupabaseClient) {
+                renderPortal();
+                return;
+            }
+
+            const { data, error } = await mySupabaseClient
+                .from('cafes')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error("カフェ一覧取得エラー:", error);
+                renderPortal();
+                return;
+            }
+
+            if (data && data.length > 0) {
+                db.cafes = data.map(item => ({
+                    id: item.id,
+                    title: item.title,
+                    master: item.master_name,
+                    birth: item.birth || '',
+                    death: item.death || '',
+                    desc: item.description || '',
+                    img: item.image_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+                    fav: false
+                }));
+
+                data.forEach(item => {
+                    if (!db.data[item.id]) {
+                        db.data[item.id] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
+                    }
+                });
+            }
+
+            renderPortal();
+        }
+
+        function toggleFavFilter() {
+            showOnlyFav = !showOnlyFav;
+            let btn = document.getElementById('filter-fav-btn');
+            btn.classList.toggle('active', showOnlyFav);
+            renderPortal();
+        }
+
+        function toggleFav(id, event) {
+            event.stopPropagation();
+            let cafe = db.cafes.find(x => x.id === id);
+            if (cafe) {
+                cafe.fav = !cafe.fav;
+                saveData();
+                renderPortal();
+            }
+        }
+
+        function renderPortal() {
+            let keyword = document.getElementById('search-input').value.toLowerCase();
+            let el = document.getElementById('cafe-list');
+            el.innerHTML = '';
+
+            let filtered = db.cafes.filter(c => {
+                let matchKeyword = c.title.toLowerCase().includes(keyword) || c.master.toLowerCase().includes(keyword) || (c.desc && c.desc.toLowerCase().includes(keyword));
+                let matchFav = showOnlyFav ? c.fav : true;
+                return matchKeyword && matchFav;
+            });
+
+            if (filtered.length === 0) {
+                el.innerHTML = `<div style="text-align:center; color:#b5a28f; font-size:0.75rem; margin-top:20px;">該当するカフェが見つかりません</div>`;
+                return;
+            }
+
+            filtered.forEach(c => {
+                let lifespan = (c.birth || c.death) ? `<br><span style="font-size:0.65rem; color:#b5a28f;">(${c.birth || '??'} 〜 ${c.death || '??'})</span>` : '';
+                let starClass = c.fav ? 'fav-star active' : 'fav-star';
+                el.innerHTML += `<div class="card cafe-card" onclick="selectCafe('${c.id}')">
+                    <img src="${c.img}" class="cafe-thumb">
+                    <div style="flex:1; padding-right:20px;">
+                        <strong style="color:var(--accent-gold); font-size:0.85rem;">${c.title}</strong><br>
+                        <span style="font-size:0.7rem; color:#d1c7bd;">マスター: ${c.master}</span>${lifespan}
+                    </div>
+                    <div class="${starClass}" onclick="toggleFav('${c.id}', event)">★</div>
+                </div>`;
+            });
+        }
+
+        function selectCafe(id) {
+            curId = id;
+            let c = db.cafes.find(x => x.id === id);
+            if (!c) return;
+            document.getElementById('ent-cafe-title').innerText = c.title;
+            document.getElementById('ent-cafe-sub').innerText = c.master + ' の席';
+            document.getElementById('master-photo').src = c.img;
+            document.getElementById('counter-header-title').innerText = c.title;
+            showScreen('entrance');
+        }
+
+        function getShareUrl() {
+            const baseUrl = window.location.origin + window.location.pathname;
+            return `${baseUrl}?cafe=${curId}`;
+        }
+
+        function openShareModal() {
+            const c = db.cafes.find(x => x.id === curId);
+            const title = c ? c.title : 'メモリアル・カフェ';
+            document.getElementById('share-modal-sub').innerText = `『${title}』へご家族や知人を温かくお招きします。`;
+            document.getElementById('share-url-input').value = getShareUrl();
+            document.getElementById('modal-share').style.display = 'flex';
+        }
+
+        function copyShareUrl() {
+            const shareUrl = getShareUrl();
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert("「カフェのご案内URLをコピーしました。\n大切な方へメッセージで添えてお送りください。」");
+            }).catch(() => {
+                alert("コピー用URL: " + shareUrl);
+            });
+        }
+
+        function shareToLine() {
+            const c = db.cafes.find(x => x.id === curId);
+            const cafeTitle = c ? c.title : 'メモリアル・カフェ';
+            const shareUrl = getShareUrl();
+            const text = encodeURIComponent(`『${cafeTitle}』へ、ようこそ。\nいつもの席で、マスターへの想いを語り合いませんか？\n\n${shareUrl}`);
+            window.open(`https://line.me/R/msg/text/?${text}`, '_blank');
+        }
+
+        function shareToX() {
+            const c = db.cafes.find(x => x.id === curId);
+            const cafeTitle = c ? c.title : 'メモリアル・カフェ';
+            const shareUrl = getShareUrl();
+            const text = encodeURIComponent(`『${cafeTitle}』で温かい想い出のひとときを過ごしています。 #メモリアルカフェ`);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+        }
+
+        function knockDoor() {
+            let store = db.data[curId];
+            if (!store) {
+                db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
+                store = db.data[curId];
+            }
+            if (!store.pending) store.pending = [];
+            if (!store.approved) store.approved = {};
+
+            if (db.guest.name && db.guest.relation) {
+                let key = db.guest.name + '_' + db.guest.relation;
+                if (store.approved[key]) {
+                    document.getElementById('main-nav').style.display = 'flex';
+                    navTo('counter');
+                    return;
+                }
+            }
+
+            document.getElementById('knock-name').value = db.guest.name || '';
+            document.getElementById('knock-relation').value = db.guest.relation || '';
+            document.getElementById('modal-knock').style.display = 'flex';
+        }
+
+        function submitKnock() {
+            let name = document.getElementById('knock-name').value.trim();
+            let relation = document.getElementById('knock-relation').value.trim();
+            if (!name || !relation) {
+                alert('お名前と関係性を入力してください。');
+                return;
+            }
+
+            db.guest.name = name;
+            db.guest.relation = relation;
+            saveData();
+
+            let store = db.data[curId];
+            if (!store) {
+                db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
+                store = db.data[curId];
+            }
+            if (!store.pending) store.pending = [];
+            if (!store.approved) store.approved = {};
+
+            let key = name + '_' + relation;
+            if (store.approved[key]) {
+                closeModals();
+                document.getElementById('main-nav').style.display = 'flex';
+                navTo('counter');
+                return;
+            }
+
+            if (!store.pending.some(p => p.name === name && p.relation === relation)) {
+                store.pending.push({ name: name, relation: relation, time: new Date().toLocaleTimeString() });
+                saveData();
+            }
+
+            closeModals();
+            document.getElementById('modal-waiting').style.display = 'flex';
+        }
+
+        function navTo(scr) {
+            if (scr === 'portal') document.getElementById('main-nav').style.display = 'none';
+            showScreen(scr);
+            if (scr === 'counter') loadOfferingsFromSupabase();
+            if (scr === 'album') {
+                loadNotesFromSupabase();
+                loadPhotosFromSupabase();
+            }
+            if (scr === 'master') renderMaster();
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('scr-' + id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            if (id === 'counter') document.getElementById('nav-c').classList.add('active');
+            if (id === 'album') document.getElementById('nav-a').classList.add('active');
+        }
+
+        function switchRole(role) {
+            document.getElementById('btn-guest').classList.toggle('active', role === 'guest');
+            document.getElementById('btn-master').classList.toggle('active', role === 'master');
+            if (role === 'master') {
+                document.getElementById('main-nav').style.display = 'none';
+                showScreen('master');
+                renderMaster();
+            } else {
+                document.getElementById('main-nav').style.display = 'flex';
+                navTo('counter');
+            }
+        }
+
+        function openGiftModal(type) {
+            giftType = type;
+            document.getElementById('gift-msg').value = '';
+            document.getElementById('modal-gift').style.display = 'flex';
+        }
+
+        async function submitGift() {
+            let giftMsgEl = document.getElementById('gift-msg');
+            let userMsg = giftMsgEl ? giftMsgEl.value.trim() : '';
+            let finalMsg = userMsg || '心ばかりのお供えです。';
+            
+            let guestName = db.guest.name || 'ゲスト';
+            let relation = db.guest.relation || '来訪者';
+            let guestLabel = `${guestName} (${relation})`;
+
+            let limitMin = 120;
+            if (giftType === 'flower') {
+                limitMin = 4320;
+            } else if (giftType === 'incense') {
+                limitMin = 60;
+            } else if (giftType === 'coffee') {
+                limitMin = 120;
+            }
+
+            let expiresAt = new Date(Date.now() + limitMin * 60000).toISOString();
+
+            if (!mySupabaseClient) {
+                alert("Supabaseが接続できていません。");
+                return;
+            }
+
+            const { data, error } = await mySupabaseClient
+                .from('offerings')
+                .insert([
+                    {
+                        cafe_id: curId,
+                        type: giftType,
+                        guest_name: guestLabel,
+                        message: finalMsg,
+                        expires_at: expiresAt
+                    }
+                ])
+                .select();
+
+            if (error) {
+                console.error("お供え保存エラー:", error);
+                alert("【Supabase保存エラー】\n" + JSON.stringify(error, null, 2));
+                return;
+            }
+
+            let store = db.data[curId];
+            if (store) store.sales++;
+            saveData();
+
+            alert("「マスターのカウンターに、温かい想いが届きました。」");
+            closeModals();
+            loadOfferingsFromSupabase();
+        }
+
+        async function loadOfferingsFromSupabase() {
+            if (!mySupabaseClient) {
+                renderCounter();
+                return;
+            }
+
+            const nowIso = new Date().toISOString();
+            const { data, error } = await mySupabaseClient
+                .from('offerings')
+                .select('*')
+                .eq('cafe_id', curId)
+                .gt('expires_at', nowIso);
+
+            if (error) {
+                console.error("データ取得エラー:", error);
+                renderCounter();
+                return;
+            }
+
+            let store = db.data[curId];
+            if (!store) return;
+
+            store.gifts = data.map(item => {
+                let img = ITEM_TRANSPARENT_IMAGES[item.type];
+                let posX = 50, posY = 50;
+
+                if (item.type === 'flower') {
+                    img = FLOWER_TRANSPARENT_IMAGES[Math.floor(Math.random() * FLOWER_TRANSPARENT_IMAGES.length)];
+                    let angle = Math.random() * Math.PI * 2;
+                    posX = 50 + Math.cos(angle) * 32;
+                    posY = 45 + Math.sin(angle) * 28;
+                }
+
+                return {
+                    id: item.id,
+                    type: item.type,
+                    name: item.guest_name,
+                    msg: item.message,
+                    img: img,
+                    left: posX,
+                    top: posY
+                };
+            });
+
+            renderCounter();
+        }
+
+        function renderCounter() {
+            let store = db.data[curId];
+            let cContainer = document.getElementById('offerings-container');
+            let fContainer = document.getElementById('flower-container');
+            cContainer.innerHTML = '';
+            fContainer.innerHTML = '';
+
+            if (!store || !store.gifts) return;
+
+            store.gifts.forEach(g => {
+                if (g.type === 'flower') {
+                    fContainer.innerHTML += `<img src="${g.img}" class="rand-flower" style="top:${g.top}%; left:${g.left}%;" onclick="alert('${g.name}さんのお花\\n\\n${g.msg}')">`;
+                } else {
+                    let extraEffect = (g.type === 'coffee' || g.type === 'incense') ? `<div class="steam-effect"></div>` : '';
+                    cContainer.innerHTML += `<div class="offering-item" onclick="alert('${g.name}さんのお供え\\n\\n${g.msg}')">
+                        ${extraEffect}
+                        <img src="${g.img}" class="offering-img-transparent">
+                        <span style="font-size:0.65rem; color:var(--accent-gold); margin-top:4px; font-weight:bold;">${g.name.split(' ')[0]}</span>
+                    </div>`;
+                }
+            });
+        }
+
+        function fastForward(min) {
+            loadOfferingsFromSupabase();
+            alert(`Supabaseから最新データを取得しました。`);
+        }
+
+        async function openNotebookView() {
+            document.getElementById('notebook-closed').style.display = 'none';
+            document.getElementById('notebook-open').style.display = 'flex';
+            notebookSpreadIdx = 0;
+            await loadNotesFromSupabase();
+        }
+
+        function closeNotebookView() {
+            document.getElementById('notebook-open').style.display = 'none';
+            document.getElementById('notebook-closed').style.display = 'block';
+        }
+
+        function nextNotebookPage() {
+            let store = db.data[curId];
+            if (!store || !store.notes) return;
+            let maxSpread = Math.ceil(store.notes.length / 2) - 1;
+            if (notebookSpreadIdx < maxSpread) {
+                notebookSpreadIdx++;
+                renderNotebookPages();
+            }
+        }
+
+        function prevNotebookPage() {
+            if (notebookSpreadIdx > 0) {
+                notebookSpreadIdx--;
+                renderNotebookPages();
+            }
+        }
+
+        function getDynamicFontSize(text) {
+            if (!text) return '0.75rem';
+            if (text.length > 90) return '0.55rem';
+            if (text.length > 50) return '0.65rem';
+            return '0.75rem';
+        }
+
+        function renderNotebookPages() {
+            let store = db.data[curId];
+            let leftEl = document.getElementById('note-page-left');
+            let rightEl = document.getElementById('note-page-right');
+            leftEl.innerHTML = '';
+            rightEl.innerHTML = '';
+
+            if (!store || !store.notes) return;
+
+            let leftNoteIdx = notebookSpreadIdx * 2;
+            let rightNoteIdx = notebookSpreadIdx * 2 + 1;
+
+            if (store.notes[leftNoteIdx]) {
+                let n = store.notes[leftNoteIdx];
+                let fSize = getDynamicFontSize(n.msg);
+                leftEl.innerHTML = `
+                    <div style="font-weight:bold; color:#4a271a; font-size:0.65rem; margin-bottom:2px;">${n.name}</div>
+                    <div style="color:#332211; font-size:${fSize}; line-height:1.3; margin-bottom:4px; word-break:break-all;">「${n.msg}」</div>
+                    <div style="font-size:0.5rem; color:#886655;">${n.time}</div>
+                `;
+            } else {
+                leftEl.innerHTML = `<div style="color:#aaa; font-size:0.65rem; margin-top:20px;">（余白）</div>`;
+            }
+
+            if (store.notes[rightNoteIdx]) {
+                let n = store.notes[rightNoteIdx];
+                let fSize = getDynamicFontSize(n.msg);
+                rightEl.innerHTML = `
+                    <div style="font-weight:bold; color:#4a271a; font-size:0.65rem; margin-bottom:2px;">${n.name}</div>
+                    <div style="color:#332211; font-size:${fSize}; line-height:1.3; margin-bottom:4px; word-break:break-all;">「${n.msg}」</div>
+                    <div style="font-size:0.5rem; color:#886655;">${n.time}</div>
+                `;
+            } else {
+                rightEl.innerHTML = `<div style="color:#aaa; font-size:0.65rem; margin-top:20px;">（余白）</div>`;
+            }
+        }
+
+        async function loadNotesFromSupabase() {
+            if (!mySupabaseClient) {
+                renderNotebookPages();
+                return;
+            }
+
+            const { data, error } = await mySupabaseClient
+                .from('posts')
+                .select('*')
+                .eq('cafe_id', curId)
+                .eq('type', 'message')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error("ノート取得エラー:", error);
+                return;
+            }
+
+            let store = db.data[curId];
+            if (!store) return;
+
+            if (data) {
+                store.notes = data.map(item => {
+                    let dateObj = new Date(item.created_at);
+                    let timeStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
+                    return {
+                        name: item.author || 'ゲスト',
+                        msg: item.content,
+                        time: timeStr
+                    };
+                });
+            }
+
+            renderNotebookPages();
+        }
+
+        function openNoteModal() {
+            document.getElementById('note-msg').value = '';
+            document.getElementById('modal-note').style.display = 'flex';
+        }
+
+        async function submitNote() {
+            let m = document.getElementById('note-msg').value.trim();
+            if (!m) {
+                alert('メッセージを入力してください。');
+                return;
+            }
+            let guestLabel = `${db.guest.name || 'ゲスト'} (${db.guest.relation || '来訪者'})`;
+
+            if (!mySupabaseClient) {
+                alert("Supabaseが接続できていません。");
+                return;
+            }
+
+            const { data, error } = await mySupabaseClient
+                .from('posts')
+                .insert([
+                    {
+                        cafe_id: curId,
+                        type: 'message',
+                        content: m,
+                        author: guestLabel
+                    }
+                ])
+                .select();
+
+            if (error) {
+                console.error("ノート保存エラー:", error);
+                alert("【Supabase保存エラー】\n" + JSON.stringify(error, null, 2));
+                return;
+            }
+
+            alert("「思い出ノートに、新しいページがそっと挟まれました。」");
+            closeModals();
+
+            await loadNotesFromSupabase();
+
+            if (document.getElementById('notebook-open').style.display === 'flex') {
+                renderNotebookPages();
+            }
+        }
+
+        function openPhotoModal() {
+            document.getElementById('photo-file').value = '';
+            document.getElementById('photo-cap').value = '';
+            selectedPhotoFile = null;
+            document.getElementById('modal-photo').style.display = 'flex';
+        }
+
+        document.getElementById('photo-file').onchange = e => {
+            let f = e.target.files[0];
+            if (f) {
+                selectedPhotoFile = f;
+            }
+        };
+
+        async function loadPhotosFromSupabase() {
+            if (!mySupabaseClient) {
+                renderAlbum();
+                return;
+            }
+
+            const { data, error } = await mySupabaseClient
+                .from('posts')
+                .select('*')
+                .eq('cafe_id', curId)
+                .eq('type', 'photo')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error("写真取得エラー:", error);
+                return;
+            }
+
+            let store = db.data[curId];
+            if (!store) return;
+
+            if (data) {
+                store.photos = data.map(item => ({
+                    url: item.image_url,
+                    cap: item.content || '想い出の1枚'
+                }));
+            }
+
+            renderAlbum();
+        }
+
+        async function submitPhoto() {
+            if (!selectedPhotoFile) {
+                alert('写真を選択してください。');
+                return;
+            }
+            let cap = document.getElementById('photo-cap').value.trim() || '想い出の1枚';
+            let guestLabel = `${db.guest.name || 'ゲスト'} (${db.guest.relation || '来訪者'})`;
+
+            if (!mySupabaseClient) {
+                alert("Supabaseが接続できていません。");
+                return;
+            }
+
+            const fileExt = selectedPhotoFile.name.split('.').pop();
+            const fileName = `${curId}_${Date.now()}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            const { data: uploadData, error: uploadError } = await mySupabaseClient.storage
+                .from('cafe-photos')
+                .upload(filePath, selectedPhotoFile);
+
+            if (uploadError) {
+                console.error("ストレージアップロードエラー:", uploadError);
+                alert("【アップロードエラー】\n" + uploadError.message);
+                return;
+            }
+
+            const { data: publicUrlData } = mySupabaseClient.storage
+                .from('cafe-photos')
+                .getPublicUrl(filePath);
+
+            const publicUrl = publicUrlData.publicUrl;
+
+            const { data: insertData, error: insertError } = await mySupabaseClient
+                .from('posts')
+                .insert([
+                    {
+                        cafe_id: curId,
+                        type: 'photo',
+                        content: cap,
+                        image_url: publicUrl,
+                        author: guestLabel
+                    }
+                ])
+                .select();
+
+            if (insertError) {
+                console.error("データベース保存エラー:", insertError);
+                alert("【DB保存エラー】\n" + JSON.stringify(insertError, null, 2));
+                return;
+            }
+
+            alert("📸 アルバムに写真を投稿しました！");
+            closeModals();
+            selectedPhotoFile = null;
+
+            await loadPhotosFromSupabase();
+        }
+
+        function nextPhotoPage() {
+            let store = db.data[curId];
+            if (!store || !store.photos) return;
+            let maxPage = Math.max(0, Math.ceil(store.photos.length / 4) - 1);
+            if (photoPageIdx < maxPage) {
+                photoPageIdx++;
+                renderAlbum();
+            }
+        }
+
+        function prevPhotoPage() {
+            if (photoPageIdx > 0) {
+                photoPageIdx--;
+                renderAlbum();
+            }
+        }
+
+        function renderAlbum() {
+            let store = db.data[curId];
+            let gridContainer = document.getElementById('photo-grid-container');
+            gridContainer.innerHTML = '';
+
+            if (!store || !store.photos || store.photos.length === 0) {
+                gridContainer.innerHTML = `<div style="grid-column: span 2; text-align:center; color:#b5a28f; font-size:0.7rem; margin-top:20px;">まだ写真がありません。</div>`;
+                document.getElementById('photo-page-indicator').innerText = `0 / 0`;
+                return;
+            }
+
+            let maxPage = Math.max(0, Math.ceil(store.photos.length / 4) - 1);
+            if (photoPageIdx > maxPage) photoPageIdx = maxPage;
+
+            let start = photoPageIdx * 4;
+            let pagePhotos = store.photos.slice(start, start + 4);
+
+            pagePhotos.forEach(p => {
+                gridContainer.innerHTML += `
+                    <div class="grid-photo-card" onclick="zoomPhoto('${p.url}', '${p.cap}')">
+                        <img src="${p.url}">
+                        <div style="font-size:0.55rem; text-align:center; color:#333; overflow:hidden; white-space:nowrap; width:100%; margin-top:2px;">${p.cap}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('photo-page-indicator').innerText = `${photoPageIdx + 1} / ${maxPage + 1}`;
+        }
+
+        function zoomPhoto(url, cap) {
+            document.getElementById('zoom-img').src = url;
+            document.getElementById('zoom-cap').innerText = cap;
+            document.getElementById('modal-photo-zoom').style.display = 'flex';
+        }
+
+        function openRegModal() {
+            document.getElementById('reg-title').value = '';
+            document.getElementById('reg-master').value = '';
+            document.getElementById('reg-birth').value = '';
+            document.getElementById('reg-death').value = '';
+            document.getElementById('reg-desc').value = '';
+            document.getElementById('reg-file').value = '';
+            selectedRegFile = null;
+            document.getElementById('modal-reg').style.display = 'flex';
+        }
+
+        document.getElementById('reg-file').onchange = e => {
+            let f = e.target.files[0];
+            if (f) {
+                selectedRegFile = f;
+            }
+        };
+
+        async function submitNewCafe() {
+            let title = document.getElementById('reg-title').value.trim();
+            let master = document.getElementById('reg-master').value.trim();
+            let birth = document.getElementById('reg-birth').value;
+            let death = document.getElementById('reg-death').value;
+            let desc = document.getElementById('reg-desc').value.trim();
+
+            if (!title || !master) {
+                alert('店名とマスター名は必須です。');
+                return;
+            }
+
+            if (!mySupabaseClient) {
+                alert("Supabaseが接続できていません。");
+                return;
+            }
+
+            let id = 'c_' + Date.now();
+            let imageUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80';
+
+            if (selectedRegFile) {
+                const fileExt = selectedRegFile.name.split('.').pop();
+                const fileName = `master_${id}_${Date.now()}.${fileExt}`;
+                
+                const { error: uploadError } = await mySupabaseClient.storage
+                    .from('cafe-photos')
+                    .upload(fileName, selectedRegFile);
+
+                if (uploadError) {
+                    console.error("マスター写真アップロードエラー:", uploadError);
+                    alert("【画像アップロードエラー】\n" + uploadError.message);
+                    return;
+                }
+
+                const { data: publicUrlData } = mySupabaseClient.storage
+                    .from('cafe-photos')
+                    .getPublicUrl(fileName);
+
+                imageUrl = publicUrlData.publicUrl;
+            }
+
+            const { error: insertError } = await mySupabaseClient
+                .from('cafes')
+                .insert([
+                    {
+                        id: id,
+                        title: title,
+                        master_name: master,
+                        birth: birth,
+                        death: death,
+                        description: desc,
+                        image_url: imageUrl
+                    }
+                ]);
+
+            if (insertError) {
+                console.error("カフェ登録エラー詳細:", insertError);
+                alert("【DB保存エラー】\n" + (insertError.message || JSON.stringify(insertError, null, 2)));
+                return;
+            }
+
+            alert('☕ 新しいカフェがクラウド上にオープンしました！');
+            closeModals();
+            selectedRegFile = null;
+
+            await loadCafesFromSupabase();
+        }
+
+        function renderMaster() {
+            let store = db.data[curId];
+            if (!store) {
+                db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
+                store = db.data[curId];
+            }
+            let rev = store.sales * 100 * 0.5;
+            document.getElementById('stat-revenue').innerText = `¥${rev.toLocaleString()}`;
+            document.getElementById('stat-count').innerText = `累計お供え ${store.sales} 件`;
+
+            let pList = document.getElementById('pending-list');
+            pList.innerHTML = '';
+            if (!store.pending || store.pending.length === 0) {
+                pList.innerHTML = `<span style="color:#886655;">現在、承認待ちのゲストはいません。</span>`;
+                return;
+            }
+
+            store.pending.forEach((p, idx) => {
+                pList.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:4px 8px; margin-bottom:4px; border-radius:3px;">
+                    <div><strong>${p.name}</strong> (${p.relation})</div>
+                    <button class="btn" style="width:auto; padding:3px 8px; font-size:0.65rem; margin:0;" onclick="approveGuest(${idx})">承認する</button>
+                </div>`;
+            });
+        }
+
+        function approveGuest(idx) {
+            let store = db.data[curId];
+            if (!store || !store.pending) return;
+            let target = store.pending.splice(idx, 1)[0];
+            if (target) {
+                let key = target.name + '_' + target.relation;
+                if (!store.approved) store.approved = {};
+                store.approved[key] = true;
+                saveData();
+                renderMaster();
+                alert(`${target.name}さんの入店を承認しました。`);
+            }
+        }
+
+        function closeModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+    </script>
+</body>
+</html>
