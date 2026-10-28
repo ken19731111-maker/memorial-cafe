@@ -35,6 +35,29 @@
             overflow-x: hidden;
         }
 
+        /* ------------------------------------------------ */
+        /* PC向け背景およびフレーム演出 (アプローチA)           */
+        /* ------------------------------------------------ */
+        @media (min-width: 768px) {
+            body {
+                /* PC背景に落ち着いたカフェの店内イメージを配置 */
+                background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), 
+                            url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+                padding: 20px 0;
+            }
+
+            .role-switch-bar {
+                border-radius: 12px 12px 0 0;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            }
+
+            .app-box {
+                border-radius: 0 0 16px 16px;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 25px rgba(197, 160, 89, 0.25);
+                border: 1px solid rgba(197, 160, 89, 0.3);
+            }
+        }
+
         .role-switch-bar {
             width: 100%;
             max-width: 420px;
