@@ -151,6 +151,27 @@
             background: #522c1b;
         }
 
+        /* 寄付（ドネーション）専用の上品なボタン */
+        .donate-banner-btn {
+            background: linear-gradient(135deg, #2b1f14, #1a120b);
+            color: #d4af37;
+            border: 1px solid rgba(197, 160, 89, 0.5);
+            padding: 8px 12px;
+            margin: 6px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            width: 100%;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+            transition: background 0.2s;
+        }
+
+        .donate-banner-btn:hover {
+            background: #38291a;
+        }
+
         .card {
             background: rgba(40,20,10,0.9);
             border: 1px solid var(--accent-gold);
@@ -687,11 +708,14 @@
                 <button class="btn" style="background: #2563eb; color: #fff;" onclick="testCreateCafe()">🧪 Supabase接続テスト（カフェを作る）</button>
             </div>
 
-            <div style="margin: 4px 0 8px 0;">
+            <div style="margin: 4px 0 4px 0;">
                 <button class="btn" onclick="openRegModal()">＋ 新しいカフェを開店する</button>
             </div>
+
+            <!-- ドネーション（寄付）誘導ボタン -->
+            <button class="donate-banner-btn" onclick="openDonateModal()">☕ サイトの維持・マスターを応援する（寄付）</button>
             
-            <div class="search-area">
+            <div class="search-area" style="margin-top: 6px;">
                 <input type="text" id="search-input" placeholder="店名やマスター名で検索..." oninput="renderPortal()">
                 <button class="filter-btn" id="filter-fav-btn" onclick="toggleFavFilter()">❤️ お気に入り</button>
             </div>
@@ -709,9 +733,10 @@
             <div class="door" onclick="knockDoor()"></div>
             <p style="font-size:0.7rem; color:var(--accent-gold); margin-top:2px;">🚪 ドアをノックして店内へ</p>
             
-            <!-- 大切な方を招くための目立つご案内ボタン -->
+            <!-- 大切な方を招くための目立つご案内ボタン ＆ 寄付ボタン -->
             <div style="width: 90%; max-width: 280px; margin-top: 8px;">
                 <button class="share-banner-btn" onclick="openShareModal()">🔗 このカフェをご案内する（シェア）</button>
+                <button class="donate-banner-btn" onclick="openDonateModal()">☕ サイトを応援する（寄付）</button>
                 <button class="btn" style="margin-top:4px; background:#2b170e; font-size:0.75rem;" onclick="navTo('portal')">◀ ポータルへ戻る</button>
             </div>
         </div>
@@ -741,7 +766,7 @@
 
             <div class="counter-surface">
                 <!-- カウンター下部にも目立つご案内ボタンを配置 -->
-                <button class="share-banner-btn" style="padding: 7px; font-size: 0.75rem; margin-bottom: 6px;" onclick="openShareModal()">🔗 大切な方をこのカフェへご案内する</button>
+                <button class="share-banner-btn" style="padding: 7px; font-size: 0.75rem; margin-bottom: 4px;" onclick="openShareModal()">🔗 大切な方をこのカフェへご案内する</button>
                 
                 <div class="offerings-row" id="offerings-container"></div>
                 <div style="display:flex; gap:6px;">
@@ -831,6 +856,29 @@
     </div>
 
     <!-- 各種モーダル -->
+    <!-- 寄付（ドネーション）専用モーダル -->
+    <div id="modal-donate" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:0.9rem; margin-bottom:6px; color:var(--accent-gold);">☕ サイトの維持・マスターを応援する</h3>
+            <p style="font-size:0.75rem; line-height:1.5; color:#555; margin-bottom:12px;">
+                「メモリアル・カフェ」はすべての機能を無料でご利用いただけます。<br>
+                サーバー維持費のサポートや、温かい空間を続けるための応援（任意のご寄付）をいただけましたら、大変励みになります。
+            </p>
+            
+            <div style="background:#f0ebe1; border:1px solid #d4af37; padding:10px; border-radius:4px; margin-bottom:12px; font-size:0.72rem; color:#332211;">
+                <strong>💡 ご支援方法について</strong><br>
+                下記のサポートリンク、またはお心づけの窓口よりお手続きいただけます。
+            </div>
+
+            <div class="share-btn-group">
+                <button class="btn" style="background:#d4af37; color:#120a05;" onclick="alert('ご支援ありがとうございます！外部の決済・応援ページ（StripeやBuy Me a Coffeeなど）へのリンクを設定できます。')">☕ 珈琲1杯分（¥500）のサポート</button>
+                <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="alert('温かいお気持ちに心より感謝申し上げます。')">💌 マスターへメッセージ付きで応援する</button>
+            </div>
+            
+            <button class="btn" style="background:#886655; margin-top:10px;" onclick="closeModals()">閉じる</button>
+        </div>
+    </div>
+
     <!-- マスターからの感謝カード・お礼モーダル -->
     <div id="modal-thanks" class="modal">
         <div class="modal-card" style="text-align:center;">
@@ -1218,6 +1266,10 @@
             document.getElementById('share-modal-sub').innerText = `『${title}』へご家族や知人を温かくお招きします。`;
             document.getElementById('share-url-input').value = getShareUrl();
             document.getElementById('modal-share').style.display = 'flex';
+        }
+
+        function openDonateModal() {
+            document.getElementById('modal-donate').style.display = 'flex';
         }
 
         function copyShareUrl() {
@@ -1892,7 +1944,7 @@
             document.getElementById('stat-count').innerText = `累計お供え ${store.sales} 件`;
 
             let pList = document.getElementById('pending-list');
-            pList.innerHTML = '';
+            pList.innerHTML = "";
             if (!store.pending || store.pending.length === 0) {
                 pList.innerHTML = `<span style="color:#886655;">現在、承認待ちのゲストはいません。</span>`;
                 return;
@@ -1921,7 +1973,7 @@
         }
 
         function closeModals() {
-            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            querySelectorAll = document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         }
     </script>
 </body>
