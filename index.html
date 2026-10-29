@@ -1933,7 +1933,7 @@
             await loadCafesFromSupabase();
         }
 
-        function renderMaster() {
+                async function renderMaster() {
             let store = db.data[curId];
             if (!store) {
                 db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
@@ -1944,20 +1944,100 @@
             document.getElementById('stat-count').innerText = `累計お供え ${store.sales} 件`;
 
             let pList = document.getElementById('pending-list');
+            let aList = document.getElementById('approved-list');
             pList.innerHTML = "";
-            if (!store.pending || store.pending.length === 0) {
-                pList.innerHTML = `<span style="color:#886655;">現在、承認待ちのゲストはいません。</span>`;
-                return;
+            aList.innerHTML = "";
+
+            // Supabaseから最新のゲスト一覧を取得（接続されている場合）
+            if (mySupabaseClient) {
+                const { data: guests, error } = await mySupabaseClient
+                    .from('guests')
+                    .select('*')
+                    .eq('cafe_id', curId)
+                    .order('created_at', { ascending: false });
+
+                if (!error && guests) {
+                    let pendingGuests = guests.filter(g => g.status === 'pending');
+                    let approvedGuests = guests.filter(g => g.status === 'approved');
+
+                    // 1. 承認待ち表示
+                    if (pendingGuests.length === 0) {
+                        pList.innerHTML = `<span style="color:#886655;">現在、承認待ちのゲストはいません。</span>`;
+                    } else {
+                        pendingGuests.forEach(g => {
+                            pList.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:4px 8px; margin-bottom:4px; border-radius:3px;">
+                                <div><strong>${g.guest_name}</strong> (${g.relation})</div>
+                                <div>
+                                    <button class="btn" style="width:auto; padding:3px 8px; font-size:0.65rem; margin:0;" onclick="updateGuestStatus('${g.id}', 'approved')">承認</button>
+                                </div>
+                            </div>`;
+                        });
+                    }
+
+                    // 2. 承認済み表示
+                    if (approvedGuests.length === 0) {
+                        aList.innerHTML = `<span style="color:#886655;">まだ承認されたゲストはいません。</span>`;
+                    } else {
+                        approvedGuests.forEach(g => {
+                            aList.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:4px 8px; margin-bottom:4px; border-radius:3px;">
+                                <div><strong>${g.guest_name}</strong> (${g.relation})</div>
+                                <div>
+                                    <button class="btn" style="width:auto; padding:3px 6px; font-size:0.65rem; margin:0; background:#e11d48; color:#fff; border:none;" onclick="updateGuestStatus('${g.id}', 'pending')">承認取消</button>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                    return;
+                }
             }
 
-            store.pending.forEach((p, idx) => {
-                pList.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:4px 8px; margin-bottom:4px; border-radius:3px;">
-                    <div><strong>${p.name}</strong> (${p.relation})</div>
-                    <button class="btn" style="width:auto; padding:3px 8px; font-size:0.65rem; margin:0;" onclick="approveGuest(${idx})">承認する</button>
-                </div>`;
-            });
+            // ローカル（オフライン）フォールバック表示
+            if (!store.pending || store.pending.length === 0) {
+                pList.innerHTML = `<span style="color:#886655;">現在、承認待ちのゲストはいません。</span>`;
+            } else {
+                store.pending.forEach((p, idx) => {
+                    pList.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:4px 8px; margin-bottom:4px; border-radius:3px;">
+                        <div><strong>${p.name}</strong> (${p.relation})</div>
+                        <button class="btn" style="width:auto; padding:3px 8px; font-size:0.65rem; margin:0;" onclick="approveGuest(${idx})">承認する</button>
+                    </div>`;
+                });
+            }
+
+            let approvedKeys = Object.keys(store.approved || {}).filter(k => store.approved[k]);
+            if (approvedKeys.length === 0) {
+                aList.innerHTML = `<span style="color:#886655;">まだ承認されたゲストはいません。</span>`;
+            } else {
+                approvedKeys.forEach(key => {
+                    let parts = key.split('_');
+                    let name = parts[0] || key;
+                    let rel = parts[1] || '';
+                    aList.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:4px 8px; margin-bottom:4px; border-radius:3px;">
+                        <div><strong>${name}</strong> (${rel})</div>
+                        <button class="btn" style="width:auto; padding:3px 6px; font-size:0.65rem; margin:0; background:#e11d48; color:#fff; border:none;" onclick="revokeGuestLocal('${key}')">承認取消</button>
+                    </div>`;
+                });
+            }
         }
 
+        // Supabase用の状態更新関数（承認 / 承認取消）
+        async function updateGuestStatus(guestId, newStatus) {
+            if (!mySupabaseClient) return;
+
+            const { error } = await mySupabaseClient
+                .from('guests')
+                .update({ status: newStatus })
+                .eq('id', guestId);
+
+            if (error) {
+                alert('更新に失敗しました: ' + error.message);
+            } else {
+                let msg = newStatus === 'approved' ? 'ゲストの入店を承認しました。' : '承認を取り消しました（承認待ちに戻ります）。';
+                alert(msg);
+                renderMaster();
+            }
+        }
+
+        // ローカル用の承認関数
         function approveGuest(idx) {
             let store = db.data[curId];
             if (!store || !store.pending) return;
@@ -1971,6 +2051,18 @@
                 alert(`${target.name}さんの入店を承認しました。`);
             }
         }
+
+        // ローカル用の承認取消関数
+        function revokeGuestLocal(key) {
+            let store = db.data[curId];
+            if (store && store.approved) {
+                store.approved[key] = false;
+                saveData();
+                renderMaster();
+                alert('承認を取り消しました。');
+            }
+        }
+
 
         function closeModals() {
             querySelectorAll = document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
