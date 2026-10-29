@@ -826,6 +826,7 @@
         </div>
 
         <!-- 4. マスター管理画面 -->
+               <!-- 4. マスター管理画面 -->
         <div id="scr-master" class="screen" style="background:var(--master-bg);">
             <div class="header" style="color:#38bdf8;">🔒 マスター専用管理画面</div>
             <div class="card" style="text-align:center; margin-top:10px;">
@@ -834,9 +835,16 @@
                 <div id="stat-count" style="font-size:0.65rem; color:#64748b; margin-top:2px;">累計お供え 0 件</div>
             </div>
             
+            <!-- 承認待ちリスト -->
             <div class="card">
-                <div style="font-size:0.75rem; color:#38bdf8; font-weight:bold; margin-bottom:4px;">🚪 入店申請・承認待ちゲスト</div>
+                <div style="font-size:0.75rem; color:#f59e0b; font-weight:bold; margin-bottom:4px;">⏳ 承認待ちの入店申請</div>
                 <div id="pending-list" style="font-size:0.7rem; color:#cbd5e1; max-height:100px; overflow-y:auto;"></div>
+            </div>
+
+            <!-- 承認済みゲスト一覧（★このブロックを追加） -->
+            <div class="card">
+                <div style="font-size:0.75rem; color:#38bdf8; font-weight:bold; margin-bottom:4px;">👥 承認済みゲスト一覧</div>
+                <div id="approved-list" style="font-size:0.7rem; color:#cbd5e1; max-height:140px; overflow-y:auto;"></div>
             </div>
 
             <div class="card" style="font-size:0.7rem; line-height:1.4; color:#cbd5e1;">
@@ -846,6 +854,7 @@
             </div>
             <button class="btn" style="margin-top:auto;" onclick="navTo('portal')">🏠 ポータルへ戻る</button>
         </div>
+
 
         <!-- 下部ナビ -->
         <div class="nav-bar" id="main-nav" style="display:none;">
