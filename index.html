@@ -1320,7 +1320,7 @@
             document.getElementById('modal-knock').style.display = 'flex';
         }
 
-        function submitKnock() {
+                async function submitKnock() {
             let name = document.getElementById('knock-name').value.trim();
             let relation = document.getElementById('knock-relation').value.trim();
             if (!name || !relation) {
@@ -1332,30 +1332,42 @@
             db.guest.relation = relation;
             saveData();
 
-            let store = db.data[curId];
-            if (!store) {
-                db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
-                store = db.data[curId];
-            }
-            if (!store.pending) store.pending = [];
-            if (!store.approved) store.approved = {};
+            // ★ Supabaseにゲストの入店申請（status: 'pending'）を保存する
+            if (mySupabaseClient) {
+                const { error } = await mySupabaseClient
+                    .from('guests')
+                    .insert([
+                        {
+                            cafe_id: curId,
+                            guest_name: name,
+                            relation: relation,
+                            status: 'pending'
+                        }
+                    ]);
 
-            let key = name + '_' + relation;
-            if (store.approved[key]) {
-                closeModals();
-                document.getElementById('main-nav').style.display = 'flex';
-                navTo('counter');
-                return;
-            }
-
-            if (!store.pending.some(p => p.name === name && p.relation === relation)) {
-                store.pending.push({ name: name, relation: relation, time: new Date().toLocaleTimeString() });
-                saveData();
+                if (error) {
+                    console.error("入店申請エラー:", error);
+                    alert("【送信エラー】\n" + error.message);
+                    return;
+                }
+            } else {
+                // オフライン時のローカル保存フォールバック
+                let store = db.data[curId];
+                if (!store) {
+                    db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
+                    store = db.data[curId];
+                }
+                if (!store.pending) store.pending = [];
+                if (!store.pending.some(p => p.name === name && p.relation === relation)) {
+                    store.pending.push({ name: name, relation: relation, time: new Date().toLocaleTimeString() });
+                    saveData();
+                }
             }
 
             closeModals();
             document.getElementById('modal-waiting').style.display = 'flex';
         }
+
 
         function navTo(scr) {
             if (scr === 'portal') document.getElementById('main-nav').style.display = 'none';
@@ -2064,9 +2076,10 @@
         }
 
 
-        function closeModals() {
-            querySelectorAll = document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+                function closeModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         }
+
     </script>
 </body>
 </html>
