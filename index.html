@@ -35,9 +35,6 @@
             overflow-x: hidden;
         }
 
-        /* ------------------------------------------------ */
-        /* PC向け背景およびフレーム演出                       */
-        /* ------------------------------------------------ */
         @media (min-width: 768px) {
             body {
                 background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), 
@@ -173,9 +170,6 @@
             border-radius: 4px;
         }
 
-        /* ------------------------------------------------ */
-        /* ★ 案1: 命日・月命日リマインダー専用エリア          */
-        /* ------------------------------------------------ */
         .memorial-anniversary-box {
             background: linear-gradient(135deg, rgba(82, 38, 20, 0.85), rgba(35, 15, 8, 0.95));
             border: 1px solid #d4af37;
@@ -196,7 +190,6 @@
             margin-bottom: 4px;
         }
 
-        /* ポータル */
         .portal-view {
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80') center/cover;
         }
@@ -257,7 +250,6 @@
             color: #e11d48;
         }
 
-        /* エントランス */
         .entrance-view {
             align-items: center;
             justify-content: center;
@@ -290,7 +282,6 @@
             margin-top: 2px;
         }
 
-        /* ドア画像 */
         .door {
             width: 200px;
             height: 270px;
@@ -306,7 +297,6 @@
             transform: scale(0.98);
         }
 
-        /* カウンター画面 */
         .counter-view {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80') center/cover;
             justify-content: space-between;
@@ -480,7 +470,6 @@
             animation: steamRise 2.5s infinite ease-out;
         }
 
-        /* アルバム＆ノート画面 */
         .album-view {
             background: #1a0f08;
             gap: 6px;
@@ -546,9 +535,6 @@
             padding-top: 4px;
         }
 
-        /* ------------------------------------------------ */
-        /* ★ 案2: マスターからの返信（一言コメント）デザイン */
-        /* ------------------------------------------------ */
         .master-reply-box {
             background: #f4ede2;
             border-left: 3px solid var(--accent-gold);
@@ -561,9 +547,6 @@
             width: 100%;
         }
 
-        /* ------------------------------------------------ */
-        /* ★ 案3: 写真館・ノートUIブラッシュアップ          */
-        /* ------------------------------------------------ */
         .album-grid-area {
             background: rgba(15, 8, 4, 0.85);
             border: 2px solid #5a3222;
@@ -699,7 +682,6 @@
 </head>
 <body>
 
-    <!-- バックグラウンドBGM音声エレメント -->
     <audio id="cafe-bgm" loop preload="none" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3"></audio>
 
     <div class="role-switch-bar">
@@ -723,7 +705,6 @@
                 <button class="btn" style="background: #2563eb; color: #fff;" onclick="testCreateCafe()">🧪 Supabase接続テスト（カフェを作る）</button>
             </div>
 
-            <!-- ★ 案1: 命日・月命日ピックアップ通知エリア -->
             <div id="anniversary-container"></div>
 
             <div style="margin: 4px 0;">
@@ -765,7 +746,7 @@
             </div>
             
             <div class="time-bar">
-                <span>⏱️ 時間テスト:</span>
+                <span>⏱️ 時間経過テスト:</span>
                 <div>
                     <button onclick="fastForward(30)">+30分</button>
                     <button onclick="fastForward(60)">+1時間</button>
@@ -828,7 +809,6 @@
             </div>
             <button class="btn" style="background:#4a271a; font-size:0.7rem; margin:1px 0;" onclick="openNoteModal()">🖋️ 思い出ノートにメッセージを綴る</button>
 
-            <!-- ★ 案3: 洗練されたデザインの想い出の写真館 -->
             <div class="album-grid-area">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                     <div style="font-size:0.75rem; color:var(--accent-gold); font-weight:bold;">📸 想い出の写真館</div>
@@ -863,7 +843,6 @@
                 <div id="approved-list" style="font-size:0.7rem; color:#cbd5e1; max-height:100px; overflow-y:auto;"></div>
             </div>
 
-            <!-- ★ 案2: ノートメッセージ一覧＆マスター返信入力 -->
             <div class="card">
                 <div style="font-size:0.75rem; color:#34d399; font-weight:bold; margin-bottom:4px;">🖋️ 思い出ノート返信管理</div>
                 <div id="master-note-reply-list" style="font-size:0.7rem; color:#cbd5e1; max-height:120px; overflow-y:auto;"></div>
@@ -885,7 +864,7 @@
         </div>
     </div>
 
-    <!-- 各種モーダル -->
+    <!-- モーダル群 -->
     <div id="modal-donate" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.9rem; margin-bottom:6px; color:var(--accent-gold);">☕ サイトの維持・マスターを応援する</h3>
@@ -893,17 +872,14 @@
                 「メモリアル・カフェ」はすべての機能を無料でご利用いただけます。<br>
                 サーバー維持費のサポートや、温かい空間を続けるための応援（任意のご寄付）をいただけましたら、大変励みになります。
             </p>
-            
             <div style="background:#f0ebe1; border:1px solid #d4af37; padding:10px; border-radius:4px; margin-bottom:12px; font-size:0.72rem; color:#332211;">
                 <strong>💡 ご支援方法について</strong><br>
                 下記のサポートリンク、またはお心づけの窓口よりお手続きいただけます。
             </div>
-
             <div class="share-btn-group">
-                <button class="btn" style="background:#d4af37; color:#120a05;" onclick="alert('ご支援ありがとうございます！外部の決済・応援ページへのリンクを設定できます。')">☕ 珈琲1杯分（¥500）のサポート</button>
+                <button class="btn" style="background:#d4af37; color:#120a05;" onclick="alert('ご支援ありがとうございます！')">☕ 珈琲1杯分（¥500）のサポート</button>
                 <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="alert('温かいお気持ちに心より感謝申し上げます。')">💌 マスターへメッセージ付きで応援する</button>
             </div>
-            
             <button class="btn" style="background:#886655; margin-top:10px;" onclick="closeModals()">閉じる</button>
         </div>
     </div>
@@ -989,7 +965,6 @@
         </div>
     </div>
 
-    <!-- ★ 案3: 写真拡大表示モーダルのデザイン洗練 -->
     <div id="modal-photo-zoom" class="modal" onclick="closeModals()">
         <div class="modal-card" style="text-align:center; background:#1f100a; border:2px solid var(--accent-gold);" onclick="event.stopPropagation()">
             <img id="zoom-img" src="" style="width:100%; max-height:280px; object-fit:contain; border:1px solid var(--accent-gold); border-radius:4px; margin-bottom:8px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);">
@@ -1034,10 +1009,8 @@
     </div>
 
     <script>
-        // --------------------------------------------------
-        // BGM 制御機能
-        // --------------------------------------------------
         let isBgmPlaying = false;
+        let simulatedTimeOffsetMs = 0; // 時間経過シミュレーション用
 
         function toggleBgm() {
             const audio = document.getElementById('cafe-bgm');
@@ -1070,11 +1043,6 @@
             });
         }
 
-        function playSound(soundType) {}
-
-        // --------------------------------------------------
-        // Supabase 初期化
-        // --------------------------------------------------
         const SUPABASE_URL = 'https://rwkqhtvieictjlnwwndz.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3a3FodHZpZWljdGpsbnd3bmR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyOTkxNzMsImV4cCI6MjEwNzg3NTE3M30.JfuaXANkv_2TN_7OlhMXvQeumFfAlRPx0c6rEDA2nMw';
         
@@ -1105,9 +1073,6 @@
             }
         }
 
-        // --------------------------------------------------
-        // アプリ共通ロジック
-        // --------------------------------------------------
         const FLOWER_TRANSPARENT_IMAGES = [
             'flower1.png', 'flower2.png', 'flower3.png', 'flower4.png', 'flower5.png'
         ];
@@ -1225,7 +1190,6 @@
             }
         }
 
-        // ★ 案1: 命日・月命日チェック＆ハイライトロジック
         function checkAnniversaries() {
             const container = document.getElementById('anniversary-container');
             container.innerHTML = '';
@@ -1266,7 +1230,7 @@
         }
 
         function renderPortal() {
-            checkAnniversaries(); // 命日チェックを実行
+            checkAnniversaries();
 
             let keyword = document.getElementById('search-input').value.toLowerCase();
             let el = document.getElementById('cafe-list');
@@ -1460,11 +1424,12 @@
             let guestLabel = `${guestName} (${relation})`;
 
             let limitMin = 120;
-            if (giftType === 'flower') limitMin = 4320;
-            else if (giftType === 'incense') limitMin = 60;
-            else if (giftType === 'coffee') limitMin = 120;
+            if (giftType === 'flower') limitMin = 4320; // 3日間
+            else if (giftType === 'incense') limitMin = 60; // 1時間
+            else if (giftType === 'coffee') limitMin = 120; // 2時間
 
-            let expiresAt = new Date(Date.now() + limitMin * 60000).toISOString();
+            // シミュレーション時間を考慮した有効期限を設定
+            let expiresAt = new Date(Date.now() + simulatedTimeOffsetMs + limitMin * 60000).toISOString();
 
             if (!mySupabaseClient) {
                 alert("Supabaseが接続できていません。");
@@ -1500,18 +1465,24 @@
             document.getElementById('modal-thanks').style.display = 'flex';
         }
 
+        // ★ 修正点: 時間経過に対応してお供え物をSupabaseから取得・消去
         async function loadOfferingsFromSupabase() {
+            let store = db.data[curId];
+            if (!store) return;
+
             if (!mySupabaseClient) {
                 renderCounter();
                 return;
             }
 
-            const nowIso = new Date().toISOString();
+            // シミュレーション進めた現在時刻（ISO文字列）
+            const currentSimulatedTimeIso = new Date(Date.now() + simulatedTimeOffsetMs).toISOString();
+
             const { data, error } = await mySupabaseClient
                 .from('offerings')
                 .select('*')
                 .eq('cafe_id', curId)
-                .gt('expires_at', nowIso);
+                .gt('expires_at', currentSimulatedTimeIso); // 有効期限が未来のものだけ取得
 
             if (error) {
                 console.error("データ取得エラー:", error);
@@ -1519,9 +1490,7 @@
                 return;
             }
 
-            let store = db.data[curId];
-            if (!store) return;
-
+            // 取得した有効なお供え物だけでクリア＆上書き更新
             store.gifts = data.map(item => {
                 let img = ITEM_TRANSPARENT_IMAGES[item.type];
                 let posX = 50, posY = 50;
@@ -1562,9 +1531,11 @@
             });
         }
 
+        // ★ 修正点: 時間をシミュレート進めて自動でお供え物を消去・再描画
         function fastForward(min) {
+            simulatedTimeOffsetMs += min * 60000;
             loadOfferingsFromSupabase();
-            alert(`Supabaseから最新データを取得しました。`);
+            alert(`⏱️ 時間を ${min} 分進めました。期限の切れたお供えが消去されます。`);
         }
 
         async function openNotebookView() {
@@ -1603,7 +1574,6 @@
             return '0.75rem';
         }
 
-        // ★ 案2: ノートの左・右ページにマスターからの返信（reply）も描画
         function renderNotebookPages() {
             let store = db.data[curId];
             let leftEl = document.getElementById('note-page-left');
@@ -1645,6 +1615,7 @@
             }
         }
 
+        // ★ 修正点: ノートを開いたときにマスターの返信も含めて最新読み込み
         async function loadNotesFromSupabase() {
             if (!mySupabaseClient) {
                 renderNotebookPages();
@@ -1675,7 +1646,7 @@
                         name: item.author || 'ゲスト',
                         msg: item.content,
                         time: timeStr,
-                        reply: item.reply || '' // マスター返信テキスト
+                        reply: item.reply || ''
                     };
                 });
             }
@@ -1991,7 +1962,6 @@
                 }
             }
 
-            // ★ 案2: マスター管理画面で思い出ノート一覧＆一言返信の描画
             renderMasterNoteReplyList();
         }
 
@@ -2031,7 +2001,6 @@
             });
         }
 
-        // ★ 案2: マスターの一言返信をSupabaseに保存
         async function submitMasterReply(postId) {
             let replyVal = document.getElementById(`reply-input-${postId}`).value.trim();
             if (!mySupabaseClient) return;
@@ -2046,6 +2015,7 @@
             } else {
                 alert('☕ 返信をノートに刻みました！');
                 renderMasterNoteReplyList();
+                await loadNotesFromSupabase(); // 返信後にノートデータを再読み込みして最新化
             }
         }
 
@@ -2063,30 +2033,6 @@
                 let msg = newStatus === 'approved' ? 'ゲストの入店を承認しました。' : '承認を取り消しました（承認待ちに戻ります）。';
                 alert(msg);
                 renderMaster();
-            }
-        }
-
-        function approveGuest(idx) {
-            let store = db.data[curId];
-            if (!store || !store.pending) return;
-            let target = store.pending.splice(idx, 1)[0];
-            if (target) {
-                let key = target.name + '_' + target.relation;
-                if (!store.approved) store.approved = {};
-                store.approved[key] = true;
-                saveData();
-                renderMaster();
-                alert(`${target.name}さんの入店を承認しました。`);
-            }
-        }
-
-        function revokeGuestLocal(key) {
-            let store = db.data[curId];
-            if (store && store.approved) {
-                store.approved[key] = false;
-                saveData();
-                renderMaster();
-                alert('承認を取り消しました。');
             }
         }
 
