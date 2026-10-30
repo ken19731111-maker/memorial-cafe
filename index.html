@@ -611,9 +611,7 @@
             font-size: 0.8rem;
         }
 
-        .nav-bar {
-            display: flex;
-            /* 下部ナビゲーションのブラッシュアップ */
+        /* 下部ナビゲーションのブラッシュアップ */
         .nav-bar {
             display: flex;
             background: linear-gradient(180deg, #1c0e07 0%, #0d0603 100%);
@@ -649,7 +647,6 @@
             border-color: var(--accent-gold);
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.6), 0 0 10px rgba(197, 160, 89, 0.3);
         }
-
 
         .modal {
             position: absolute;
@@ -875,12 +872,13 @@
             <button class="btn" style="margin-top:auto;" onclick="navTo('portal')">🏠 ポータルへ戻る</button>
         </div>
 
-              <!-- 下部ナビ -->
+        <!-- 下部ナビ -->
         <div class="nav-bar" id="main-nav" style="display:none;">
             <button class="nav-btn active" id="nav-c" onclick="navTo('counter')">☕ カウンター</button>
             <button class="nav-btn" id="nav-a" onclick="navTo('album')">📖 ノート・写真</button>
             <button class="nav-btn" onclick="navTo('portal')">🏠 ホーム</button>
         </div>
+    </div>
 
     <!-- モーダル群 -->
     <div id="modal-donate" class="modal">
@@ -1446,7 +1444,6 @@
             else if (giftType === 'incense') limitMin = 60; // 1時間
             else if (giftType === 'coffee') limitMin = 120; // 2時間
 
-            // シミュレーション時間を考慮した有効期限を設定
             let expiresAt = new Date(Date.now() + simulatedTimeOffsetMs + limitMin * 60000).toISOString();
 
             if (!mySupabaseClient) {
@@ -1483,7 +1480,6 @@
             document.getElementById('modal-thanks').style.display = 'flex';
         }
 
-        // ★ 修正点: 時間経過に対応してお供え物をSupabaseから取得・消去
         async function loadOfferingsFromSupabase() {
             let store = db.data[curId];
             if (!store) return;
@@ -1493,14 +1489,13 @@
                 return;
             }
 
-            // シミュレーション進めた現在時刻（ISO文字列）
             const currentSimulatedTimeIso = new Date(Date.now() + simulatedTimeOffsetMs).toISOString();
 
             const { data, error } = await mySupabaseClient
                 .from('offerings')
                 .select('*')
                 .eq('cafe_id', curId)
-                .gt('expires_at', currentSimulatedTimeIso); // 有効期限が未来のものだけ取得
+                .gt('expires_at', currentSimulatedTimeIso);
 
             if (error) {
                 console.error("データ取得エラー:", error);
@@ -1508,7 +1503,6 @@
                 return;
             }
 
-            // 取得した有効なお供え物だけでクリア＆上書き更新
             store.gifts = data.map(item => {
                 let img = ITEM_TRANSPARENT_IMAGES[item.type];
                 let posX = 50, posY = 50;
@@ -1549,7 +1543,6 @@
             });
         }
 
-        // ★ 修正点: 時間をシミュレート進めて自動でお供え物を消去・再描画
         function fastForward(min) {
             simulatedTimeOffsetMs += min * 60000;
             loadOfferingsFromSupabase();
@@ -1633,7 +1626,6 @@
             }
         }
 
-        // ★ 修正点: ノートを開いたときにマスターの返信も含めて最新読み込み
         async function loadNotesFromSupabase() {
             if (!mySupabaseClient) {
                 renderNotebookPages();
@@ -2033,7 +2025,7 @@
             } else {
                 alert('☕ 返信をノートに刻みました！');
                 renderMasterNoteReplyList();
-                await loadNotesFromSupabase(); // 返信後にノートデータを再読み込みして最新化
+                await loadNotesFromSupabase();
             }
         }
 
