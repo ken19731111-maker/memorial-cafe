@@ -528,17 +528,18 @@
             background: #fff;
             border: 1px solid #d1c7bd;
             border-radius: 4px;
-            padding: 6px;
+            padding: 8px;
             margin-bottom: 6px;
             width: 100%;
             text-align: left;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
             transition: transform 0.1s, border-color 0.2s;
         }
         .note-card-item:hover {
             transform: scale(1.02);
             border-color: var(--accent-gold);
+            background: #fffdf9;
         }
 
         .notebook-nav {
@@ -823,7 +824,7 @@
             </div>
 
             <div id="notebook-open" class="open-notebook-container">
-                <div style="font-size:0.65rem; font-weight:bold; color:#4a271a; text-align:center; border-bottom:1px solid #d1c7bd; padding-bottom:2px;">📖 思い出ノート (タップで詳細・コメント)</div>
+                <div style="font-size:0.65rem; font-weight:bold; color:#4a271a; text-align:center; border-bottom:1px solid #d1c7bd; padding-bottom:2px;">📖 思い出ノート (📝カードをタップでスレッド・会話へ)</div>
                 <div class="notebook-pages">
                     <div class="notebook-page">
                         <div style="font-size:0.55rem; color:#886655; margin-bottom:2px;">[ ◀ 左ページ ]</div>
@@ -1059,7 +1060,7 @@
     <script>
         let isBgmPlaying = false;
         let simulatedTimeOffsetMs = 0;
-        let activeThreadPostId = null; // 現在スレッド表示中の投稿ID
+        let activeThreadPostId = null;
 
         function toggleBgm() {
             const audio = document.getElementById('cafe-bgm');
@@ -1696,7 +1697,6 @@
             renderNotebookPages();
         }
 
-        // ★ メッセージをタップしてスレッド画面を開く処理
         async function openThreadModal(postId) {
             activeThreadPostId = postId;
             let store = db.data[curId];
@@ -1714,7 +1714,6 @@
             document.getElementById('modal-thread').style.display = 'flex';
         }
 
-        // ★ スレッド内のコメント（マスター返信＋ゲストコメント）をロード
         async function loadThreadComments(postId) {
             let container = document.getElementById('thread-comments-container');
             container.innerHTML = `<div style="font-size:0.65rem; color:#886655; text-align:center;">読み込み中...</div>`;
@@ -1724,7 +1723,6 @@
 
             let html = '';
 
-            // マスターからの返信がすでにある場合は最上位に表示
             if (post && post.reply) {
                 let cafeInfo = db.cafes.find(c => c.id === curId);
                 let masterName = cafeInfo ? cafeInfo.master : 'マスター';
@@ -1767,7 +1765,6 @@
             }
         }
 
-        // ★ スレッドに新しいコメントを投稿
         async function submitThreadComment() {
             let content = document.getElementById('thread-comment-input').value.trim();
             if (!content) {
@@ -1784,7 +1781,6 @@
                 return;
             }
 
-            // もしマスターモードで返信した場合は、postsテーブルの reply 列も同時更新するとノート側の返信管理とも連動して便利！
             if (roleIsMaster) {
                 const { error: replyErr } = await mySupabaseClient
                     .from('posts')
@@ -1805,7 +1801,7 @@
 
             document.getElementById('thread-comment-input').value = '';
             await loadThreadComments(activeThreadPostId);
-            await loadNotesFromSupabase(); // ノート側も最新状態に更新
+            await loadNotesFromSupabase();
         }
 
         function openNoteModal() {
@@ -2173,7 +2169,6 @@
                 return;
             }
 
-            // 同時にコメントテーブル側にもマスターの返信を自動投稿（スレッドで一体化表示するため）
             let cafeInfo = db.cafes.find(c => c.id === curId);
             let masterName = cafeInfo ? cafeInfo.master : 'マスター';
             await mySupabaseClient
@@ -2203,7 +2198,7 @@
         }
 
         function closeModals() {
-            document.querySelectorAll('.modal').forEach(m => m.style.title = '', m.style.display = 'none');
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         }
     </script>
 </body>
