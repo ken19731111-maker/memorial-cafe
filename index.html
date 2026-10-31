@@ -843,10 +843,11 @@
         <!-- 4. マスター管理画面 -->
         <div id="scr-master" class="screen" style="background:var(--master-bg);">
             <div class="header" style="color:#38bdf8;">🔒 マスター専用管理画面</div>
+            
+            <!-- ★ 金額・還元表示を削除し、すっきりした統計カードに変更 -->
             <div class="card" style="text-align:center; margin-top:10px;">
-                <div style="font-size:0.7rem; color:#94a3b8;">マスター受取可能 還元額 (50%)</div>
-                <div id="stat-revenue" style="font-size:1.3rem; color:#34d399; font-weight:bold; margin-top:4px;">¥0</div>
-                <div id="stat-count" style="font-size:0.65rem; color:#64748b; margin-top:2px;">累計お供え 0 件</div>
+                <div style="font-size:0.7rem; color:#94a3b8;">温かい想い出の統計</div>
+                <div id="stat-count" style="font-size:1.1rem; color:#38bdf8; font-weight:bold; margin-top:4px;">累計お供え 0 件</div>
             </div>
             
             <div class="card">
@@ -860,15 +861,10 @@
             </div>
 
             <div class="card">
-                <div style="font-size:0.75rem; color:#34d399; font-weight:bold; margin-bottom:4px;">🖋️ 思い出ノート返信管理</div>
+                <div style="font-size:0.75rem; color:#34d399; font-weight:bold; margin-bottom:4px;">🖋️ 未返信の思い出ノートメッセージ</div>
                 <div id="master-note-reply-list" style="font-size:0.7rem; color:#cbd5e1; max-height:120px; overflow-y:auto;"></div>
             </div>
 
-            <div class="card" style="font-size:0.7rem; line-height:1.4; color:#cbd5e1;">
-                <strong style="color:#38bdf8;">💰 還元金のお受け取りについて</strong><br>
-                • 銀行口座振込（毎月末自動振込）<br>
-                • デジタルギフト（Amazonギフト券等）
-            </div>
             <button class="btn" style="margin-top:auto;" onclick="navTo('portal')">🏠 ポータルへ戻る</button>
         </div>
 
@@ -1026,7 +1022,7 @@
 
     <script>
         let isBgmPlaying = false;
-        let simulatedTimeOffsetMs = 0; // 時間経過シミュレーション用
+        let simulatedTimeOffsetMs = 0;
 
         function toggleBgm() {
             const audio = document.getElementById('cafe-bgm');
@@ -1440,9 +1436,9 @@
             let guestLabel = `${guestName} (${relation})`;
 
             let limitMin = 120;
-            if (giftType === 'flower') limitMin = 4320; // 3日間
-            else if (giftType === 'incense') limitMin = 60; // 1時間
-            else if (giftType === 'coffee') limitMin = 120; // 2時間
+            if (giftType === 'flower') limitMin = 4320;
+            else if (giftType === 'incense') limitMin = 60;
+            else if (giftType === 'coffee') limitMin = 120;
 
             let expiresAt = new Date(Date.now() + simulatedTimeOffsetMs + limitMin * 60000).toISOString();
 
@@ -1928,8 +1924,8 @@
                 db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
                 store = db.data[curId];
             }
-            let rev = store.sales * 100 * 0.5;
-            document.getElementById('stat-revenue').innerText = `¥${rev.toLocaleString()}`;
+            
+            // シンプルな累計件数表示
             document.getElementById('stat-count').innerText = `累計お供え ${store.sales} 件`;
 
             let pList = document.getElementById('pending-list');
@@ -1975,6 +1971,7 @@
             renderMasterNoteReplyList();
         }
 
+        // ★ 未返信メッセージのみを表示するように修正
         async function renderMasterNoteReplyList() {
             let container = document.getElementById('master-note-reply-list');
             container.innerHTML = "";
@@ -1989,21 +1986,21 @@
                 .select('*')
                 .eq('cafe_id', curId)
                 .eq('type', 'message')
+                .is('reply', null) // ★ replyがnull（未返信）のものだけ取得
                 .order('created_at', { ascending: false });
 
             if (error || !posts || posts.length === 0) {
-                container.innerHTML = `<span style="color:#886655;">書き込まれたノートはありません。</span>`;
+                container.innerHTML = `<span style="color:#886655;">未返信のノートメッセージはありません。</span>`;
                 return;
             }
 
             posts.forEach(p => {
-                let currentReply = p.reply ? p.reply : '';
                 container.innerHTML += `
                     <div style="background:rgba(0,0,0,0.3); padding:6px; margin-bottom:6px; border-radius:4px;">
                         <div style="font-size:0.65rem; color:#38bdf8; font-weight:bold;">${p.author || 'ゲスト'}</div>
                         <div style="font-size:0.7rem; color:#fff; margin:2px 0;">「${p.content}」</div>
                         <div style="display:flex; gap:4px; margin-top:4px;">
-                            <input type="text" id="reply-input-${p.id}" value="${currentReply}" placeholder="マスターからの一言返信..." style="padding:3px 5px; font-size:0.65rem; margin:0; flex:1;">
+                            <input type="text" id="reply-input-${p.id}" value="" placeholder="マスターからの一言返信..." style="padding:3px 5px; font-size:0.65rem; margin:0; flex:1;">
                             <button class="btn" style="width:auto; padding:3px 8px; font-size:0.65rem; margin:0; background:#34d399; color:#120a05; border:none;" onclick="submitMasterReply('${p.id}')">返信</button>
                         </div>
                     </div>
@@ -2013,6 +2010,11 @@
 
         async function submitMasterReply(postId) {
             let replyVal = document.getElementById(`reply-input-${postId}`).value.trim();
+            if (!replyVal) {
+                alert('返信メッセージを入力してください。');
+                return;
+            }
+
             if (!mySupabaseClient) return;
 
             const { error } = await mySupabaseClient
@@ -2024,7 +2026,7 @@
                 alert('返信の保存に失敗しました: ' + error.message);
             } else {
                 alert('☕ 返信をノートに刻みました！');
-                renderMasterNoteReplyList();
+                renderMasterNoteReplyList(); // 返信完了でリストから消去
                 await loadNotesFromSupabase();
             }
         }
