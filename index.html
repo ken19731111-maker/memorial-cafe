@@ -387,7 +387,7 @@
             object-fit: cover;
         }
 
-        /* 🛋️ マスター写真の下に配置する専用カスタムボタンエリア */
+        /* マスター写真下の専用ボタン */
         .counter-action-buttons {
             display: flex;
             gap: 12px;
@@ -395,7 +395,6 @@
             margin-top: 4px;
         }
 
-        /* 📖 ノート型ボタン */
         .btn-shape-notebook {
             background: linear-gradient(135deg, #f7f4ed, #e6dfd5);
             color: #4a271a;
@@ -415,7 +414,6 @@
             transform: scale(1.05);
         }
 
-        /* 📸 アルバム型ボタン */
         .btn-shape-album {
             background: linear-gradient(135deg, #2b170e, #1a0f08);
             color: var(--accent-gold);
@@ -766,7 +764,7 @@
         }
     </style>
 </head>
-<body onclick="unlockAudioContextOnce()">
+<body>
 
     <audio id="cafe-bgm" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3"></audio>
 
@@ -848,7 +846,7 @@
                     <img id="master-photo" src="">
                 </div>
                 
-                <!-- 🛋️ マスター写真の直下にノート型・アルバム型ボタンを配置 -->
+                <!-- マスター写真下の専用ボタン -->
                 <div class="counter-action-buttons">
                     <button class="btn-shape-notebook" onclick="navTo('notebook')">📖 ノート</button>
                     <button class="btn-shape-album" onclick="navTo('album')">📸 写真館</button>
@@ -1130,14 +1128,6 @@
             { name: "ジャズピアノ", url: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a8155d.mp3?filename=relaxing-piano-jazz-10813.mp3" }
         ];
 
-        // 🎵 ブラウザの音声ブロックを解除するための初回タップ検知
-        function unlockAudioContextOnce() {
-            const audio = document.getElementById('cafe-bgm');
-            if (audio && audio.paused && !isBgmPlaying) {
-                audio.load();
-            }
-        }
-
         function toggleBgm() {
             const audio = document.getElementById('cafe-bgm');
             if (!audio) return;
@@ -1244,7 +1234,7 @@
             data: {
                 'sato': { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} }
             },
-            guest: { name: 'ゲスト', relation: '来訪者' }
+            guest: { name: '', relation: '' }
         };
 
         let curId = 'sato';
@@ -1461,36 +1451,27 @@
             window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(shareUrl)}`, '_blank');
         }
 
-        // ★ 一度承認されていれば次から直接入れるようにチェックするロジック
         async function knockDoor() {
-            let name = db.guest.name || prompt("お名前を入力してください:", "ゲスト");
-            if (!name) return;
-            let relation = db.guest.relation || prompt("関係性を入力してください:", "友人");
-            if (!relation) return;
+            if (db.guest && db.guest.name && db.guest.relation) {
+                if (mySupabaseClient) {
+                    const { data } = await mySupabaseClient
+                        .from('guests')
+                        .select('*')
+                        .eq('cafe_id', curId)
+                        .eq('guest_name', db.guest.name)
+                        .eq('relation', db.guest.relation)
+                        .maybeSingle();
 
-            db.guest.name = name;
-            db.guest.relation = relation;
-            saveData();
-
-            if (mySupabaseClient) {
-                const { data, error } = await mySupabaseClient
-                    .from('guests')
-                    .select('*')
-                    .eq('cafe_id', curId)
-                    .eq('guest_name', name)
-                    .eq('relation', relation)
-                    .maybeSingle();
-
-                if (data && data.status === 'approved') {
-                    // 既に承認されているため直接カウンターへ
-                    document.getElementById('main-nav').style.display = 'flex';
-                    navTo('counter');
-                    return;
+                    if (data && data.status === 'approved') {
+                        navTo('counter');
+                        return;
+                    }
                 }
             }
 
-            // まだ承認されていない、または未申請の場合は申請処理へ
-            submitKnockDirect(name, relation);
+            document.getElementById('knock-name').value = db.guest ? db.guest.name || '' : '';
+            document.getElementById('knock-relation').value = db.guest ? db.guest.relation || '' : '';
+            document.getElementById('modal-knock').style.display = 'flex';
         }
 
         async function submitKnock() {
@@ -1500,16 +1481,13 @@
                 showToast("⚠️ お名前と関係性を入力してください");
                 return;
             }
-            submitKnockDirect(name, relation);
-        }
 
-        async function submitKnockDirect(name, relation) {
+            if (!db.guest) db.guest = {};
             db.guest.name = name;
             db.guest.relation = relation;
             saveData();
 
             if (mySupabaseClient) {
-                // すでに同名でレコードがあるか確認
                 const { data: existing } = await mySupabaseClient
                     .from('guests')
                     .select('*')
@@ -1519,16 +1497,13 @@
                     .maybeSingle();
 
                 if (existing) {
+                    closeModals();
                     if (existing.status === 'approved') {
-                        closeModals();
-                        document.getElementById('main-nav').style.display = 'flex';
                         navTo('counter');
-                        return;
                     } else {
-                        closeModals();
                         document.getElementById('modal-waiting').style.display = 'flex';
-                        return;
                     }
+                    return;
                 }
 
                 const { error } = await mySupabaseClient
@@ -1547,8 +1522,11 @@
         }
 
         function navTo(scr) {
-            if (scr === 'portal') document.getElementById('main-nav').style.display = 'none';
-            else document.getElementById('main-nav').style.display = 'flex';
+            if (scr === 'portal') {
+                document.getElementById('main-nav').style.display = 'none';
+            } else {
+                document.getElementById('main-nav').style.display = 'flex';
+            }
 
             showScreen(scr);
             if (scr === 'counter') loadOfferingsFromSupabase();
@@ -1597,8 +1575,8 @@
             let userMsg = giftMsgEl ? giftMsgEl.value.trim() : '';
             let finalMsg = userMsg || '心ばかりのお供えです。';
             
-            let guestName = db.guest.name || 'ゲスト';
-            let relation = db.guest.relation || '来訪者';
+            let guestName = (db.guest && db.guest.name) ? db.guest.name : 'ゲスト';
+            let relation = (db.guest && db.guest.relation) ? db.guest.relation : '来訪者';
             let guestLabel = `${guestName} (${relation})`;
 
             let limitMin = 120;
@@ -1927,7 +1905,7 @@
 
             let roleIsMaster = document.getElementById('btn-master').classList.contains('active');
             let cafeInfo = db.cafes.find(c => c.id === curId);
-            let authorLabel = roleIsMaster ? `${cafeInfo ? cafeInfo.master : 'マスター'} (マスター)` : `${db.guest.name || 'ゲスト'} (${db.guest.relation || '来訪者'})`;
+            let authorLabel = roleIsMaster ? `${cafeInfo ? cafeInfo.master : 'マスター'} (マスター)` : `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
 
             if (!mySupabaseClient) {
                 showToast("⚠️ Supabase未接続");
@@ -1969,7 +1947,7 @@
                 showToast("⚠️ メッセージを入力してください");
                 return;
             }
-            let guestLabel = `${db.guest.name || 'ゲスト'} (${db.guest.relation || '来訪者'})`;
+            let guestLabel = `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
 
             if (!mySupabaseClient) {
                 showToast("⚠️ Supabase未接続");
@@ -2040,7 +2018,7 @@
                 return;
             }
             let cap = document.getElementById('photo-cap').value.trim() || '想い出の1枚';
-            let guestLabel = `${db.guest.name || 'ゲスト'} (${db.guest.relation || '来訪者'})`;
+            let guestLabel = `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
 
             if (!mySupabaseClient) {
                 showToast("⚠️ Supabase未接続");
