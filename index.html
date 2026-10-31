@@ -523,7 +523,6 @@
             border-right: none;
         }
 
-        /* ノート上のメッセージカード（タップして詳細へ） */
         .note-card-item {
             background: #fff;
             border: 1px solid #d1c7bd;
@@ -629,7 +628,6 @@
             font-size: 0.8rem;
         }
 
-        /* 下部ナビゲーションのブラッシュアップ */
         .nav-bar {
             display: flex;
             background: linear-gradient(180deg, #1c0e07 0%, #0d0603 100%);
@@ -712,11 +710,35 @@
             margin: 10px 0;
             box-shadow: inset 0 0 10px rgba(197,160,89,0.15);
         }
+
+        /* ✨ 優しい温かみのあるトースト通知 */
+        #toast-notification {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #2b170e, #1a0f08);
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            z-index: 2000;
+            display: none;
+            text-align: center;
+            pointer-events: none;
+            animation: softAppear 0.4s ease-out;
+        }
     </style>
 </head>
 <body>
 
     <audio id="cafe-bgm" loop preload="none" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3"></audio>
+
+    <!-- トースト通知エレメント -->
+    <div id="toast-notification">☕ メッセージをお届けしました</div>
 
     <div class="role-switch-bar">
         <span>👁️ モード:</span>
@@ -906,8 +928,8 @@
                 下記のサポートリンク、またはお心づけの窓口よりお手続きいただけます。
             </div>
             <div class="share-btn-group">
-                <button class="btn" style="background:#d4af37; color:#120a05;" onclick="alert('ご支援ありがとうございます！')">☕ 珈琲1杯分（¥500）のサポート</button>
-                <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="alert('温かいお気持ちに心より感謝申し上げます。')">💌 マスターへメッセージ付きで応援する</button>
+                <button class="btn" style="background:#d4af37; color:#120a05;" onclick="showToast('☕ 応援メッセージをお送りしました'); closeModals();">☕ 珈琲1杯分（¥500）のサポート</button>
+                <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="showToast('💌 マスターへ温かい感謝を届けました'); closeModals();">💌 マスターへメッセージ付きで応援する</button>
             </div>
             <button class="btn" style="background:#886655; margin-top:10px;" onclick="closeModals()">閉じる</button>
         </div>
@@ -984,7 +1006,6 @@
         </div>
     </div>
 
-    <!-- ★ ノートメッセージ詳細・スレッド画面（コメント一覧＋投稿フォーム） -->
     <div id="modal-thread" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:6px; color:var(--accent-gold);">💬 思い出スレッド</h3>
@@ -1059,27 +1080,47 @@
 
     <script>
         let isBgmPlaying = false;
+        let curBgmIdx = 0;
         let simulatedTimeOffsetMs = 0;
         let activeThreadPostId = null;
+
+        // 🎵 カフェの雰囲気を彩る3種のBGMプレイリスト
+        const BGM_PLAYLIST = [
+            { name: "アコースティックギター", url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3" },
+            { name: "静かな雨とカフェ", url: "https://cdn.pixabay.com/download/audio/2021/09/06/audio_8b211115b0.mp3?filename=rain-and-cafe-11022.mp3" },
+            { name: "ジャズピアノ", url: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a8155d.mp3?filename=relaxing-piano-jazz-10813.mp3" }
+        ];
 
         function toggleBgm() {
             const audio = document.getElementById('cafe-bgm');
             if (!audio) return;
 
             if (isBgmPlaying) {
-                audio.pause();
-                isBgmPlaying = false;
-                updateBgmButtons("🎵 BGM: OFF", false);
+                // 演奏中の場合は次の曲へ切り替え、全種一周したらOFF
+                curBgmIdx++;
+                if (curBgmIdx >= BGM_PLAYLIST.length) {
+                    audio.pause();
+                    isBgmPlaying = false;
+                    curBgmIdx = 0;
+                    updateBgmButtons("🎵 BGM: OFF", false);
+                    showToast("🎵 BGMをオフにしました");
+                    return;
+                }
             } else {
-                audio.volume = 0.25;
-                audio.play().then(() => {
-                    isBgmPlaying = true;
-                    updateBgmButtons("🎵 BGM: ON", true);
-                }).catch(err => {
-                    console.log("BGM自動再生エラー:", err);
-                    alert("ブラウザの音声制限のため、音声を有効にできませんでした。");
-                });
+                isBgmPlaying = true;
+                curBgmIdx = 0;
             }
+
+            let curTrack = BGM_PLAYLIST[curBgmIdx];
+            audio.src = curTrack.url;
+            audio.volume = 0.25;
+            audio.play().then(() => {
+                updateBgmButtons(`🎵 ${curTrack.name}`, true);
+                showToast(`🎵 BGM: 『${curTrack.name}』を再生中`);
+            }).catch(err => {
+                console.log("BGM自動再生エラー:", err);
+                showToast("⚠️ ブラウザの音声制限のため再開できませんでした");
+            });
         }
 
         function updateBgmButtons(text, playing) {
@@ -1091,6 +1132,17 @@
                     btn.classList.toggle('playing', playing);
                 }
             });
+        }
+
+        // ✨ 優しいトースト通知機能
+        function showToast(msg) {
+            let toast = document.getElementById('toast-notification');
+            if (!toast) return;
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
         }
 
         const SUPABASE_URL = 'https://rwkqhtvieictjlnwwndz.supabase.co';
@@ -1105,7 +1157,7 @@
 
         async function testCreateCafe() {
             if (!mySupabaseClient) {
-                alert("Supabaseが準備できていません。");
+                showToast("⚠️ Supabaseが準備できていません");
                 return;
             }
 
@@ -1116,10 +1168,10 @@
 
             if (error) {
                 console.error('通信エラー:', error);
-                alert("【通信エラー】\n" + JSON.stringify(error, null, 2));
+                showToast("❌ 通信エラーが発生しました");
             } else {
                 console.log('保存成功:', data);
-                alert("🎉 大成功！Supabaseに『テスト喫茶』が保存されました！");
+                showToast("🎉 大成功！『テスト喫茶』が作成されました");
             }
         }
 
@@ -1342,9 +1394,9 @@
         function copyShareUrl() {
             const shareUrl = getShareUrl();
             navigator.clipboard.writeText(shareUrl).then(() => {
-                alert("「カフェのご案内URLをコピーしました。\n大切な方へメッセージで添えてお送りください。」");
+                showToast("📋 URLをコピーしました");
             }).catch(() => {
-                alert("コピー用URL: " + shareUrl);
+                showToast("コピー用URL: " + shareUrl);
             });
         }
 
@@ -1391,7 +1443,7 @@
             let name = document.getElementById('knock-name').value.trim();
             let relation = document.getElementById('knock-relation').value.trim();
             if (!name || !relation) {
-                alert('お名前と関係性を入力してください。');
+                showToast("⚠️ お名前と関係性を入力してください");
                 return;
             }
 
@@ -1406,7 +1458,7 @@
 
                 if (error) {
                     console.error("入店申請エラー:", error);
-                    alert("【送信エラー】\n" + error.message);
+                    showToast("❌ 申請エラー: " + error.message);
                     return;
                 }
             } else {
@@ -1481,7 +1533,7 @@
             let expiresAt = new Date(Date.now() + simulatedTimeOffsetMs + limitMin * 60000).toISOString();
 
             if (!mySupabaseClient) {
-                alert("Supabaseが接続できていません。");
+                showToast("⚠️ Supabase未接続");
                 return;
             }
 
@@ -1491,7 +1543,7 @@
 
             if (error) {
                 console.error("お供え保存エラー:", error);
-                alert("【Supabase保存エラー】\n" + JSON.stringify(error, null, 2));
+                showToast("❌ 保存エラーが発生しました");
                 return;
             }
 
@@ -1565,10 +1617,10 @@
 
             store.gifts.forEach(g => {
                 if (g.type === 'flower') {
-                    fContainer.innerHTML += `<img src="${g.img}" class="rand-flower" style="top:${g.top}%; left:${g.left}%;" onclick="alert('${g.name}さんのお花\\n\\n${g.msg}')">`;
+                    fContainer.innerHTML += `<img src="${g.img}" class="rand-flower" style="top:${g.top}%; left:${g.left}%;" onclick="showToast('${g.name}さんのお花: 「${g.msg}」')">`;
                 } else {
                     let extraEffect = (g.type === 'coffee' || g.type === 'incense') ? `<div class="steam-effect"></div>` : '';
-                    cContainer.innerHTML += `<div class="offering-item" onclick="alert('${g.name}さんのお供え\\n\\n${g.msg}')">
+                    cContainer.innerHTML += `<div class="offering-item" onclick="showToast('${g.name}さんのお供え: 「${g.msg}」')">
                         ${extraEffect}
                         <img src="${g.img}" class="offering-img-transparent">
                         <span style="font-size:0.65rem; color:var(--accent-gold); margin-top:4px; font-weight:bold;">${g.name.split(' ')[0]}</span>
@@ -1580,7 +1632,7 @@
         function fastForward(min) {
             simulatedTimeOffsetMs += min * 60000;
             loadOfferingsFromSupabase();
-            alert(`⏱️ 時間を ${min} 分進めました。期限の切れたお供えが消去されます。`);
+            showToast(`⏱️ 時間を ${min} 分進めました`);
         }
 
         async function openNotebookView() {
@@ -1626,14 +1678,14 @@
 
             if (store.notes[leftNoteIdx]) {
                 let n = store.notes[leftNoteIdx];
-                let replyPreview = n.reply ? `<div style="font-size:0.55rem; color:#b45309; margin-top:2px;">💬 マスターからの返信あり</div>` : '';
+                let commentCountBadge = n.commentCount > 0 ? `<div style="font-size:0.55rem; color:#b45309; margin-top:2px;">💬 ${n.commentCount}件のコメント</div>` : (n.reply ? `<div style="font-size:0.55rem; color:#b45309; margin-top:2px;">💬 返信あり</div>` : '');
                 leftEl.innerHTML = `
                     <div class="note-card-item" onclick="openThreadModal('${n.id}')">
                         <div style="font-weight:bold; color:#4a271a; font-size:0.65rem;">${n.name}</div>
                         <div style="color:#332211; font-size:0.7rem; line-height:1.2; margin:2px 0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">「${n.msg}」</div>
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span style="font-size:0.5rem; color:#886655;">${n.time}</span>
-                            ${replyPreview}
+                            ${commentCountBadge}
                         </div>
                     </div>
                 `;
@@ -1643,14 +1695,14 @@
 
             if (store.notes[rightNoteIdx]) {
                 let n = store.notes[rightNoteIdx];
-                let replyPreview = n.reply ? `<div style="font-size:0.55rem; color:#b45309; margin-top:2px;">💬 マスターからの返信あり</div>` : '';
+                let commentCountBadge = n.commentCount > 0 ? `<div style="font-size:0.55rem; color:#b45309; margin-top:2px;">💬 ${n.commentCount}件のコメント</div>` : (n.reply ? `<div style="font-size:0.55rem; color:#b45309; margin-top:2px;">💬 返信あり</div>` : '');
                 rightEl.innerHTML = `
                     <div class="note-card-item" onclick="openThreadModal('${n.id}')">
                         <div style="font-weight:bold; color:#4a271a; font-size:0.65rem;">${n.name}</div>
                         <div style="color:#332211; font-size:0.7rem; line-height:1.2; margin:2px 0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">「${n.msg}」</div>
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span style="font-size:0.5rem; color:#886655;">${n.time}</span>
-                            ${replyPreview}
+                            ${commentCountBadge}
                         </div>
                     </div>
                 `;
@@ -1681,6 +1733,19 @@
             if (!store) return;
 
             if (data) {
+                // 各ノートのコメント件数を取得
+                const { data: comments } = await mySupabaseClient
+                    .from('post_comments')
+                    .select('post_id')
+                    .eq('cafe_id', curId);
+
+                let commentCounts = {};
+                if (comments) {
+                    comments.forEach(c => {
+                        commentCounts[c.post_id] = (commentCounts[c.post_id] || 0) + 1;
+                    });
+                }
+
                 store.notes = data.map(item => {
                     let dateObj = new Date(item.created_at);
                     let timeStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
@@ -1689,7 +1754,8 @@
                         name: item.author || 'ゲスト',
                         msg: item.content,
                         time: timeStr,
-                        reply: item.reply || ''
+                        reply: item.reply || '',
+                        commentCount: commentCounts[item.id] || 0
                     };
                 });
             }
@@ -1714,12 +1780,14 @@
             document.getElementById('modal-thread').style.display = 'flex';
         }
 
+        // ★ スレッド内コメント取得（マスターモード時は削除ボタンを表示）
         async function loadThreadComments(postId) {
             let container = document.getElementById('thread-comments-container');
             container.innerHTML = `<div style="font-size:0.65rem; color:#886655; text-align:center;">読み込み中...</div>`;
 
             let store = db.data[curId];
             let post = store.notes.find(n => n.id === postId);
+            let roleIsMaster = document.getElementById('btn-master').classList.contains('active');
 
             let html = '';
 
@@ -1745,11 +1813,18 @@
                     comments.forEach(cm => {
                         let dateObj = new Date(cm.created_at);
                         let timeStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
+                        
+                        // 🗑️ マスター視点の場合のみ削除ボタンを表示
+                        let deleteBtn = roleIsMaster ? `<button onclick="deleteComment('${cm.id}')" style="background:none; border:none; color:#e11d48; font-size:0.65rem; cursor:pointer;">🗑️ 削除</button>` : '';
+
                         html += `
                             <div style="background:#f9f8f5; border:1px solid #e5e0d5; padding:5px; margin-bottom:5px; border-radius:3px;">
-                                <div style="display:flex; justify-content:space-between; font-size:0.55rem; color:#886655; margin-bottom:1px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.55rem; color:#886655; margin-bottom:1px;">
                                     <strong>${cm.author}</strong>
-                                    <span>${timeStr}</span>
+                                    <div>
+                                        <span>${timeStr}</span>
+                                        ${deleteBtn}
+                                    </div>
                                 </div>
                                 <div style="font-size:0.7rem; color:#332211;">${cm.content}</div>
                             </div>
@@ -1765,10 +1840,29 @@
             }
         }
 
+        // 🗑️ マスターによるコメント削除処理
+        async function deleteComment(commentId) {
+            if (!confirm("このコメントを削除しますか？")) return;
+            if (!mySupabaseClient) return;
+
+            const { error } = await mySupabaseClient
+                .from('post_comments')
+                .delete()
+                .eq('id', commentId);
+
+            if (error) {
+                showToast("❌ 削除に失敗しました: " + error.message);
+            } else {
+                showToast("🗑️ コメントを削除しました");
+                await loadThreadComments(activeThreadPostId);
+                await loadNotesFromSupabase();
+            }
+        }
+
         async function submitThreadComment() {
             let content = document.getElementById('thread-comment-input').value.trim();
             if (!content) {
-                alert('コメントを入力してください。');
+                showToast("⚠️ コメントを入力してください");
                 return;
             }
 
@@ -1777,7 +1871,7 @@
             let authorLabel = roleIsMaster ? `${cafeInfo ? cafeInfo.master : 'マスター'} (マスター)` : `${db.guest.name || 'ゲスト'} (${db.guest.relation || '来訪者'})`;
 
             if (!mySupabaseClient) {
-                alert("Supabaseが接続できていません。");
+                showToast("⚠️ Supabase未接続");
                 return;
             }
 
@@ -1795,11 +1889,12 @@
 
             if (error) {
                 console.error("コメント保存エラー:", error);
-                alert("【保存エラー】\n" + error.message);
+                showToast("❌ 保存エラー: " + error.message);
                 return;
             }
 
             document.getElementById('thread-comment-input').value = '';
+            showToast("💬 コメントを投稿しました");
             await loadThreadComments(activeThreadPostId);
             await loadNotesFromSupabase();
         }
@@ -1812,13 +1907,13 @@
         async function submitNote() {
             let m = document.getElementById('note-msg').value.trim();
             if (!m) {
-                alert('メッセージを入力してください。');
+                showToast("⚠️ メッセージを入力してください");
                 return;
             }
             let guestLabel = `${db.guest.name || 'ゲスト'} (${db.guest.relation || '来訪者'})`;
 
             if (!mySupabaseClient) {
-                alert("Supabaseが接続できていません。");
+                showToast("⚠️ Supabase未接続");
                 return;
             }
 
@@ -1828,11 +1923,11 @@
 
             if (error) {
                 console.error("ノート保存エラー:", error);
-                alert("【Supabase保存エラー】\n" + JSON.stringify(error, null, 2));
+                showToast("❌ 保存エラーが発生しました");
                 return;
             }
 
-            alert("「思い出ノートに、新しいページがそっと挟まれました。」");
+            showToast("📖 思い出ノートに想いを綴りました");
             closeModals();
 
             await loadNotesFromSupabase();
@@ -1887,14 +1982,14 @@
 
         async function submitPhoto() {
             if (!selectedPhotoFile) {
-                alert('写真を選択してください。');
+                showToast("⚠️ 写真を選択してください");
                 return;
             }
             let cap = document.getElementById('photo-cap').value.trim() || '想い出の1枚';
             let guestLabel = `${db.guest.name || 'ゲスト'} (${db.guest.relation || '来訪者'})`;
 
             if (!mySupabaseClient) {
-                alert("Supabaseが接続できていません。");
+                showToast("⚠️ Supabase未接続");
                 return;
             }
 
@@ -1907,7 +2002,7 @@
 
             if (uploadError) {
                 console.error("ストレージアップロードエラー:", uploadError);
-                alert("【アップロードエラー】\n" + uploadError.message);
+                showToast("❌ 画像アップロードエラー: " + uploadError.message);
                 return;
             }
 
@@ -1923,11 +2018,11 @@
 
             if (insertError) {
                 console.error("データベース保存エラー:", insertError);
-                alert("【DB保存エラー】\n" + JSON.stringify(insertError, null, 2));
+                showToast("❌ DB保存エラーが発生しました");
                 return;
             }
 
-            alert("📸 アルバムに写真を投稿しました！");
+            showToast("📸 アルバムに写真を投稿しました");
             closeModals();
             selectedPhotoFile = null;
 
@@ -2012,12 +2107,12 @@
             let desc = document.getElementById('reg-desc').value.trim();
 
             if (!title || !master) {
-                alert('店名とマスター名は必須です。');
+                showToast("⚠️ 店名とマスター名は必須です");
                 return;
             }
 
             if (!mySupabaseClient) {
-                alert("Supabaseが接続できていません。");
+                showToast("⚠️ Supabase未接続");
                 return;
             }
 
@@ -2034,7 +2129,7 @@
 
                 if (uploadError) {
                     console.error("マスター写真アップロードエラー:", uploadError);
-                    alert("【画像アップロードエラー】\n" + uploadError.message);
+                    showToast("❌ 画像アップロードエラー: " + uploadError.message);
                     return;
                 }
 
@@ -2051,11 +2146,11 @@
 
             if (insertError) {
                 console.error("カフェ登録エラー詳細:", insertError);
-                alert("【DB保存エラー】\n" + (insertError.message || JSON.stringify(insertError, null, 2)));
+                showToast("❌ DB保存エラーが発生しました");
                 return;
             }
 
-            alert('☕ 新しいカフェがクラウド上にオープンしました！');
+            showToast('☕ 新しいカフェがオープンしました！');
             closeModals();
             selectedRegFile = null;
 
@@ -2153,7 +2248,7 @@
         async function submitMasterReply(postId) {
             let replyVal = document.getElementById(`reply-input-${postId}`).value.trim();
             if (!replyVal) {
-                alert('返信メッセージを入力してください。');
+                showToast("⚠️ 返信メッセージを入力してください");
                 return;
             }
 
@@ -2165,7 +2260,7 @@
                 .eq('id', postId);
 
             if (error) {
-                alert('返信の保存に失敗しました: ' + error.message);
+                showToast("❌ 返信の保存に失敗しました: " + error.message);
                 return;
             }
 
@@ -2175,7 +2270,7 @@
                 .from('post_comments')
                 .insert([{ post_id: postId, cafe_id: curId, author: `${masterName} (マスター)`, content: replyVal }]);
 
-            alert('☕ 返信をノートに刻みました！');
+            showToast("☕ 返信をノートに刻みました");
             renderMasterNoteReplyList();
             await loadNotesFromSupabase();
         }
@@ -2189,10 +2284,10 @@
                 .eq('id', guestId);
 
             if (error) {
-                alert('更新に失敗しました: ' + error.message);
+                showToast("❌ 更新エラー: " + error.message);
             } else {
-                let msg = newStatus === 'approved' ? 'ゲストの入店を承認しました。' : '承認を取り消しました（承認待ちに戻ります）。';
-                alert(msg);
+                let msg = newStatus === 'approved' ? '入店を承認しました' : '承認を取り消しました';
+                showToast("👥 " + msg);
                 renderMaster();
             }
         }
