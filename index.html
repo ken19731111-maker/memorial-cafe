@@ -98,17 +98,6 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.8);
-            transition: max-width 0.3s ease;
-        }
-
-        /* PC等でノート/写真館を左右に並べたい場合の幅拡張モード */
-        @media (min-width: 768px) {
-            .app-box.wide-mode {
-                max-width: 780px !important;
-            }
-            .role-switch-bar.wide-mode {
-                max-width: 780px !important;
-            }
         }
 
         .screen {
@@ -376,25 +365,74 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            padding-top: 10px;
             overflow: hidden;
         }
 
         .photo-frame {
-            width: 130px;
-            height: 170px;
-            border: 5px solid var(--accent-gold);
+            width: 110px;
+            height: 145px;
+            border: 4px solid var(--accent-gold);
             background: #1f100a;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.9);
             position: relative;
             z-index: 10;
-            margin-bottom: 20px;
+            margin-bottom: 6px;
         }
 
         .photo-frame img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        /* 🛋️ マスター写真の下に配置する専用カスタムボタンエリア */
+        .counter-action-buttons {
+            display: flex;
+            gap: 12px;
+            z-index: 25;
+            margin-top: 4px;
+        }
+
+        /* 📖 ノート型ボタン */
+        .btn-shape-notebook {
+            background: linear-gradient(135deg, #f7f4ed, #e6dfd5);
+            color: #4a271a;
+            border: 2px solid #5a3222;
+            border-radius: 3px 8px 8px 3px;
+            padding: 6px 14px;
+            font-size: 0.72rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: transform 0.2s;
+        }
+        .btn-shape-notebook:hover {
+            transform: scale(1.05);
+        }
+
+        /* 📸 アルバム型ボタン */
+        .btn-shape-album {
+            background: linear-gradient(135deg, #2b170e, #1a0f08);
+            color: var(--accent-gold);
+            border: 2px solid var(--accent-gold);
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 0.72rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: transform 0.2s;
+        }
+        .btn-shape-album:hover {
+            transform: scale(1.05);
         }
 
         .flower-area {
@@ -409,8 +447,8 @@
 
         .rand-flower {
             position: absolute;
-            width: 90px;
-            height: 90px;
+            width: 80px;
+            height: 80px;
             object-fit: contain;
             pointer-events: auto;
             cursor: pointer;
@@ -426,7 +464,7 @@
             width: 100%;
             background: linear-gradient(180deg, #422315 0%, #221008 100%);
             border-top: 6px solid #6b3c27;
-            padding: 10px 12px 14px 12px;
+            padding: 8px 12px 12px 12px;
             position: relative;
             z-index: 15;
             box-shadow: 0 -10px 20px rgba(0,0,0,0.8);
@@ -437,8 +475,8 @@
             justify-content: center;
             align-items: flex-end;
             gap: 20px;
-            min-height: 90px;
-            margin-bottom: 8px;
+            min-height: 80px;
+            margin-bottom: 6px;
         }
 
         .offering-item {
@@ -455,8 +493,8 @@
         }
 
         .offering-img-transparent {
-            width: 85px;
-            height: 85px;
+            width: 75px;
+            height: 75px;
             object-fit: contain;
             filter: drop-shadow(0 6px 10px rgba(0,0,0,0.9));
             background: rgba(255,255,255,0.08);
@@ -483,14 +521,14 @@
             animation: steamRise 2.5s infinite ease-out;
         }
 
-        /* 📖 ノート画面・📸 写真館画面のデザイン */
-        .notebook-screen-view {
+        .notebook-screen-view, .album-screen-view {
             background: #1a0f08;
             padding: 8px;
             display: flex;
             flex-direction: column;
             gap: 8px;
             position: relative;
+            flex: 1;
         }
 
         .open-notebook-full {
@@ -558,15 +596,6 @@
             padding-top: 6px;
         }
 
-        .album-screen-view {
-            background: #1a0f08;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            position: relative;
-        }
-
         .album-grid-full {
             background: rgba(15, 8, 4, 0.9);
             border: 2px solid #5a3222;
@@ -620,27 +649,6 @@
             border-top: 1px solid #3a1f14;
             padding-top: 6px;
             margin-top: 8px;
-        }
-
-        /* 📍 右下の切り替えフローティングボタン (FAB) */
-        .fab-switch-btn {
-            position: absolute;
-            bottom: 60px;
-            right: 16px;
-            background: linear-gradient(135deg, #c5a059, #8c6d32);
-            color: #120a05;
-            border: 2px solid #fff;
-            padding: 10px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-            z-index: 100;
-            transition: transform 0.2s;
-        }
-        .fab-switch-btn:hover {
-            transform: scale(1.05);
         }
 
         input, textarea, select {
@@ -758,9 +766,9 @@
         }
     </style>
 </head>
-<body>
+<body onclick="unlockAudioContextOnce()">
 
-    <audio id="cafe-bgm" loop preload="none" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3"></audio>
+    <audio id="cafe-bgm" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3"></audio>
 
     <div id="toast-notification">☕ メッセージをお届けしました</div>
 
@@ -839,10 +847,16 @@
                 <div class="photo-frame">
                     <img id="master-photo" src="">
                 </div>
+                
+                <!-- 🛋️ マスター写真の直下にノート型・アルバム型ボタンを配置 -->
+                <div class="counter-action-buttons">
+                    <button class="btn-shape-notebook" onclick="navTo('notebook')">📖 ノート</button>
+                    <button class="btn-shape-album" onclick="navTo('album')">📸 写真館</button>
+                </div>
             </div>
 
             <div class="counter-surface">
-                <button class="share-banner-btn" style="padding: 7px; font-size: 0.75rem; margin-bottom: 4px;" onclick="openShareModal()">🔗 大切な方をこのカフェへご案内する</button>
+                <button class="share-banner-btn" style="padding: 6px; font-size: 0.72rem; margin-bottom: 4px;" onclick="openShareModal()">🔗 大切な方をこのカフェへご案内する</button>
                 
                 <div class="offerings-row" id="offerings-container"></div>
                 <div style="display:flex; gap:6px;">
@@ -881,9 +895,6 @@
             </div>
 
             <button class="btn" style="background:#4a271a;" onclick="openNoteModal()">🖋️ 思い出ノートにメッセージを綴る</button>
-
-            <!-- 右下の切り替えボタン -->
-            <button class="fab-switch-btn" onclick="navTo('album')">📸 写真館へ ▶</button>
         </div>
 
         <!-- 3B. 📸 想い出の写真館専用画面 -->
@@ -906,9 +917,6 @@
             </div>
 
             <button class="btn" style="background:#3e2217;" onclick="openPhotoModal()">📷 アルバムに写真を投稿</button>
-
-            <!-- 右下の切り替えボタン -->
-            <button class="fab-switch-btn" onclick="navTo('notebook')">◀ ノートへ</button>
         </div>
 
         <!-- 4. マスター管理画面 -->
@@ -938,7 +946,7 @@
             <button class="btn" style="margin-top:auto;" onclick="navTo('portal')">🏠 ポータルへ戻る</button>
         </div>
 
-        <!-- 下部ナビ（4つに整理） -->
+        <!-- 下部ナビ -->
         <div class="nav-bar" id="main-nav" style="display:none;">
             <button class="nav-btn active" id="nav-c" onclick="navTo('counter')">☕ カウンター</button>
             <button class="nav-btn" id="nav-n" onclick="navTo('notebook')">📖 ノート</button>
@@ -1122,6 +1130,14 @@
             { name: "ジャズピアノ", url: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a8155d.mp3?filename=relaxing-piano-jazz-10813.mp3" }
         ];
 
+        // 🎵 ブラウザの音声ブロックを解除するための初回タップ検知
+        function unlockAudioContextOnce() {
+            const audio = document.getElementById('cafe-bgm');
+            if (audio && audio.paused && !isBgmPlaying) {
+                audio.load();
+            }
+        }
+
         function toggleBgm() {
             const audio = document.getElementById('cafe-bgm');
             if (!audio) return;
@@ -1148,8 +1164,8 @@
                 updateBgmButtons(`🎵 ${curTrack.name}`, true);
                 showToast(`🎵 BGM: 『${curTrack.name}』を再生中`);
             }).catch(err => {
-                console.log("BGM自動再生エラー:", err);
-                showToast("⚠️ ブラウザの音声制限のため再開できませんでした");
+                console.log("BGM再生制限:", err);
+                showToast("⚠️ 画面を一度タップしてから再度お試しください");
             });
         }
 
@@ -1445,27 +1461,36 @@
             window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(shareUrl)}`, '_blank');
         }
 
-        function knockDoor() {
-            let store = db.data[curId];
-            if (!store) {
-                db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
-                store = db.data[curId];
-            }
-            if (!store.pending) store.pending = [];
-            if (!store.approved) store.approved = {};
+        // ★ 一度承認されていれば次から直接入れるようにチェックするロジック
+        async function knockDoor() {
+            let name = db.guest.name || prompt("お名前を入力してください:", "ゲスト");
+            if (!name) return;
+            let relation = db.guest.relation || prompt("関係性を入力してください:", "友人");
+            if (!relation) return;
 
-            if (db.guest.name && db.guest.relation) {
-                let key = db.guest.name + '_' + db.guest.relation;
-                if (store.approved[key]) {
+            db.guest.name = name;
+            db.guest.relation = relation;
+            saveData();
+
+            if (mySupabaseClient) {
+                const { data, error } = await mySupabaseClient
+                    .from('guests')
+                    .select('*')
+                    .eq('cafe_id', curId)
+                    .eq('guest_name', name)
+                    .eq('relation', relation)
+                    .maybeSingle();
+
+                if (data && data.status === 'approved') {
+                    // 既に承認されているため直接カウンターへ
                     document.getElementById('main-nav').style.display = 'flex';
                     navTo('counter');
                     return;
                 }
             }
 
-            document.getElementById('knock-name').value = db.guest.name || '';
-            document.getElementById('knock-relation').value = db.guest.relation || '';
-            document.getElementById('modal-knock').style.display = 'flex';
+            // まだ承認されていない、または未申請の場合は申請処理へ
+            submitKnockDirect(name, relation);
         }
 
         async function submitKnock() {
@@ -1475,12 +1500,37 @@
                 showToast("⚠️ お名前と関係性を入力してください");
                 return;
             }
+            submitKnockDirect(name, relation);
+        }
 
+        async function submitKnockDirect(name, relation) {
             db.guest.name = name;
             db.guest.relation = relation;
             saveData();
 
             if (mySupabaseClient) {
+                // すでに同名でレコードがあるか確認
+                const { data: existing } = await mySupabaseClient
+                    .from('guests')
+                    .select('*')
+                    .eq('cafe_id', curId)
+                    .eq('guest_name', name)
+                    .eq('relation', relation)
+                    .maybeSingle();
+
+                if (existing) {
+                    if (existing.status === 'approved') {
+                        closeModals();
+                        document.getElementById('main-nav').style.display = 'flex';
+                        navTo('counter');
+                        return;
+                    } else {
+                        closeModals();
+                        document.getElementById('modal-waiting').style.display = 'flex';
+                        return;
+                    }
+                }
+
                 const { error } = await mySupabaseClient
                     .from('guests')
                     .insert([{ cafe_id: curId, guest_name: name, relation: relation, status: 'pending' }]);
@@ -1490,17 +1540,6 @@
                     showToast("❌ 申請エラー: " + error.message);
                     return;
                 }
-            } else {
-                let store = db.data[curId];
-                if (!store) {
-                    db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
-                    store = db.data[curId];
-                }
-                if (!store.pending) store.pending = [];
-                if (!store.pending.some(p => p.name === name && p.relation === relation)) {
-                    store.pending.push({ name: name, relation: relation, time: new Date().toLocaleTimeString() });
-                    saveData();
-                }
             }
 
             closeModals();
@@ -1509,6 +1548,8 @@
 
         function navTo(scr) {
             if (scr === 'portal') document.getElementById('main-nav').style.display = 'none';
+            else document.getElementById('main-nav').style.display = 'flex';
+
             showScreen(scr);
             if (scr === 'counter') loadOfferingsFromSupabase();
             if (scr === 'notebook') loadNotesFromSupabase();
@@ -1518,9 +1559,15 @@
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('scr-' + id).classList.add('active');
+            let target = document.getElementById('scr-' + id);
+            if (target) {
+                target.classList.add('active');
+            } else {
+                console.error("画面が見つかりません: scr-" + id);
+                document.getElementById('scr-counter').classList.add('active');
+            }
+
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
             if (id === 'counter') document.getElementById('nav-c').classList.add('active');
             if (id === 'notebook') document.getElementById('nav-n').classList.add('active');
             if (id === 'album') document.getElementById('nav-a').classList.add('active');
