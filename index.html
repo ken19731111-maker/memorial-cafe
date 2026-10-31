@@ -517,11 +517,28 @@
             text-align: center;
             padding: 6px;
             border-right: 1px dashed #d1c7bd;
-            cursor: pointer;
             overflow-y: auto;
         }
         .notebook-page:last-child {
             border-right: none;
+        }
+
+        /* ノート上のメッセージカード（タップして詳細へ） */
+        .note-card-item {
+            background: #fff;
+            border: 1px solid #d1c7bd;
+            border-radius: 4px;
+            padding: 6px;
+            margin-bottom: 6px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.1s, border-color 0.2s;
+        }
+        .note-card-item:hover {
+            transform: scale(1.02);
+            border-color: var(--accent-gold);
         }
 
         .notebook-nav {
@@ -539,7 +556,7 @@
             background: #f4ede2;
             border-left: 3px solid var(--accent-gold);
             padding: 4px 6px;
-            margin-top: 6px;
+            margin-top: 4px;
             border-radius: 0 4px 4px 0;
             text-align: left;
             font-size: 0.6rem;
@@ -806,20 +823,20 @@
             </div>
 
             <div id="notebook-open" class="open-notebook-container">
-                <div style="font-size:0.65rem; font-weight:bold; color:#4a271a; text-align:center; border-bottom:1px solid #d1c7bd; padding-bottom:2px;">📖 思い出ノート</div>
+                <div style="font-size:0.65rem; font-weight:bold; color:#4a271a; text-align:center; border-bottom:1px solid #d1c7bd; padding-bottom:2px;">📖 思い出ノート (タップで詳細・コメント)</div>
                 <div class="notebook-pages">
-                    <div class="notebook-page" onclick="prevNotebookPage()" title="前のページ">
+                    <div class="notebook-page">
                         <div style="font-size:0.55rem; color:#886655; margin-bottom:2px;">[ ◀ 左ページ ]</div>
                         <div id="note-page-left" style="width:100%;"></div>
                     </div>
-                    <div class="notebook-page" onclick="nextNotebookPage()" title="次のページ">
+                    <div class="notebook-page">
                         <div style="font-size:0.55rem; color:#886655; margin-bottom:2px;">[ 右ページ ▶ ]</div>
                         <div id="note-page-right" style="width:100%;"></div>
                     </div>
                 </div>
                 <div class="notebook-nav">
                     <span style="cursor:pointer;" onclick="prevNotebookPage()">◀ 戻る</span>
-                    <span style="cursor:pointer; color:#7a2211;" onclick="closeNotebookView()">[ 戻る ]</span>
+                    <span style="cursor:pointer; color:#7a2211;" onclick="closeNotebookView()">[ 閉じる ]</span>
                     <span style="cursor:pointer;" onclick="nextNotebookPage()">次へ ▶</span>
                 </div>
             </div>
@@ -828,7 +845,7 @@
             <div class="album-grid-area">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                     <div style="font-size:0.75rem; color:var(--accent-gold); font-weight:bold;">📸 想い出の写真館</div>
-                    <div style="font-size:0.6rem; color:#b5a28f;">タップで拡大</div>
+                    <div style="font-size:0.60rem; color:#b5a28f;">タップで拡大</div>
                 </div>
                 <div class="photo-grid" id="photo-grid-container"></div>
                 <div class="album-pagination">
@@ -844,7 +861,6 @@
         <div id="scr-master" class="screen" style="background:var(--master-bg);">
             <div class="header" style="color:#38bdf8;">🔒 マスター専用管理画面</div>
             
-            <!-- ★ 金額・還元表示を削除し、すっきりした統計カードに変更 -->
             <div class="card" style="text-align:center; margin-top:10px;">
                 <div style="font-size:0.7rem; color:#94a3b8;">温かい想い出の統計</div>
                 <div id="stat-count" style="font-size:1.1rem; color:#38bdf8; font-weight:bold; margin-top:4px;">累計お供え 0 件</div>
@@ -967,6 +983,26 @@
         </div>
     </div>
 
+    <!-- ★ ノートメッセージ詳細・スレッド画面（コメント一覧＋投稿フォーム） -->
+    <div id="modal-thread" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:0.85rem; margin-bottom:6px; color:var(--accent-gold);">💬 思い出スレッド</h3>
+            
+            <div id="thread-original-box" style="background:#fff; border:1px solid var(--accent-gold); padding:8px; border-radius:4px; text-align:left; margin-bottom:8px;">
+                <div id="thread-orig-author" style="font-size:0.65rem; font-weight:bold; color:#4a271a;"></div>
+                <div id="thread-orig-content" style="font-size:0.75rem; color:#332211; margin:4px 0; word-break:break-all;"></div>
+                <div id="thread-orig-time" style="font-size:0.5rem; color:#886655;"></div>
+            </div>
+
+            <div style="font-size:0.7rem; font-weight:bold; color:var(--accent-gold); text-align:left; margin-bottom:4px;">みんなのコメント・マスターからの返信:</div>
+            <div id="thread-comments-container" style="max-height:160px; overflow-y:auto; background:#fff; border:1px solid #d1c7bd; border-radius:4px; padding:6px; margin-bottom:8px; text-align:left;"></div>
+
+            <textarea id="thread-comment-input" placeholder="このメッセージに温かいコメントを返す…" style="height:50px; font-size:0.75rem;"></textarea>
+            <button class="btn" style="margin-top:4px;" onclick="submitThreadComment()">コメントを投稿する</button>
+            <button class="btn" style="background:#886655; margin-top:4px;" onclick="closeModals()">ノートに戻る</button>
+        </div>
+    </div>
+
     <div id="modal-photo" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.9rem; margin-bottom:8px;">アルバムに写真を投稿</h3>
@@ -1023,6 +1059,7 @@
     <script>
         let isBgmPlaying = false;
         let simulatedTimeOffsetMs = 0;
+        let activeThreadPostId = null; // 現在スレッド表示中の投稿ID
 
         function toggleBgm() {
             const audio = document.getElementById('cafe-bgm');
@@ -1574,13 +1611,6 @@
             }
         }
 
-        function getDynamicFontSize(text) {
-            if (!text) return '0.75rem';
-            if (text.length > 90) return '0.55rem';
-            if (text.length > 50) return '0.65rem';
-            return '0.75rem';
-        }
-
         function renderNotebookPages() {
             let store = db.data[curId];
             let leftEl = document.getElementById('note-page-left');
@@ -1595,13 +1625,16 @@
 
             if (store.notes[leftNoteIdx]) {
                 let n = store.notes[leftNoteIdx];
-                let fSize = getDynamicFontSize(n.msg);
-                let replyHtml = n.reply ? `<div class="master-reply-box"><strong>☕ マスターより:</strong><br>${n.reply}</div>` : '';
+                let replyPreview = n.reply ? `<div style="font-size:0.55rem; color:#b45309; margin-top:2px;">💬 マスターからの返信あり</div>` : '';
                 leftEl.innerHTML = `
-                    <div style="font-weight:bold; color:#4a271a; font-size:0.65rem; margin-bottom:2px;">${n.name}</div>
-                    <div style="color:#332211; font-size:${fSize}; line-height:1.3; margin-bottom:4px; word-break:break-all;">「${n.msg}」</div>
-                    <div style="font-size:0.5rem; color:#886655;">${n.time}</div>
-                    ${replyHtml}
+                    <div class="note-card-item" onclick="openThreadModal('${n.id}')">
+                        <div style="font-weight:bold; color:#4a271a; font-size:0.65rem;">${n.name}</div>
+                        <div style="color:#332211; font-size:0.7rem; line-height:1.2; margin:2px 0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">「${n.msg}」</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.5rem; color:#886655;">${n.time}</span>
+                            ${replyPreview}
+                        </div>
+                    </div>
                 `;
             } else {
                 leftEl.innerHTML = `<div style="color:#aaa; font-size:0.65rem; margin-top:20px;">（余白）</div>`;
@@ -1609,13 +1642,16 @@
 
             if (store.notes[rightNoteIdx]) {
                 let n = store.notes[rightNoteIdx];
-                let fSize = getDynamicFontSize(n.msg);
-                let replyHtml = n.reply ? `<div class="master-reply-box"><strong>☕ マスターより:</strong><br>${n.reply}</div>` : '';
+                let replyPreview = n.reply ? `<div style="font-size:0.55rem; color:#b45309; margin-top:2px;">💬 マスターからの返信あり</div>` : '';
                 rightEl.innerHTML = `
-                    <div style="font-weight:bold; color:#4a271a; font-size:0.65rem; margin-bottom:2px;">${n.name}</div>
-                    <div style="color:#332211; font-size:${fSize}; line-height:1.3; margin-bottom:4px; word-break:break-all;">「${n.msg}」</div>
-                    <div style="font-size:0.5rem; color:#886655;">${n.time}</div>
-                    ${replyHtml}
+                    <div class="note-card-item" onclick="openThreadModal('${n.id}')">
+                        <div style="font-weight:bold; color:#4a271a; font-size:0.65rem;">${n.name}</div>
+                        <div style="color:#332211; font-size:0.7rem; line-height:1.2; margin:2px 0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">「${n.msg}」</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.5rem; color:#886655;">${n.time}</span>
+                            ${replyPreview}
+                        </div>
+                    </div>
                 `;
             } else {
                 rightEl.innerHTML = `<div style="color:#aaa; font-size:0.65rem; margin-top:20px;">（余白）</div>`;
@@ -1658,6 +1694,118 @@
             }
 
             renderNotebookPages();
+        }
+
+        // ★ メッセージをタップしてスレッド画面を開く処理
+        async function openThreadModal(postId) {
+            activeThreadPostId = postId;
+            let store = db.data[curId];
+            if (!store || !store.notes) return;
+
+            let post = store.notes.find(n => n.id === postId);
+            if (!post) return;
+
+            document.getElementById('thread-orig-author').innerText = post.name;
+            document.getElementById('thread-orig-content').innerText = `「${post.msg}」`;
+            document.getElementById('thread-orig-time').innerText = post.time;
+            document.getElementById('thread-comment-input').value = '';
+
+            await loadThreadComments(postId);
+            document.getElementById('modal-thread').style.display = 'flex';
+        }
+
+        // ★ スレッド内のコメント（マスター返信＋ゲストコメント）をロード
+        async function loadThreadComments(postId) {
+            let container = document.getElementById('thread-comments-container');
+            container.innerHTML = `<div style="font-size:0.65rem; color:#886655; text-align:center;">読み込み中...</div>`;
+
+            let store = db.data[curId];
+            let post = store.notes.find(n => n.id === postId);
+
+            let html = '';
+
+            // マスターからの返信がすでにある場合は最上位に表示
+            if (post && post.reply) {
+                let cafeInfo = db.cafes.find(c => c.id === curId);
+                let masterName = cafeInfo ? cafeInfo.master : 'マスター';
+                html += `
+                    <div style="background:#f4ede2; border-left:3px solid var(--accent-gold); padding:5px; margin-bottom:5px; border-radius:0 3px 3px 0;">
+                        <div style="font-size:0.6rem; font-weight:bold; color:#b45309;">☕ ${masterName} (マスター)</div>
+                        <div style="font-size:0.7rem; color:#332211; margin-top:2px;">${post.reply}</div>
+                    </div>
+                `;
+            }
+
+            if (mySupabaseClient) {
+                const { data: comments, error } = await mySupabaseClient
+                    .from('post_comments')
+                    .select('*')
+                    .eq('post_id', postId)
+                    .order('created_at', { ascending: true });
+
+                if (!error && comments && comments.length > 0) {
+                    comments.forEach(cm => {
+                        let dateObj = new Date(cm.created_at);
+                        let timeStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
+                        html += `
+                            <div style="background:#f9f8f5; border:1px solid #e5e0d5; padding:5px; margin-bottom:5px; border-radius:3px;">
+                                <div style="display:flex; justify-content:space-between; font-size:0.55rem; color:#886655; margin-bottom:1px;">
+                                    <strong>${cm.author}</strong>
+                                    <span>${timeStr}</span>
+                                </div>
+                                <div style="font-size:0.7rem; color:#332211;">${cm.content}</div>
+                            </div>
+                        `;
+                    });
+                }
+            }
+
+            if (!html) {
+                container.innerHTML = `<div style="font-size:0.65rem; color:#886655; text-align:center;">まだコメントはありません。最初の言葉を綴ってみませんか？</div>`;
+            } else {
+                container.innerHTML = html;
+            }
+        }
+
+        // ★ スレッドに新しいコメントを投稿
+        async function submitThreadComment() {
+            let content = document.getElementById('thread-comment-input').value.trim();
+            if (!content) {
+                alert('コメントを入力してください。');
+                return;
+            }
+
+            let roleIsMaster = document.getElementById('btn-master').classList.contains('active');
+            let cafeInfo = db.cafes.find(c => c.id === curId);
+            let authorLabel = roleIsMaster ? `${cafeInfo ? cafeInfo.master : 'マスター'} (マスター)` : `${db.guest.name || 'ゲスト'} (${db.guest.relation || '来訪者'})`;
+
+            if (!mySupabaseClient) {
+                alert("Supabaseが接続できていません。");
+                return;
+            }
+
+            // もしマスターモードで返信した場合は、postsテーブルの reply 列も同時更新するとノート側の返信管理とも連動して便利！
+            if (roleIsMaster) {
+                const { error: replyErr } = await mySupabaseClient
+                    .from('posts')
+                    .update({ reply: content })
+                    .eq('id', activeThreadPostId);
+                if (replyErr) console.error("マスター返信更新エラー:", replyErr);
+            }
+
+            const { error } = await mySupabaseClient
+                .from('post_comments')
+                .insert([{ post_id: activeThreadPostId, cafe_id: curId, author: authorLabel, content: content }]);
+
+            if (error) {
+                console.error("コメント保存エラー:", error);
+                alert("【保存エラー】\n" + error.message);
+                return;
+            }
+
+            document.getElementById('thread-comment-input').value = '';
+            await loadThreadComments(activeThreadPostId);
+            await loadNotesFromSupabase(); // ノート側も最新状態に更新
         }
 
         function openNoteModal() {
@@ -1925,7 +2073,6 @@
                 store = db.data[curId];
             }
             
-            // シンプルな累計件数表示
             document.getElementById('stat-count').innerText = `累計お供え ${store.sales} 件`;
 
             let pList = document.getElementById('pending-list');
@@ -1971,7 +2118,6 @@
             renderMasterNoteReplyList();
         }
 
-        // ★ 未返信メッセージのみを表示するように修正
         async function renderMasterNoteReplyList() {
             let container = document.getElementById('master-note-reply-list');
             container.innerHTML = "";
@@ -1986,7 +2132,7 @@
                 .select('*')
                 .eq('cafe_id', curId)
                 .eq('type', 'message')
-                .is('reply', null) // ★ replyがnull（未返信）のものだけ取得
+                .is('reply', null)
                 .order('created_at', { ascending: false });
 
             if (error || !posts || posts.length === 0) {
@@ -2024,11 +2170,19 @@
 
             if (error) {
                 alert('返信の保存に失敗しました: ' + error.message);
-            } else {
-                alert('☕ 返信をノートに刻みました！');
-                renderMasterNoteReplyList(); // 返信完了でリストから消去
-                await loadNotesFromSupabase();
+                return;
             }
+
+            // 同時にコメントテーブル側にもマスターの返信を自動投稿（スレッドで一体化表示するため）
+            let cafeInfo = db.cafes.find(c => c.id === curId);
+            let masterName = cafeInfo ? cafeInfo.master : 'マスター';
+            await mySupabaseClient
+                .from('post_comments')
+                .insert([{ post_id: postId, cafe_id: curId, author: `${masterName} (マスター)`, content: replyVal }]);
+
+            alert('☕ 返信をノートに刻みました！');
+            renderMasterNoteReplyList();
+            await loadNotesFromSupabase();
         }
 
         async function updateGuestStatus(guestId, newStatus) {
@@ -2049,7 +2203,7 @@
         }
 
         function closeModals() {
-            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            document.querySelectorAll('.modal').forEach(m => m.style.title = '', m.style.display = 'none');
         }
     </script>
 </body>
