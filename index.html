@@ -1402,10 +1402,14 @@
             curId = id;
             let c = db.cafes.find(x => x.id === id);
             if (!c) return;
+            
+            // 看板や写真の情報をセット
             document.getElementById('ent-cafe-title').innerText = c.title;
             document.getElementById('ent-cafe-sub').innerText = c.master + ' の席';
             document.getElementById('master-photo').src = c.img;
             document.getElementById('counter-header-title').innerText = c.title;
+            
+            // 強制的にエントランス画面を表示する
             showScreen('entrance');
         }
 
