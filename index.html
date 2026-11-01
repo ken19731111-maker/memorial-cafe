@@ -134,16 +134,17 @@
             font-weight: bold;
         }
 
+/* シェアボタンの上下余白を短縮 */
         .share-banner-btn {
             background: linear-gradient(135deg, #422315, #2b170e);
             color: var(--accent-gold);
             border: 2px solid var(--accent-gold);
-            padding: 10px 14px;
-            margin: 6px 0;
+            padding: 6px 10px;
+            margin: 2px 0 4px 0; /* 下の余白を 4px に縮小 */
             border-radius: 6px;
             cursor: pointer;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
             width: 100%;
             box-shadow: 0 4px 12px rgba(0,0,0,0.6);
@@ -469,16 +470,13 @@
             transform: scale(1.15);
         }
 
-       .counter-surface {
-            width: 100%;
-            background: linear-gradient(180deg, #422315 0%, #221008 100%);
-            border-top: 5px solid #6b3c27;
-            padding: 6px 10px 10px 10px;
-            position: relative;
-            z-index: 15;
-            box-shadow: 0 -8px 15px rgba(0,0,0,0.8);
-            flex-shrink: 0; /* 下部カウンターが潰れないように固定 */
+    /* お供えボタンエリアの隙間を小さく設定 */
+        .counter-surface > div:last-child {
+            display: flex;
+            gap: 4px; /* ボタン同士の間隔を縮小 */
+            margin-top: 2px; /* 上の要素との隙間を縮小 */
         }
+            
         .offerings-row {
             display: flex;
             justify-content: center;
