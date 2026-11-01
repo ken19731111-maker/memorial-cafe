@@ -128,13 +128,13 @@
             font-weight: bold;
         }
 
-        /* 📖ノート・📸写真館ボタン（マスターの写真下に配置するスタイル） */
+        /* 📖ノート・📸写真館ボタン（マスターの写真下） */
         .counter-action-buttons {
             display: flex;
             gap: 8px;
             z-index: 25;
             margin-top: 6px;
-            width: 190px; /* 写真の幅に合わせる */
+            width: 190px;
         }
         .counter-action-buttons button {
             flex: 1;
@@ -149,26 +149,6 @@
         }
         .counter-action-buttons button:active {
             transform: scale(0.97);
-        }
-
-        /* カウンター用大きめシェアバナーボタン（2ボタン分の大きさと存在感） */
-        .share-banner-btn {
-            background: linear-gradient(135deg, #522614, #31150a);
-            color: var(--accent-gold);
-            border: 2px solid var(--accent-gold);
-            padding: 11px;
-            margin-top: 6px;
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 0.85rem;
-            font-weight: bold;
-            width: 100%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.7);
-            transition: transform 0.1s;
-        }
-        .share-banner-btn:active {
-            transform: scale(0.98);
         }
 
         .donate-banner-btn {
@@ -440,7 +420,7 @@
             width: 100%;
             background: linear-gradient(180deg, #422315 0%, #221008 100%);
             border-top: 4px solid #6b3c27;
-            padding: 6px 10px 8px 10px;
+            padding: 8px 10px 12px 10px;
             position: relative;
             z-index: 15;
             box-shadow: 0 -8px 15px rgba(0,0,0,0.8);
@@ -453,7 +433,7 @@
             align-items: flex-end;
             gap: 16px;
             min-height: 65px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .offering-item {
@@ -639,6 +619,7 @@
             font-size: 0.8rem;
         }
 
+        /* 最下部固定フッター（ナビゲーションバー） */
         .nav-bar {
             display: flex;
             background: linear-gradient(180deg, #1c0e07 0%, #0d0603 100%);
@@ -656,7 +637,7 @@
             border: 1px solid rgba(197, 160, 89, 0.4);
             border-radius: 6px;
             color: #b5a28f;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: bold;
             cursor: pointer;
             text-align: center;
@@ -673,6 +654,13 @@
             color: var(--accent-gold);
             border-color: var(--accent-gold);
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.6), 0 0 10px rgba(197, 160, 89, 0.3);
+        }
+
+        /* フッター用シェアボタンの強調スタイル */
+        .nav-btn.share-nav-btn {
+            background: linear-gradient(135deg, #522614, #31150a);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
         }
 
         .modal {
@@ -797,7 +785,7 @@
             <p style="font-size:0.7rem; color:var(--accent-gold); margin-top:2px;">🚪 ドアをノックして店内へ</p>
             
             <div style="width: 90%; max-width: 280px; margin-top: 8px;">
-                <button class="share-banner-btn" onclick="openShareModal()">🔗 このカフェをご案内する（シェア）</button>
+                <button class="btn" style="background:linear-gradient(135deg, #422315, #2b170e);" onclick="openShareModal()">🔗 このカフェをご案内する（シェア）</button>
                 <button class="donate-banner-btn" onclick="openDonateModal()">☕ サイトを応援する（寄付）</button>
                 <button class="btn" style="margin-top:4px; background:#2b170e; font-size:0.75rem;" onclick="navTo('portal')">◀ ポータルへ戻る</button>
             </div>
@@ -831,7 +819,7 @@
                 </div>
             </div>
 
-            <!-- カウンター表面 -->
+            <!-- カウンター表面（お供えアクションのみ配置してスッキリ） -->
             <div class="counter-surface">
                 <div class="offerings-row" id="offerings-container"></div>
 
@@ -841,9 +829,6 @@
                     <button class="btn" onclick="openGiftModal('flower')">💐 お花を飾る</button>
                     <button class="btn" onclick="openGiftModal('incense')">🕯️ お線香を手向ける</button>
                 </div>
-
-                <!-- 🔗シェアボタン（一番下に大きめで配置） -->
-                <button class="share-banner-btn" onclick="openShareModal()">🔗 大切な方をこのカフェへご案内する</button>
             </div>
         </div>
 
@@ -926,11 +911,12 @@
             <button class="btn" style="margin-top:auto;" onclick="navTo('portal')">🏠 ポータルへ戻る</button>
         </div>
 
-        <!-- 下部ナビ -->
+        <!-- 下部固定フッター（ナビゲーションバー） -->
         <div class="nav-bar" id="main-nav" style="display:none;">
             <button class="nav-btn active" id="nav-c" onclick="navTo('counter')">☕ カウンター</button>
             <button class="nav-btn" id="nav-n" onclick="navTo('notebook')">📖 ノート</button>
             <button class="nav-btn" id="nav-a" onclick="navTo('album')">📸 写真館</button>
+            <button class="nav-btn share-nav-btn" onclick="openShareModal()">🔗 シェア</button>
             <button class="nav-btn" onclick="navTo('portal')">🏠 ホーム</button>
         </div>
     </div>
