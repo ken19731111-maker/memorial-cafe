@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>メモリアル・カフェ</title>
 
-    <!-- Supabaseの通信プログラムのみ読み込み -->
+    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -90,7 +90,7 @@
             width: 100%;
             max-width: 420px;
             height: auto;
-            max-height: 88vh;
+            max-height: 92vh;
             background: #0f0804;
             border: 3px solid #2b170e;
             border-top: none;
@@ -105,7 +105,7 @@
             display: none !important;
             flex: 1;
             flex-direction: column;
-            padding: 10px;
+            padding: 8px;
             overflow-y: auto;
             position: relative;
         }
@@ -128,18 +128,19 @@
             font-weight: bold;
         }
 
-        /* 📖ノート・📸写真館ボタン（マスターの写真下） */
+        /* マスター写真下の操作ボタン */
         .counter-action-buttons {
             display: flex;
             gap: 8px;
             z-index: 25;
-            margin-top: 6px;
-            width: 190px;
+            margin-top: 8px;
+            width: 200px;
         }
         .counter-action-buttons button {
             flex: 1;
-            padding: 5px 2px;
-            font-size: 0.68rem;
+            padding: 6px 4px;
+            font-size: 0.72rem;
+            font-weight: bold;
             background: linear-gradient(135deg, #422315, #2b170e);
             border: 1px solid var(--accent-gold);
             border-radius: 4px;
@@ -308,13 +309,14 @@
             overflow: hidden !important;
         }
 
+        /* カウンター上部ヘッダーの余白削減 */
         .header {
             background: #1f100a;
-            padding: 6px 10px;
+            padding: 4px 10px;
             text-align: center;
             border-bottom: 1px solid var(--accent-gold);
             color: var(--accent-gold);
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             z-index: 20;
             display: flex;
             justify-content: space-between;
@@ -325,9 +327,9 @@
             background: #3e2217;
             color: var(--accent-gold);
             border: 1px solid var(--accent-gold);
-            padding: 3px 7px;
+            padding: 2px 6px;
             border-radius: 3px;
-            font-size: 0.65rem;
+            font-size: 0.62rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -340,10 +342,11 @@
             font-weight: bold;
         }
 
+        /* 時間経過テストバーの軽量・コンパクト化 */
         .time-bar {
-            background: #1f100a;
-            padding: 3px 8px;
-            font-size: 0.62rem;
+            background: rgba(31, 16, 10, 0.85);
+            padding: 2px 8px;
+            font-size: 0.58rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -356,12 +359,13 @@
             background: #3e2217;
             color: var(--accent-gold);
             border: 1px solid var(--accent-gold);
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-size: 0.58rem;
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-size: 0.55rem;
             cursor: pointer;
         }
 
+        /* カウンターのマスター写真ステージエリアを広く調整 */
         .counter-stage {
             flex: 1;
             position: relative;
@@ -369,17 +373,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 6px 0;
+            padding: 12px 0;
             overflow: hidden;
             min-height: 0;
         }
 
+        /* マスター写真を少し大型化してしっかり魅せる */
         .photo-frame {
-            width: 95px;
-            height: 125px;
+            width: 110px;
+            height: 145px;
             border: 3px solid var(--accent-gold);
             background: #1f100a;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.9);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.95);
             position: relative;
             z-index: 10;
             flex-shrink: 0;
@@ -420,7 +425,7 @@
             width: 100%;
             background: linear-gradient(180deg, #422315 0%, #221008 100%);
             border-top: 4px solid #6b3c27;
-            padding: 8px 10px 12px 10px;
+            padding: 8px 10px 10px 10px;
             position: relative;
             z-index: 15;
             box-shadow: 0 -8px 15px rgba(0,0,0,0.8);
@@ -619,25 +624,25 @@
             font-size: 0.8rem;
         }
 
-        /* 最下部固定フッター（ナビゲーションバー） */
+        /* 最下部フッター（3構成で中央のシェアボタンを大型化） */
         .nav-bar {
             display: flex;
             background: linear-gradient(180deg, #1c0e07 0%, #0d0603 100%);
             border-top: 2px solid var(--accent-gold);
-            padding: 6px;
-            gap: 4px;
+            padding: 6px 8px;
+            gap: 6px;
+            align-items: center;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.8);
             z-index: 50;
         }
 
         .nav-btn {
-            flex: 1;
-            padding: 10px 2px;
+            padding: 8px 4px;
             background: linear-gradient(135deg, #2b170e, #1a0f08);
             border: 1px solid rgba(197, 160, 89, 0.4);
             border-radius: 6px;
             color: #b5a28f;
-            font-size: 0.68rem;
+            font-size: 0.72rem;
             font-weight: bold;
             cursor: pointer;
             text-align: center;
@@ -656,11 +661,15 @@
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.6), 0 0 10px rgba(197, 160, 89, 0.3);
         }
 
-        /* フッター用シェアボタンの強調スタイル */
+        /* フッター中央の大型シェアボタン */
         .nav-btn.share-nav-btn {
-            background: linear-gradient(135deg, #522614, #31150a);
-            border-color: var(--accent-gold);
+            flex: 2; /* 左右より幅を広く設定 */
+            padding: 10px 4px;
+            background: linear-gradient(135deg, #522614, #2b170e);
+            border: 2px solid var(--accent-gold);
             color: var(--accent-gold);
+            font-size: 0.8rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
         }
 
         .modal {
@@ -712,15 +721,15 @@
 
         #toast-notification {
             position: absolute;
-            top: 50px;
+            top: 45px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, #2b170e, #1a0f08);
             color: var(--accent-gold);
             border: 1px solid var(--accent-gold);
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.8);
             z-index: 2000;
@@ -754,7 +763,7 @@
                 <button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>
             </div>
             
-            <div style="margin: 8px 0;">
+            <div style="margin: 6px 0;">
                 <button class="btn" style="background: #2563eb; color: #fff;" onclick="testCreateCafe()">🧪 Supabase接続テスト（カフェを作る）</button>
             </div>
 
@@ -819,7 +828,7 @@
                 </div>
             </div>
 
-            <!-- カウンター表面（お供えアクションのみ配置してスッキリ） -->
+            <!-- カウンター表面 -->
             <div class="counter-surface">
                 <div class="offerings-row" id="offerings-container"></div>
 
@@ -911,13 +920,11 @@
             <button class="btn" style="margin-top:auto;" onclick="navTo('portal')">🏠 ポータルへ戻る</button>
         </div>
 
-        <!-- 下部固定フッター（ナビゲーションバー） -->
+        <!-- 最下部固定フッター（3構成：カウンター / 大型シェアボタン / ホーム） -->
         <div class="nav-bar" id="main-nav" style="display:none;">
-            <button class="nav-btn active" id="nav-c" onclick="navTo('counter')">☕ カウンター</button>
-            <button class="nav-btn" id="nav-n" onclick="navTo('notebook')">📖 ノート</button>
-            <button class="nav-btn" id="nav-a" onclick="navTo('album')">📸 写真館</button>
-            <button class="nav-btn share-nav-btn" onclick="openShareModal()">🔗 シェア</button>
-            <button class="nav-btn" onclick="navTo('portal')">🏠 ホーム</button>
+            <button class="nav-btn style-side" id="nav-c" style="flex:1;" onclick="navTo('counter')">☕ カウンター</button>
+            <button class="nav-btn share-nav-btn" onclick="openShareModal()">🔗 このカフェをご案内する</button>
+            <button class="nav-btn style-side" style="flex:1;" onclick="navTo('portal')">🏠 ホーム</button>
         </div>
     </div>
 
@@ -1049,6 +1056,7 @@
         </div>
     </div>
 
+    <!-- カフェ開店モーダル（パブリック／プライベート切り替えを追加） -->
     <div id="modal-reg" class="modal">
         <div class="modal-card">
             <h3 style="font-size:0.9rem; margin-bottom:8px; text-align:center; color:var(--accent-gold);">☕ 新しいカフェを開店</h3>
@@ -1058,6 +1066,12 @@
             
             <label style="font-size:0.7rem;">マスターのお名前:</label>
             <input type="text" id="reg-master" placeholder="例: 鈴木 太郎">
+
+            <label style="font-size:0.7rem; color:var(--accent-gold); font-weight:bold; margin-top:4px; display:block;">🔒 カフェの公開タイプ:</label>
+            <select id="reg-type" style="font-size:0.75rem; padding:6px; margin-bottom:6px;">
+                <option value="public">👥 誰でも入店OK (パブリック / 承認不要)</option>
+                <option value="private">🔒 承認制 (プライベート / マスターの承認が必要)</option>
+            </select>
             
             <div style="display:flex; gap:6px;">
                 <div style="flex:1;">
@@ -1166,7 +1180,7 @@
 
             const { data, error } = await mySupabaseClient
                 .from('cafes')
-                .insert([{ title: 'テスト喫茶', master_name: 'テストマスター' }])
+                .insert([{ title: 'テスト喫茶', master_name: 'テストマスター', type: 'public' }])
                 .select();
 
             if (error) {
@@ -1197,7 +1211,8 @@
                 desc: '「いつもの珈琲の香る温かい場所で、お待ちしています。」',
                 thanks: '「いつもの席で、ゆっくりしていってくださいね。」',
                 img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
-                fav: false
+                fav: false,
+                type: 'private'
             }],
             data: {
                 'sato': { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} }
@@ -1265,6 +1280,7 @@
                     desc: item.description || '',
                     thanks: item.thanks_message || '「いつもの席で、ゆっくりしていってくださいね。」',
                     img: item.image_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+                    type: item.type || 'private',
                     fav: false
                 }));
 
@@ -1355,10 +1371,12 @@
             filtered.forEach(c => {
                 let lifespan = (c.birth || c.death) ? `<br><span style="font-size:0.65rem; color:#b5a28f;">(${c.birth || '??'} 〜 ${c.death || '??'})</span>` : '';
                 let starClass = c.fav ? 'fav-star active' : 'fav-star';
+                let typeBadge = c.type === 'public' ? `<span style="font-size:0.55rem; background:#16a34a; color:#fff; padding:1px 4px; border-radius:3px; margin-left:4px;">👥 公開</span>` : `<span style="font-size:0.55rem; background:#d97706; color:#fff; padding:1px 4px; border-radius:3px; margin-left:4px;">🔒 承認制</span>`;
+                
                 el.innerHTML += `<div class="card cafe-card" onclick="selectCafe('${c.id}')">
                     <img src="${c.img}" class="cafe-thumb">
                     <div style="flex:1; padding-right:20px;">
-                        <strong style="color:var(--accent-gold); font-size:0.85rem;">${c.title}</strong><br>
+                        <strong style="color:var(--accent-gold); font-size:0.85rem;">${c.title}</strong>${typeBadge}<br>
                         <span style="font-size:0.7rem; color:#d1c7bd;">マスター: ${c.master}</span>${lifespan}
                     </div>
                     <div class="${starClass}" onclick="toggleFav('${c.id}', event)">★</div>
@@ -1420,6 +1438,18 @@
         }
 
         async function knockDoor() {
+            const currentCafe = db.cafes.find(c => c.id === curId);
+
+            // パブリック（公開）カフェの場合は誰でも即時入店OK
+            if (currentCafe && currentCafe.type === 'public') {
+                if (!db.guest || !db.guest.name) {
+                    db.guest = { name: 'ゲスト', relation: '来訪者' };
+                }
+                navTo('counter');
+                return;
+            }
+
+            // プライベート（承認制）の場合の既存承認判定
             if (db.guest && db.guest.name && db.guest.relation) {
                 if (mySupabaseClient) {
                     const { data } = await mySupabaseClient
@@ -1455,6 +1485,8 @@
             db.guest.relation = relation;
             saveData();
 
+            const currentCafe = db.cafes.find(c => c.id === curId);
+
             if (mySupabaseClient) {
                 const { data: existing } = await mySupabaseClient
                     .from('guests')
@@ -1466,7 +1498,7 @@
 
                 if (existing) {
                     closeModals();
-                    if (existing.status === 'approved') {
+                    if (existing.status === 'approved' || (currentCafe && currentCafe.type === 'public')) {
                         navTo('counter');
                     } else {
                         document.getElementById('modal-waiting').style.display = 'flex';
@@ -1474,19 +1506,29 @@
                     return;
                 }
 
+                let initialStatus = (currentCafe && currentCafe.type === 'public') ? 'approved' : 'pending';
+
                 const { error } = await mySupabaseClient
                     .from('guests')
-                    .insert([{ cafe_id: curId, guest_name: name, relation: relation, status: 'pending' }]);
+                    .insert([{ cafe_id: curId, guest_name: name, relation: relation, status: initialStatus }]);
 
                 if (error) {
                     console.error("入店申請エラー:", error);
                     showToast("❌ 申請エラー: " + error.message);
                     return;
                 }
+
+                closeModals();
+                if (initialStatus === 'approved') {
+                    navTo('counter');
+                } else {
+                    document.getElementById('modal-waiting').style.display = 'flex';
+                }
+                return;
             }
 
             closeModals();
-            document.getElementById('modal-waiting').style.display = 'flex';
+            navTo('counter');
         }
 
         function navTo(scr) {
@@ -1515,8 +1557,6 @@
 
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if (id === 'counter') document.getElementById('nav-c').classList.add('active');
-            if (id === 'notebook') document.getElementById('nav-n').classList.add('active');
-            if (id === 'album') document.getElementById('nav-a').classList.add('active');
         }
 
         function switchRole(role) {
@@ -2088,6 +2128,7 @@
             document.getElementById('reg-thanks').value = '';
             document.getElementById('reg-desc').value = '';
             document.getElementById('reg-file').value = '';
+            document.getElementById('reg-type').value = 'public';
             selectedRegFile = null;
             document.getElementById('modal-reg').style.display = 'flex';
         }
@@ -2104,6 +2145,7 @@
             let death = document.getElementById('reg-death').value;
             let thanks = document.getElementById('reg-thanks').value.trim();
             let desc = document.getElementById('reg-desc').value.trim();
+            let cafeType = document.getElementById('reg-type').value;
 
             if (!title || !master) {
                 showToast("⚠️ 店名とマスター名は必須です");
@@ -2141,7 +2183,7 @@
 
             const { error: insertError } = await mySupabaseClient
                 .from('cafes')
-                .insert([{ id: id, title: title, master_name: master, birth: birth, death: death, description: desc, thanks_message: thanks, image_url: imageUrl }]);
+                .insert([{ id: id, title: title, master_name: master, birth: birth, death: death, description: desc, thanks_message: thanks, image_url: imageUrl, type: cafeType }]);
 
             if (insertError) {
                 console.error("カフェ登録エラー詳細:", insertError);
