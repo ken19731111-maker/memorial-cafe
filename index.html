@@ -128,34 +128,24 @@
             font-weight: bold;
         }
 
-        /* 📖ノート・📸写真館用の大きめボタン */
-        .large-action-btn {
-            background: linear-gradient(135deg, #522614, #31150a);
-            color: var(--accent-gold);
-            border: 2px solid var(--accent-gold);
-            padding: 10px;
-            font-size: 0.85rem;
-            border-radius: 6px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-            transition: transform 0.1s;
-        }
-        .large-action-btn:active {
-            transform: scale(0.98);
-        }
-
+        /* カウンター用大きめシェアバナーボタン */
         .share-banner-btn {
             background: linear-gradient(135deg, #422315, #2b170e);
             color: var(--accent-gold);
             border: 2px solid var(--accent-gold);
-            padding: 6px 10px;
-            margin: 0 0 3px 0;
-            border-radius: 5px;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 6px;
             cursor: pointer;
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             font-weight: bold;
             width: 100%;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            transition: transform 0.1s;
+        }
+        .share-banner-btn:active {
+            transform: scale(0.98);
         }
 
         .donate-banner-btn {
@@ -440,7 +430,7 @@
             align-items: flex-end;
             gap: 16px;
             min-height: 65px;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .offering-item {
@@ -813,17 +803,9 @@
                 </div>
             </div>
 
-            <!-- カウンター表面（ここに大きめのノート・アルバムボタンとお供えボタンを配置） -->
+            <!-- カウンター表面 -->
             <div class="counter-surface">
-                <button class="share-banner-btn" onclick="openShareModal()">🔗 大切な方をこのカフェへご案内する</button>
-                
                 <div class="offerings-row" id="offerings-container"></div>
-
-                <!-- 📖思い出ノート & 📸写真館（大きめボタン） -->
-                <div style="display: flex; gap: 6px; margin-bottom: 6px;">
-                    <button class="btn large-action-btn" onclick="navTo('notebook')">📖 思い出ノート</button>
-                    <button class="btn large-action-btn" onclick="navTo('album')">📸 想い出の写真館</button>
-                </div>
 
                 <!-- お供えアクションボタン -->
                 <div style="display:flex; gap:6px;">
@@ -831,6 +813,9 @@
                     <button class="btn" onclick="openGiftModal('flower')">💐 お花を飾る</button>
                     <button class="btn" onclick="openGiftModal('incense')">🕯️ お線香を手向ける</button>
                 </div>
+
+                <!-- 🔗シェアボタン（一番下に大きめで配置） -->
+                <button class="share-banner-btn" onclick="openShareModal()">🔗 大切な方をこのカフェへご案内する</button>
             </div>
         </div>
 
