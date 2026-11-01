@@ -128,12 +128,35 @@
             font-weight: bold;
         }
 
-        /* カウンター用大きめシェアバナーボタン */
-        .share-banner-btn {
+        /* 📖ノート・📸写真館ボタン（マスターの写真下に配置するスタイル） */
+        .counter-action-buttons {
+            display: flex;
+            gap: 8px;
+            z-index: 25;
+            margin-top: 6px;
+            width: 190px; /* 写真の幅に合わせる */
+        }
+        .counter-action-buttons button {
+            flex: 1;
+            padding: 5px 2px;
+            font-size: 0.68rem;
             background: linear-gradient(135deg, #422315, #2b170e);
+            border: 1px solid var(--accent-gold);
+            border-radius: 4px;
+            color: var(--accent-gold);
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+        }
+        .counter-action-buttons button:active {
+            transform: scale(0.97);
+        }
+
+        /* カウンター用大きめシェアバナーボタン（2ボタン分の大きさと存在感） */
+        .share-banner-btn {
+            background: linear-gradient(135deg, #522614, #31150a);
             color: var(--accent-gold);
             border: 2px solid var(--accent-gold);
-            padding: 10px;
+            padding: 11px;
             margin-top: 6px;
             border-radius: 6px;
             cursor: pointer;
@@ -141,7 +164,7 @@
             font-size: 0.85rem;
             font-weight: bold;
             width: 100%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.7);
             transition: transform 0.1s;
         }
         .share-banner-btn:active {
@@ -372,8 +395,8 @@
         }
 
         .photo-frame {
-            width: 100px;
-            height: 135px;
+            width: 95px;
+            height: 125px;
             border: 3px solid var(--accent-gold);
             background: #1f100a;
             box-shadow: 0 6px 15px rgba(0,0,0,0.9);
@@ -800,6 +823,11 @@
                 <div class="flower-area" id="flower-container"></div>
                 <div class="photo-frame">
                     <img id="master-photo" src="">
+                </div>
+                <!-- 📖思い出ノート & 📸写真館ボタン（マスターの写真下） -->
+                <div class="counter-action-buttons">
+                    <button onclick="navTo('notebook')">📖 ノート</button>
+                    <button onclick="navTo('album')">📸 写真館</button>
                 </div>
             </div>
 
