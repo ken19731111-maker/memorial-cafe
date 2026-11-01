@@ -49,20 +49,13 @@
             }
 
             .app-box {
-            width: 100%;
-            max-width: 420px;
-            /* 修正前：height: 760px; (固定高) */
-            height: auto; 
-            max-height: 88vh; /* 画面の高さの88%までに収め、はみ出さないようにする */
-            background: #0f0804;
-            border: 3px solid #2b170e;
-            border-top: none;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+                max-width: 480px;
+                border-radius: 0 0 16px 16px;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 25px rgba(197, 160, 89, 0.25);
+                border: 1px solid rgba(197, 160, 89, 0.3);
+            }
         }
+
         .role-switch-bar {
             width: 100%;
             max-width: 420px;
@@ -96,7 +89,8 @@
         .app-box {
             width: 100%;
             max-width: 420px;
-            height: 760px;
+            height: auto;
+            max-height: 88vh;
             background: #0f0804;
             border: 3px solid #2b170e;
             border-top: none;
@@ -111,7 +105,7 @@
             display: none !important;
             flex: 1;
             flex-direction: column;
-            padding: 12px;
+            padding: 10px;
             overflow-y: auto;
             position: relative;
         }
@@ -124,35 +118,44 @@
             background: #3e2217;
             color: var(--accent-gold);
             border: 1px solid var(--accent-gold);
-            padding: 9px;
-            margin: 4px 0;
+            padding: 8px;
+            margin: 2px 0;
             border-radius: 4px;
             cursor: pointer;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             width: 100%;
             font-weight: bold;
         }
 
-/* シェアボタンの上下余白を短縮 */
-    .share-banner-btn {
+        /* 📖ノート・📸写真館用の大きめボタン */
+        .large-action-btn {
+            background: linear-gradient(135deg, #522614, #31150a);
+            color: var(--accent-gold);
+            border: 2px solid var(--accent-gold);
+            padding: 10px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            transition: transform 0.1s;
+        }
+        .large-action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .share-banner-btn {
             background: linear-gradient(135deg, #422315, #2b170e);
             color: var(--accent-gold);
-            border: 1px solid var(--accent-gold);
-            padding: 5px 8px;
-            margin: 0 0 2px 0; /* 下の隙間を2pxに極小化 */
-            border-radius: 4px;
+            border: 2px solid var(--accent-gold);
+            padding: 6px 10px;
+            margin: 0 0 3px 0;
+            border-radius: 5px;
             cursor: pointer;
             text-align: center;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             font-weight: bold;
             width: 100%;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-        }
-
-        .share-banner-btn:hover {
-            transform: scale(1.02);
-            background: #522c1b;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.5);
         }
 
         .donate-banner-btn {
@@ -168,7 +171,6 @@
             font-weight: bold;
             width: 100%;
             box-shadow: 0 3px 8px rgba(0,0,0,0.5);
-            transition: background 0.2s;
         }
 
         .card {
@@ -294,7 +296,7 @@
         .door {
             width: 200px;
             height: 270px;
-            background: url('door.png') center/cover no-repeat;
+            background: #2b170e url('door.png') center/cover no-repeat;
             border: 4px solid var(--accent-gold);
             margin: 6px auto;
             border-radius: 4px;
@@ -306,20 +308,20 @@
             transform: scale(0.98);
         }
 
-      .counter-view {
+        .counter-view {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80') center/cover;
             justify-content: space-between;
             padding: 0;
-            overflow: hidden !important; /* はみ出しをカット */
+            overflow: hidden !important;
         }
 
         .header {
             background: #1f100a;
-            padding: 8px 10px;
+            padding: 6px 10px;
             text-align: center;
             border-bottom: 1px solid var(--accent-gold);
             color: var(--accent-gold);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             z-index: 20;
             display: flex;
             justify-content: space-between;
@@ -347,8 +349,8 @@
 
         .time-bar {
             background: #1f100a;
-            padding: 4px 8px;
-            font-size: 0.65rem;
+            padding: 3px 8px;
+            font-size: 0.62rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -363,85 +365,37 @@
             border: 1px solid var(--accent-gold);
             padding: 2px 5px;
             border-radius: 3px;
-            font-size: 0.6rem;
+            font-size: 0.58rem;
             cursor: pointer;
         }
 
-       .counter-stage {
+        .counter-stage {
             flex: 1;
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* 中央に綺麗に揃える */
-            padding: 10px 0;
+            justify-content: center;
+            padding: 6px 0;
             overflow: hidden;
-            min-height: 0; /* フレックス要素の縮小を許可 */
+            min-height: 0;
         }
 
-       .photo-frame {
-            width: 95px;  /* 少しコンパクトに調整 */
-            height: 125px;
+        .photo-frame {
+            width: 100px;
+            height: 135px;
             border: 3px solid var(--accent-gold);
             background: #1f100a;
             box-shadow: 0 6px 15px rgba(0,0,0,0.9);
             position: relative;
             z-index: 10;
-            margin-bottom: 8px;
             flex-shrink: 0;
         }
+
         .photo-frame img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        /* マスター写真下の専用ボタン */
-       /* ノート・アルバムボタンの位置指定強化 */
-        .counter-action-buttons {
-            display: flex;
-            gap: 12px;
-            z-index: 25;
-            margin-top: 4px;
-            flex-shrink: 0;
-        }
-
-        .btn-shape-notebook {
-            background: linear-gradient(135deg, #f7f4ed, #e6dfd5);
-            color: #4a271a;
-            border: 2px solid #5a3222;
-            border-radius: 3px 8px 8px 3px;
-            padding: 6px 14px;
-            font-size: 0.72rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: transform 0.2s;
-        }
-        .btn-shape-notebook:hover {
-            transform: scale(1.05);
-        }
-
-        .btn-shape-album {
-            background: linear-gradient(135deg, #2b170e, #1a0f08);
-            color: var(--accent-gold);
-            border: 2px solid var(--accent-gold);
-            border-radius: 6px;
-            padding: 6px 14px;
-            font-size: 0.72rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: transform 0.2s;
-        }
-        .btn-shape-album:hover {
-            transform: scale(1.05);
         }
 
         .flower-area {
@@ -456,8 +410,8 @@
 
         .rand-flower {
             position: absolute;
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
             object-fit: contain;
             pointer-events: auto;
             cursor: pointer;
@@ -469,32 +423,24 @@
             transform: scale(1.15);
         }
 
-    /* お供えボタンエリアの隙間を小さく設定 */
-      .counter-surface {
+        .counter-surface {
             width: 100%;
             background: linear-gradient(180deg, #422315 0%, #221008 100%);
             border-top: 4px solid #6b3c27;
-            padding: 4px 8px 6px 8px; /* パディングを最小限に */
+            padding: 6px 10px 8px 10px;
             position: relative;
             z-index: 15;
-            box-shadow: 0 -5px 10px rgba(0,0,0,0.8);
+            box-shadow: 0 -8px 15px rgba(0,0,0,0.8);
             flex-shrink: 0;
         }
-         .counter-surface div[style*="display:flex"] {
-            margin-top: 0px !important;
-        }
-        .counter-surface div[style*="display:flex"] button {
-            margin: 0 !important;
-            padding: 6px 4px;
-        }   
-       /* お供え物の列の上下余白も詰める */
+
         .offerings-row {
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            gap: 15px;
-            min-height: 70px;
-            margin-bottom: 2px; /* 隙間を詰める */
+            gap: 16px;
+            min-height: 65px;
+            margin-bottom: 2px;
         }
 
         .offering-item {
@@ -511,8 +457,8 @@
         }
 
         .offering-img-transparent {
-            width: 75px;
-            height: 75px;
+            width: 65px;
+            height: 65px;
             object-fit: contain;
             filter: drop-shadow(0 6px 10px rgba(0,0,0,0.9));
             background: rgba(255,255,255,0.08);
@@ -523,16 +469,16 @@
         @keyframes steamRise {
             0% { transform: translateY(0) scaleX(1); opacity: 0; }
             30% { opacity: 0.6; }
-            100% { transform: translateY(-25px) scaleX(1.5); opacity: 0; }
+            100% { transform: translateY(-22px) scaleX(1.5); opacity: 0; }
         }
 
         .steam-effect {
             position: absolute;
-            top: -12px;
+            top: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
-            height: 30px;
+            width: 18px;
+            height: 25px;
             background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
             border-radius: 50%;
             pointer-events: none;
@@ -865,18 +811,21 @@
                 <div class="photo-frame">
                     <img id="master-photo" src="">
                 </div>
-                
-                <!-- マスター写真下の専用ボタン -->
-                <div class="counter-action-buttons">
-                    <button class="btn-shape-notebook" onclick="navTo('notebook')">📖 ノート</button>
-                    <button class="btn-shape-album" onclick="navTo('album')">📸 写真館</button>
-                </div>
             </div>
 
+            <!-- カウンター表面（ここに大きめのノート・アルバムボタンとお供えボタンを配置） -->
             <div class="counter-surface">
-                <button class="share-banner-btn" style="padding: 6px; font-size: 0.72rem; margin-bottom: 4px;" onclick="openShareModal()">🔗 大切な方をこのカフェへご案内する</button>
+                <button class="share-banner-btn" onclick="openShareModal()">🔗 大切な方をこのカフェへご案内する</button>
                 
                 <div class="offerings-row" id="offerings-container"></div>
+
+                <!-- 📖思い出ノート & 📸写真館（大きめボタン） -->
+                <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+                    <button class="btn large-action-btn" onclick="navTo('notebook')">📖 思い出ノート</button>
+                    <button class="btn large-action-btn" onclick="navTo('album')">📸 想い出の写真館</button>
+                </div>
+
+                <!-- お供えアクションボタン -->
                 <div style="display:flex; gap:6px;">
                     <button class="btn" onclick="openGiftModal('coffee')">☕ 珈琲を淹れる</button>
                     <button class="btn" onclick="openGiftModal('flower')">💐 お花を飾る</button>
@@ -1422,14 +1371,10 @@
             curId = id;
             let c = db.cafes.find(x => x.id === id);
             if (!c) return;
-            
-            // 看板や写真の情報をセット
             document.getElementById('ent-cafe-title').innerText = c.title;
             document.getElementById('ent-cafe-sub').innerText = c.master + ' の席';
             document.getElementById('master-photo').src = c.img;
             document.getElementById('counter-header-title').innerText = c.title;
-            
-            // 強制的にエントランス画面を表示する
             showScreen('entrance');
         }
 
@@ -2314,7 +2259,7 @@
                 .eq('id', postId);
 
             if (error) {
-                showToast("❌ 返信の保存に失敗しました: " + error.message);
+                showToast("❌ 返信の失敗: " + error.message);
                 return;
             }
 
