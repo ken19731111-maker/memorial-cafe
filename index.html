@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>メモリアル・カフェ ～大切な想い出が集まる場所～</title>
 
-    <!-- ファビコン（タブのアイコン） -->
+    <!-- ファビコン -->
     <link rel="icon" href="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=64&h=64&q=80" type="image/x-icon">
 
-    <!-- OGP (SNSシェア時のプレビューカード設定) -->
+    <!-- OGP -->
     <meta property="app:title" content="メモリアル・カフェ">
     <meta property="og:title" content="メモリアル・カフェ ～大切な想い出が集まる場所～">
     <meta property="og:description" content="いつもの珈琲の香る温かい場所で、マスターや大切な方への想いを語り合いませんか？お供えや思い出ノート、写真館を備えた閉じることのない優しい空間です。">
@@ -149,7 +149,6 @@
             font-weight: bold;
         }
 
-        /* マスター写真下の操作ボタン */
         .counter-action-buttons {
             display: flex;
             gap: 8px;
@@ -404,28 +403,6 @@
             border-radius: 50%;
             display: none;
             box-shadow: 0 0 6px #e11d48;
-        }
-
-        .time-bar {
-            background: rgba(31, 16, 10, 0.85);
-            padding: 2px 6px;
-            font-size: 0.55rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #3a1f14;
-            color: var(--accent-gold);
-            z-index: 20;
-        }
-
-        .time-bar button {
-            background: #3e2217;
-            color: var(--accent-gold);
-            border: 1px solid var(--accent-gold);
-            padding: 1px 3px;
-            border-radius: 2px;
-            font-size: 0.52rem;
-            cursor: pointer;
         }
 
         .counter-stage {
@@ -826,12 +803,8 @@
                     <button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>
                 </div>
             </div>
-            
-            <div style="margin: 4px 0;">
-                <button class="btn" style="background: #2563eb; color: #fff;" onclick="testCreateCafe()">🧪 Supabase接続テスト（カフェを作る）</button>
-            </div>
 
-            <div id="anniversary-container"></div>
+            <div id="anniversary-container" style="margin-top: 4px;"></div>
 
             <div style="margin: 4px 0;">
                 <button class="btn" onclick="openRegModal()">＋ 新しいカフェを開店する</button>
@@ -871,15 +844,6 @@
                 <div class="header-controls">
                     <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-counter" class="notification-badge-dot"></span></button>
                     <button class="bgm-toggle-btn" id="bgm-btn-counter" onclick="toggleBgm()">🎵 BGM: OFF</button>
-                </div>
-            </div>
-            
-            <div class="time-bar">
-                <span>⏱️ 時間経過テスト:</span>
-                <div>
-                    <button onclick="fastForward(30)">+30分</button>
-                    <button onclick="fastForward(60)">+1時間</button>
-                    <button onclick="fastForward(1440)">+1日</button>
                 </div>
             </div>
 
@@ -1078,7 +1042,7 @@
     <div id="modal-waiting" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:6px; color:var(--accent-gold);">⏳ 承認待ち</h3>
-            <p style="font-size:0.75rem; line-height:1.4; margin-bottom:12px;">マスターが扉を開けるのを待っています...。<br><span style="font-size:0.62rem; color:#666;">（マスター管理画面モードに切り替えて承認することができます）</span></p>
+            <p style="font-size:0.75rem; line-height:1.4; margin-bottom:12px;">マスターが扉を開けるのを待っています...。</p>
             <button class="btn" onclick="closeModals()">閉じる</button>
         </div>
     </div>
@@ -1182,7 +1146,6 @@
     <script>
         let isBgmPlaying = false;
         let curBgmIdx = 0;
-        let simulatedTimeOffsetMs = 0;
         let activeThreadPostId = null;
         let realTimeChannel = null;
         let unreadNotifications = [];
@@ -1279,26 +1242,6 @@
             console.error("Supabase初期化エラー: ", e);
         }
 
-        async function testCreateCafe() {
-            if (!mySupabaseClient) {
-                showToast("⚠️ Supabaseが準備できていません");
-                return;
-            }
-
-            const { data, error } = await mySupabaseClient
-                .from('cafes')
-                .insert([{ title: 'テスト喫茶', master_name: 'テストマスター', type: 'public' }])
-                .select();
-
-            if (error) {
-                console.error('通信エラー:', error);
-                showToast("❌ 通信エラーが発生しました");
-            } else {
-                console.log('保存成功:', data);
-                showToast("🎉 大成功！『テスト喫茶』が作成されました");
-            }
-        }
-
         const FLOWER_TRANSPARENT_IMAGES = [
             'flower1.png', 'flower2.png', 'flower3.png', 'flower4.png', 'flower5.png'
         ];
@@ -1337,7 +1280,7 @@
 
         window.onload = async function() {
             try {
-                let saved = localStorage.getItem('memorial_cafe_perfect_v24');
+                let saved = localStorage.getItem('memorial_cafe_perfect_v25');
                 if (saved) db = JSON.parse(saved);
             } catch(e) {}
 
@@ -1357,7 +1300,7 @@
         };
 
         function saveData() {
-            try { localStorage.setItem('memorial_cafe_perfect_v24', JSON.stringify(db)); } catch(e) {}
+            try { localStorage.setItem('memorial_cafe_perfect_v25', JSON.stringify(db)); } catch(e) {}
         }
 
         async function loadCafesFromSupabase() {
@@ -1692,7 +1635,6 @@
             if (target) {
                 target.classList.add('active');
             } else {
-                console.error("画面が見つかりません: scr-" + id);
                 document.getElementById('scr-counter').classList.add('active');
             }
 
@@ -1733,7 +1675,7 @@
             else if (giftType === 'incense') limitMin = 60;
             else if (giftType === 'coffee') limitMin = 120;
 
-            let expiresAt = new Date(Date.now() + simulatedTimeOffsetMs + limitMin * 60000).toISOString();
+            let expiresAt = new Date(Date.now() + limitMin * 60000).toISOString();
 
             if (!mySupabaseClient) {
                 showToast("⚠️ Supabase未接続");
@@ -1778,13 +1720,13 @@
                 return;
             }
 
-            const currentSimulatedTimeIso = new Date(Date.now() + simulatedTimeOffsetMs).toISOString();
+            const currentTimeIso = new Date().toISOString();
 
             const { data, error } = await mySupabaseClient
                 .from('offerings')
                 .select('*')
                 .eq('cafe_id', curId)
-                .gt('expires_at', currentSimulatedTimeIso);
+                .gt('expires_at', currentTimeIso);
 
             if (error) {
                 console.error("データ取得エラー:", error);
@@ -1830,12 +1772,6 @@
                     </div>`;
                 }
             });
-        }
-
-        function fastForward(min) {
-            simulatedTimeOffsetMs += min * 60000;
-            loadOfferingsFromSupabase();
-            showToast(`⏱️ 時間を ${min} 分進めました`);
         }
 
         function nextNotebookPage() {
@@ -2083,6 +2019,7 @@
             showToast("💬 コメントを投稿しました");
             await loadThreadComments(activeThreadPostId);
             await loadNotesFromSupabase();
+            renderMaster();
         }
 
         function openNoteModal() {
@@ -2399,6 +2336,7 @@
                 return;
             }
 
+            // `.is('reply', null)` により、返信済みのものは未返信リストから自動除外されます
             const { data: posts, error } = await mySupabaseClient
                 .from('posts')
                 .select('*')
@@ -2452,7 +2390,7 @@
                 .insert([{ post_id: postId, cafe_id: curId, author: `${masterName} (マスター)`, content: replyVal }]);
 
             showToast("☕ 返信をノートに刻みました");
-            renderMasterNoteReplyList();
+            renderMaster();
             await loadNotesFromSupabase();
         }
 
