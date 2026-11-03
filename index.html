@@ -316,9 +316,10 @@
             overflow: hidden !important;
         }
 
+        /* ヘッダー周りのレスポンシブ最適化 */
         .header {
             background: #1f100a;
-            padding: 3px 8px;
+            padding: 4px 8px;
             text-align: center;
             border-bottom: 1px solid var(--accent-gold);
             color: var(--accent-gold);
@@ -327,25 +328,36 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 4px;
+        }
+
+        .header-title-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 160px;
+            text-align: left;
         }
 
         .header-controls {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
+            flex-shrink: 0;
         }
 
         .bgm-toggle-btn {
             background: #3e2217;
             color: var(--accent-gold);
             border: 1px solid var(--accent-gold);
-            padding: 2px 5px;
+            padding: 3px 6px;
             border-radius: 3px;
-            font-size: 0.6rem;
+            font-size: 0.62rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 2px;
+            white-space: nowrap;
         }
 
         .bgm-toggle-btn.playing {
@@ -354,16 +366,19 @@
             font-weight: bold;
         }
 
-        /* ささやかな通知ベルボタン */
+        /* 🔔 ささやかな通知ベルボタン */
         .notification-bell-btn {
             background: #3e2217;
             color: var(--accent-gold);
             border: 1px solid var(--accent-gold);
-            padding: 2px 6px;
+            padding: 3px 7px;
             border-radius: 3px;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             cursor: pointer;
             position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* 未読があるときだけ光る小さなドット */
@@ -371,12 +386,13 @@
             position: absolute;
             top: -2px;
             right: -2px;
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
             background: #e11d48;
+            border: 1px solid #fff;
             border-radius: 50%;
             display: none;
-            box-shadow: 0 0 5px #e11d48;
+            box-shadow: 0 0 6px #e11d48;
         }
 
         .time-bar {
@@ -771,6 +787,8 @@
             text-align: center;
             pointer-events: none;
             animation: softAppear 0.4s ease-out;
+            width: 85%;
+            max-width: 320px;
         }
     </style>
 </head>
@@ -793,7 +811,7 @@
         <!-- 0. ポータル画面 -->
         <div id="scr-portal" class="screen portal-view active">
             <div class="header">
-                <span>☕ ポータル</span>
+                <span class="header-title-text">☕ ポータル</span>
                 <div class="header-controls">
                     <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-portal" class="notification-badge-dot"></span></button>
                     <button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>
@@ -840,7 +858,7 @@
         <!-- 2. 店内カウンター画面 -->
         <div id="scr-counter" class="screen counter-view">
             <div class="header">
-                <span id="counter-header-title">メモリアル・カフェ 佐藤</span>
+                <span class="header-title-text" id="counter-header-title">メモリアル・カフェ 佐藤</span>
                 <div class="header-controls">
                     <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-counter" class="notification-badge-dot"></span></button>
                     <button class="bgm-toggle-btn" id="bgm-btn-counter" onclick="toggleBgm()">🎵 BGM: OFF</button>
@@ -884,7 +902,7 @@
         <!-- 3A. 📖 思い出ノート専用画面 -->
         <div id="scr-notebook" class="screen notebook-screen-view">
             <div class="header">
-                <span>📖 思い出ノート</span>
+                <span class="header-title-text">📖 思い出ノート</span>
                 <div class="header-controls">
                     <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-notebook" class="notification-badge-dot"></span></button>
                     <button class="bgm-toggle-btn" id="bgm-btn-notebook" onclick="toggleBgm()">🎵 BGM: OFF</button>
@@ -917,7 +935,7 @@
         <!-- 3B. 📸 想い出の写真館専用画面 -->
         <div id="scr-album" class="screen album-screen-view">
             <div class="header">
-                <span>📸 想い出の写真館</span>
+                <span class="header-title-text">📸 想い出の写真館</span>
                 <div class="header-controls">
                     <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-album" class="notification-badge-dot"></span></button>
                     <button class="bgm-toggle-btn" id="bgm-btn-album" onclick="toggleBgm()">🎵 BGM: OFF</button>
@@ -1160,7 +1178,7 @@
         let simulatedTimeOffsetMs = 0;
         let activeThreadPostId = null;
         let realTimeChannel = null;
-        let unreadNotifications = []; // 未読ストック
+        let unreadNotifications = [];
 
         const BGM_PLAYLIST = [
             { name: "アコースティックギター", url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3" },
@@ -1239,7 +1257,6 @@
                     container.innerHTML += `<div style="border-bottom:1px solid #eee; padding:4px 0;">${n}</div>`;
                 });
             }
-            // 開いたら未読をクリア
             unreadNotifications = [];
             updateBellBadge();
             document.getElementById('modal-notification').style.display = 'flex';
@@ -1313,7 +1330,7 @@
 
         window.onload = async function() {
             try {
-                let saved = localStorage.getItem('memorial_cafe_perfect_v22');
+                let saved = localStorage.getItem('memorial_cafe_perfect_v23');
                 if (saved) db = JSON.parse(saved);
             } catch(e) {}
 
@@ -1333,7 +1350,7 @@
         };
 
         function saveData() {
-            try { localStorage.setItem('memorial_cafe_perfect_v22', JSON.stringify(db)); } catch(e) {}
+            try { localStorage.setItem('memorial_cafe_perfect_v23', JSON.stringify(db)); } catch(e) {}
         }
 
         async function loadCafesFromSupabase() {
@@ -1629,7 +1646,6 @@
             if (scr === 'master') renderMaster();
         }
 
-        // Supabase Realtimeで他の人のお供えや書き込みを「ささやかに」キャッチする
         function setupRealtimeListener() {
             if (!mySupabaseClient) return;
             if (realTimeChannel) {
