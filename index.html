@@ -329,6 +329,12 @@
             align-items: center;
         }
 
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .bgm-toggle-btn {
             background: #3e2217;
             color: var(--accent-gold);
@@ -346,6 +352,31 @@
             background: var(--accent-gold);
             color: #120a05;
             font-weight: bold;
+        }
+
+        /* ささやかな通知ベルボタン */
+        .notification-bell-btn {
+            background: #3e2217;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* 未読があるときだけ光る小さなドット */
+        .notification-badge-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 7px;
+            height: 7px;
+            background: #e11d48;
+            border-radius: 50%;
+            display: none;
+            box-shadow: 0 0 5px #e11d48;
         }
 
         .time-bar {
@@ -370,7 +401,6 @@
             cursor: pointer;
         }
 
-        /* スマホで余白が大きくならないようステージ領域をコンパクトに最適化 */
         .counter-stage {
             flex: 1;
             position: relative;
@@ -722,6 +752,7 @@
             box-shadow: inset 0 0 10px rgba(197,160,89,0.15);
         }
 
+        /* 画面上部の優しくふわっと出るトースト通知 */
         #toast-notification {
             position: absolute;
             top: 40px;
@@ -763,7 +794,10 @@
         <div id="scr-portal" class="screen portal-view active">
             <div class="header">
                 <span>☕ ポータル</span>
-                <button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>
+                <div class="header-controls">
+                    <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-portal" class="notification-badge-dot"></span></button>
+                    <button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>
+                </div>
             </div>
             
             <div style="margin: 4px 0;">
@@ -807,7 +841,10 @@
         <div id="scr-counter" class="screen counter-view">
             <div class="header">
                 <span id="counter-header-title">メモリアル・カフェ 佐藤</span>
-                <button class="bgm-toggle-btn" id="bgm-btn-counter" onclick="toggleBgm()">🎵 BGM: OFF</button>
+                <div class="header-controls">
+                    <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-counter" class="notification-badge-dot"></span></button>
+                    <button class="bgm-toggle-btn" id="bgm-btn-counter" onclick="toggleBgm()">🎵 BGM: OFF</button>
+                </div>
             </div>
             
             <div class="time-bar">
@@ -848,7 +885,10 @@
         <div id="scr-notebook" class="screen notebook-screen-view">
             <div class="header">
                 <span>📖 思い出ノート</span>
-                <button class="bgm-toggle-btn" id="bgm-btn-notebook" onclick="toggleBgm()">🎵 BGM: OFF</button>
+                <div class="header-controls">
+                    <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-notebook" class="notification-badge-dot"></span></button>
+                    <button class="bgm-toggle-btn" id="bgm-btn-notebook" onclick="toggleBgm()">🎵 BGM: OFF</button>
+                </div>
             </div>
 
             <div class="open-notebook-full">
@@ -878,7 +918,10 @@
         <div id="scr-album" class="screen album-screen-view">
             <div class="header">
                 <span>📸 想い出の写真館</span>
-                <button class="bgm-toggle-btn" id="bgm-btn-album" onclick="toggleBgm()">🎵 BGM: OFF</button>
+                <div class="header-controls">
+                    <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-album" class="notification-badge-dot"></span></button>
+                    <button class="bgm-toggle-btn" id="bgm-btn-album" onclick="toggleBgm()">🎵 BGM: OFF</button>
+                </div>
             </div>
 
             <div class="album-grid-full">
@@ -932,6 +975,17 @@
     </div>
 
     <!-- モーダル群 -->
+    <div id="modal-notification" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:0.85rem; margin-bottom:6px; color:var(--accent-gold);">🔔 新着の気配・お知らせ</h3>
+            <p style="font-size:0.7rem; color:#555; margin-bottom:8px;">最近カフェに届いたお供えやメッセージの記録です。</p>
+            <div id="notification-list-container" style="max-height:200px; overflow-y:auto; background:#fff; border:1px solid #d1c7bd; border-radius:4px; padding:6px; margin-bottom:8px; text-align:left; font-size:0.7rem;">
+                <!-- 動的挿入 -->
+            </div>
+            <button class="btn" style="background:#886655;" onclick="closeModals()">閉じる</button>
+        </div>
+    </div>
+
     <div id="modal-donate" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:4px; color:var(--accent-gold);">☕ サイトの維持・マスターを応援する</h3>
@@ -1105,6 +1159,8 @@
         let curBgmIdx = 0;
         let simulatedTimeOffsetMs = 0;
         let activeThreadPostId = null;
+        let realTimeChannel = null;
+        let unreadNotifications = []; // 未読ストック
 
         const BGM_PLAYLIST = [
             { name: "アコースティックギター", url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3" },
@@ -1162,6 +1218,31 @@
             setTimeout(() => {
                 toast.style.display = 'none';
             }, 3000);
+        }
+
+        function updateBellBadge() {
+            const dots = [document.getElementById('bell-dot-portal'), document.getElementById('bell-dot-counter'), document.getElementById('bell-dot-notebook'), document.getElementById('bell-dot-album')];
+            dots.forEach(d => {
+                if (d) {
+                    d.style.display = unreadNotifications.length > 0 ? 'block' : 'none';
+                }
+            });
+        }
+
+        function openNotificationModal() {
+            let container = document.getElementById('notification-list-container');
+            if (unreadNotifications.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#886655; padding:10px;">新しいお知らせはありません。静かなひとときが流れています。</div>`;
+            } else {
+                container.innerHTML = '';
+                unreadNotifications.forEach(n => {
+                    container.innerHTML += `<div style="border-bottom:1px solid #eee; padding:4px 0;">${n}</div>`;
+                });
+            }
+            // 開いたら未読をクリア
+            unreadNotifications = [];
+            updateBellBadge();
+            document.getElementById('modal-notification').style.display = 'flex';
         }
 
         const SUPABASE_URL = 'https://rwkqhtvieictjlnwwndz.supabase.co';
@@ -1232,7 +1313,7 @@
 
         window.onload = async function() {
             try {
-                let saved = localStorage.getItem('memorial_cafe_perfect_v21');
+                let saved = localStorage.getItem('memorial_cafe_perfect_v22');
                 if (saved) db = JSON.parse(saved);
             } catch(e) {}
 
@@ -1252,7 +1333,7 @@
         };
 
         function saveData() {
-            try { localStorage.setItem('memorial_cafe_perfect_v21', JSON.stringify(db)); } catch(e) {}
+            try { localStorage.setItem('memorial_cafe_perfect_v22', JSON.stringify(db)); } catch(e) {}
         }
 
         async function loadCafesFromSupabase() {
@@ -1442,7 +1523,6 @@
         async function knockDoor() {
             const currentCafe = db.cafes.find(c => c.id === curId);
 
-            // パブリック（公開）カフェの場合は無条件で即入店
             if (currentCafe && currentCafe.type === 'public') {
                 if (!db.guest || !db.guest.name) {
                     db.guest = { name: 'ゲスト', relation: '来訪者' };
@@ -1451,7 +1531,6 @@
                 return;
             }
 
-            // プライベート（承認制）の場合：すでにゲスト情報があり、DB上でapprovedかチェック
             if (db.guest && db.guest.name && db.guest.relation) {
                 if (mySupabaseClient) {
                     const { data } = await mySupabaseClient
@@ -1541,10 +1620,47 @@
             }
 
             showScreen(scr);
-            if (scr === 'counter') loadOfferingsFromSupabase();
+            if (scr === 'counter') {
+                loadOfferingsFromSupabase();
+                setupRealtimeListener();
+            }
             if (scr === 'notebook') loadNotesFromSupabase();
             if (scr === 'album') loadPhotosFromSupabase();
             if (scr === 'master') renderMaster();
+        }
+
+        // Supabase Realtimeで他の人のお供えや書き込みを「ささやかに」キャッチする
+        function setupRealtimeListener() {
+            if (!mySupabaseClient) return;
+            if (realTimeChannel) {
+                mySupabaseClient.removeChannel(realTimeChannel);
+            }
+
+            realTimeChannel = mySupabaseClient.channel(`public:cafe_${curId}`)
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'offerings', filter: `cafe_id=eq.${curId}` }, payload => {
+                    let newItem = payload.new;
+                    let typeName = newItem.type === 'coffee' ? '珈琲' : (newItem.type === 'flower' ? 'お花' : 'お線香');
+                    let shortName = newItem.guest_name ? newItem.guest_name.split(' ')[0] : 'どなたか';
+                    showToast(`☕ ${shortName}さんが${typeName}をお供えしました`);
+                    unreadNotifications.push(`☕ ${shortName}さんが${typeName}を手向けました（${newItem.message}）`);
+                    updateBellBadge();
+                    loadOfferingsFromSupabase();
+                })
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts', filter: `cafe_id=eq.${curId}` }, payload => {
+                    let newItem = payload.new;
+                    let shortName = newItem.author ? newItem.author.split(' ')[0] : 'どなたか';
+                    if (newItem.type === 'message') {
+                        showToast(`📖 ${shortName}さんがノートにメッセージを綴りました`);
+                        unreadNotifications.push(`📖 ${shortName}さんが思い出ノートに綴りました`);
+                    } else if (newItem.type === 'photo') {
+                        showToast(`📸 ${shortName}さんが写真館に写真を投稿しました`);
+                        unreadNotifications.push(`📸 ${shortName}さんが写真館に写真を投稿しました`);
+                    }
+                    updateBellBadge();
+                    if (document.getElementById('scr-notebook').classList.contains('active')) loadNotesFromSupabase();
+                    if (document.getElementById('scr-album').classList.contains('active')) loadPhotosFromSupabase();
+                })
+                .subscribe();
         }
 
         function showScreen(id) {
