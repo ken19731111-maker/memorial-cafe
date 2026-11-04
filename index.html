@@ -277,7 +277,6 @@
             margin-top: 1px;
         }
 
-        /* ドア（通常 / 半開き） */
         .door {
             width: 220px;
             height: 300px;
@@ -290,7 +289,6 @@
             transition: transform 0.1s;
             position: relative;
         }
-        /* 承認済みゲスト用の半開きドアスタイル */
         .door.half-open {
             background: #1a0d07 url('door-half.png') center/cover no-repeat;
             border-color: #34d399;
@@ -806,9 +804,7 @@
         <div id="scr-portal" class="screen portal-view active">
             <div class="header">
                 <span class="header-title-text">☕ ポータル</span>
-                <div class="header-controls" id="portal-header-controls">
-                    <!-- 動的にログインボタン / 管理ボタンに切り替わります -->
-                </div>
+                <div class="header-controls" id="portal-header-controls"></div>
             </div>
 
             <div id="anniversary-container" style="margin-top: 4px;"></div>
@@ -854,9 +850,7 @@
         <div id="scr-counter" class="screen counter-view">
             <div class="header">
                 <span class="header-title-text" id="counter-header-title">メモリアル・カフェ 佐藤</span>
-                <div class="header-controls" id="counter-header-controls">
-                    <!-- 動的にログインボタン / 管理ボタンに切り替わります -->
-                </div>
+                <div class="header-controls" id="counter-header-controls"></div>
             </div>
 
             <div class="counter-stage">
@@ -973,13 +967,17 @@
         </div>
     </div>
 
-    <!-- モーダル群 -->
+    <!-- モーダル群（パスワードマネージャー完全対応） -->
     <div id="modal-master-login" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:6px; color:#38bdf8;">🔒 マスター専用ログイン</h3>
             <p style="font-size:0.7rem; color:#555; margin-bottom:8px;" id="login-modal-sub">このカフェのマスター管理パスワードを入力してください。</p>
-            <input type="password" id="master-pass-input" placeholder="パスワードを入力">
-            <button class="btn" style="background:#0284c7; color:#fff; border:none; margin-top:6px;" onclick="submitMasterLogin()">ログインする</button>
+            
+            <form onsubmit="event.preventDefault(); submitMasterLogin();">
+                <input type="text" name="username" id="master-login-user" value="master" style="display:none;" autocomplete="username">
+                <input type="password" id="master-pass-input" name="password" autocomplete="current-password" placeholder="パスワードを入力" required>
+                <button type="submit" class="btn" style="background:#0284c7; color:#fff; border:none; margin-top:6px;">ログインする</button>
+            </form>
             <button class="btn" style="background:#886655; margin-top:3px;" onclick="closeModals()">キャンセル</button>
         </div>
     </div>
@@ -1165,46 +1163,49 @@
         </div>
     </div>
 
+    <!-- 新規開店モーダル（パスワードマネージャー完全対応） -->
     <div id="modal-reg" class="modal">
         <div class="modal-card">
             <h3 style="font-size:0.85rem; margin-bottom:6px; text-align:center; color:var(--accent-gold);">☕ 新しいカフェを開店</h3>
             
-            <label style="font-size:0.68rem;">店名:</label>
-            <input type="text" id="reg-title" placeholder="例: メモリアル・カフェ 鈴木">
-            
-            <label style="font-size:0.68rem;">マスターのお名前:</label>
-            <input type="text" id="reg-master" placeholder="例: 鈴木 太郎">
+            <form onsubmit="event.preventDefault(); submitNewCafe();">
+                <label style="font-size:0.68rem;">店名:</label>
+                <input type="text" id="reg-title" placeholder="例: メモリアル・カフェ 鈴木" required>
+                
+                <label style="font-size:0.68rem;">マスターのお名前:</label>
+                <input type="text" id="reg-master" autocomplete="username" placeholder="例: 鈴木 太郎" required>
 
-            <label style="font-size:0.68rem;">マスター管理パスワード (ログイン用):</label>
-            <input type="password" id="reg-pass" placeholder="管理画面用パスワード">
+                <label style="font-size:0.68rem;">マスター管理パスワード (ログイン用):</label>
+                <input type="password" id="reg-pass" autocomplete="new-password" placeholder="管理画面用パスワード" required>
 
-            <label style="font-size:0.68rem; color:var(--accent-gold); font-weight:bold; margin-top:3px; display:block;">🔒 カフェの公開タイプ:</label>
-            <select id="reg-type" style="font-size:0.72rem; padding:5px; margin-bottom:4px;">
-                <option value="public">👥 誰でも入店OK (パブリック / 承認不要)</option>
-                <option value="private">🔒 承認制 (プライベート / マスターの承認が必要)</option>
-            </select>
-            
-            <div style="display:flex; gap:6px;">
-                <div style="flex:1;">
-                    <label style="font-size:0.68rem;">生年月日:</label>
-                    <input type="date" id="reg-birth">
+                <label style="font-size:0.68rem; color:var(--accent-gold); font-weight:bold; margin-top:3px; display:block;">🔒 カフェの公開タイプ:</label>
+                <select id="reg-type" style="font-size:0.72rem; padding:5px; margin-bottom:4px;">
+                    <option value="public">👥 誰でも入店OK (パブリック / 承認不要)</option>
+                    <option value="private">🔒 承認制 (プライベート / マスターの承認が必要)</option>
+                </select>
+                
+                <div style="display:flex; gap:6px;">
+                    <div style="flex:1;">
+                        <label style="font-size:0.68rem;">生年月日:</label>
+                        <input type="date" id="reg-birth">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="font-size:0.68rem;">没年月日 (命日):</label>
+                        <input type="date" id="reg-death">
+                    </div>
                 </div>
-                <div style="flex:1;">
-                    <label style="font-size:0.68rem;">没年月日 (命日):</label>
-                    <input type="date" id="reg-death">
-                </div>
-            </div>
 
-            <label style="font-size:0.68rem;">マスターからの感謝の一言 (お供え時に表示):</label>
-            <input type="text" id="reg-thanks" placeholder="例: いつもの席で、ゆっくりしていってくださいね。">
+                <label style="font-size:0.68rem;">マスターからの感謝の一言 (お供え時に表示):</label>
+                <input type="text" id="reg-thanks" placeholder="例: いつもの席で、ゆっくりしていってくださいね。">
 
-            <label style="font-size:0.68rem;">フリーコメント (職業・趣味・人柄など):</label>
-            <textarea id="reg-desc" placeholder="例: 珈琲とジャズを愛した職人。いつも穏やかな笑顔でした。" style="height:45px;"></textarea>
-            
-            <label style="font-size:0.68rem;">マスターの写真 (遺影):</label>
-            <input type="file" id="reg-file" accept="image/*" style="font-size:0.72rem;">
-            
-            <button class="btn" style="margin-top:6px;" onclick="submitNewCafe()">オープンする</button>
+                <label style="font-size:0.68rem;">フリーコメント (職業・趣味・人柄など):</label>
+                <textarea id="reg-desc" placeholder="例: 珈琲とジャズを愛した職人。いつも穏やかな笑顔でした。" style="height:45px;"></textarea>
+                
+                <label style="font-size:0.68rem;">マスターの写真 (遺影):</label>
+                <input type="file" id="reg-file" accept="image/*" style="font-size:0.72rem;">
+                
+                <button type="submit" class="btn" style="margin-top:6px;">オープンする</button>
+            </form>
             <button class="btn" style="background:#886655; margin-top:3px;" onclick="closeModals()">戻る</button>
         </div>
     </div>
@@ -1302,7 +1303,6 @@
         function openGuideModal() { document.getElementById('modal-guide').style.display = 'flex'; }
         function openTermsModal() { document.getElementById('modal-terms').style.display = 'flex'; }
 
-        // ログイン状態管理 (LocalStorageに保存してセッションを維持)
         function isMasterLoggedIn() {
             let loggedInCafeId = localStorage.getItem('memorial_cafe_logged_in');
             return loggedInCafeId === curId;
@@ -1339,7 +1339,6 @@
             }
         }
 
-        // ヘッダーコントロールをログイン状態に応じて切り替える
         function updateHeaderControls() {
             let loggedIn = isMasterLoggedIn();
             
@@ -1423,7 +1422,7 @@
 
         window.onload = async function() {
             try {
-                let saved = localStorage.getItem('memorial_cafe_perfect_v28');
+                let saved = localStorage.getItem('memorial_cafe_perfect_v29');
                 if (saved) db = JSON.parse(saved);
             } catch(e) {}
 
@@ -1444,7 +1443,7 @@
         };
 
         function saveData() {
-            try { localStorage.setItem('memorial_cafe_perfect_v28', JSON.stringify(db)); } catch(e) {}
+            try { localStorage.setItem('memorial_cafe_perfect_v29', JSON.stringify(db)); } catch(e) {}
         }
 
         async function loadCafesFromSupabase() {
@@ -1589,10 +1588,7 @@
             document.getElementById('counter-header-title').innerText = c.title;
 
             updateHeaderControls();
-
-            // 承認済みかどうかをチェックしてドアを半開きにする
             await checkGuestApprovalState();
-
             showScreen('entrance');
         }
 
@@ -1983,7 +1979,7 @@
                 leftEl.innerHTML = `
                     <div class="note-card-item" onclick="openThreadModal('${n.id}')">
                         <div style="font-weight:bold; color:#4a271a; font-size:0.62rem;">${n.name}</div>
-                        <div style="color:#332211; font-size:0.68rem; line-height:1.2; margin:2px 0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">「${n.msg}」</div>
+                        <div style="color:#332211; font-size:0.68rem; line-height:1.2; margin:2px 0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">“${n.msg}”</div>
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span style="font-size:0.48rem; color:#886655;">${n.time}</span>
                             ${commentCountBadge}
@@ -2000,7 +1996,7 @@
                 rightEl.innerHTML = `
                     <div class="note-card-item" onclick="openThreadModal('${n.id}')">
                         <div style="font-weight:bold; color:#4a271a; font-size:0.62rem;">${n.name}</div>
-                        <div style="color:#332211; font-size:0.68rem; line-height:1.2; margin:2px 0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">「${n.msg}」</div>
+                        <div style="color:#332211; font-size:0.68rem; line-height:1.2; margin:2px 0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">“${n.msg}”</div>
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span style="font-size:0.48rem; color:#886655;">${n.time}</span>
                             ${commentCountBadge}
@@ -2411,7 +2407,6 @@
                 return;
             }
 
-            // 開店と同時に自動ログインさせる
             localStorage.setItem('memorial_cafe_logged_in', id);
 
             showToast('☕ 新しいカフェがオープンしました！');
