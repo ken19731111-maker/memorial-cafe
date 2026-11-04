@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>メモリアル・カフェ ～大切な想い出が集まる場所～</title>
 
-    <!-- ファビコン（コーヒーカップ画像） -->
     <link rel="icon" href="favicon.png" type="image/png">
 
-    <!-- OGP (SNSシェア用) -->
     <meta property="og:title" content="メモリアル・カフェ ～大切な想い出が集まる場所～">
     <meta property="og:description" content="いつもの珈琲の香る温かい場所で、マスターや大切な方への想いを語り合いませんか？">
     <meta property="og:type" content="website">
@@ -108,7 +106,6 @@
             font-weight: bold;
         }
 
-        /* ノート・写真館の画像ボタン領域 (サイズ約2倍・画像化) */
         .counter-action-buttons {
             display: flex;
             gap: 16px;
@@ -280,7 +277,7 @@
             margin-top: 1px;
         }
 
-        /* ドア（サイズ約2倍化） */
+        /* ドア（通常 / 半開き） */
         .door {
             width: 220px;
             height: 300px;
@@ -291,6 +288,13 @@
             cursor: pointer;
             box-shadow: 0 10px 25px rgba(0,0,0,0.9);
             transition: transform 0.1s;
+            position: relative;
+        }
+        /* 承認済みゲスト用の半開きドアスタイル */
+        .door.half-open {
+            background: #1a0d07 url('door-half.png') center/cover no-repeat;
+            border-color: #34d399;
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.4);
         }
         .door:active {
             transform: scale(0.98);
@@ -336,6 +340,16 @@
             background: transparent;
             color: #38bdf8;
             border: 1px solid #38bdf8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            cursor: pointer;
+        }
+
+        .master-logout-link-btn {
+            background: #e11d48;
+            color: #fff;
+            border: 1px solid #e11d48;
             padding: 2px 6px;
             border-radius: 3px;
             font-size: 0.6rem;
@@ -401,7 +415,6 @@
             min-height: 0;
         }
 
-        /* マスター写真フレーム（サイズ約2倍化） */
         .photo-frame {
             width: 140px;
             height: 185px;
@@ -430,7 +443,6 @@
             z-index: 12;
         }
 
-        /* お花（サイズ約2倍化） */
         .rand-flower {
             position: absolute;
             width: 90px;
@@ -466,7 +478,6 @@
             margin-bottom: 6px;
         }
 
-        /* お供え物（サイズ約2倍化） */
         .offering-item {
             display: flex;
             flex-direction: column;
@@ -696,7 +707,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.7);
         }
 
-        /* モーダルのPC最適化幅 */
         .modal {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -796,10 +806,8 @@
         <div id="scr-portal" class="screen portal-view active">
             <div class="header">
                 <span class="header-title-text">☕ ポータル</span>
-                <div class="header-controls">
-                    <button class="master-login-link-btn" onclick="openMasterLoginModal()">🔒 管理</button>
-                    <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-portal" class="notification-badge-dot"></span></button>
-                    <button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>
+                <div class="header-controls" id="portal-header-controls">
+                    <!-- 動的にログインボタン / 管理ボタンに切り替わります -->
                 </div>
             </div>
 
@@ -818,7 +826,6 @@
 
             <div id="cafe-list" style="display:flex; flex-direction:column; gap:6px; overflow-y:auto; flex:1;"></div>
 
-            <!-- フッター案内・規約リンク -->
             <div class="portal-footer-links">
                 <span onclick="openAboutModal()">☕ このサイトについて</span>
                 <span onclick="openGuideModal()">💡 使い方</span>
@@ -833,8 +840,8 @@
                 <div class="signboard-sub" id="ent-cafe-sub">カフェへ、ようこそ</div>
             </div>
 
-            <div class="door" onclick="knockDoor()"></div>
-            <p style="font-size:0.68rem; color:var(--accent-gold); margin-top:2px;">🚪 ドアをノックして店内へ</p>
+            <div class="door" id="entrance-door" onclick="knockDoor()"></div>
+            <p id="entrance-door-label" style="font-size:0.68rem; color:var(--accent-gold); margin-top:2px;">🚪 ドアをノックして店内へ</p>
             
             <div style="width: 90%; max-width: 280px; margin-top: 6px;">
                 <button class="btn" style="background:linear-gradient(135deg, #422315, #2b170e);" onclick="openShareModal()">🔗 このカフェをご案内する（シェア）</button>
@@ -847,10 +854,8 @@
         <div id="scr-counter" class="screen counter-view">
             <div class="header">
                 <span class="header-title-text" id="counter-header-title">メモリアル・カフェ 佐藤</span>
-                <div class="header-controls">
-                    <button class="master-login-link-btn" onclick="openMasterLoginModal()">🔒 管理</button>
-                    <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-counter" class="notification-badge-dot"></span></button>
-                    <button class="bgm-toggle-btn" id="bgm-btn-counter" onclick="toggleBgm()">🎵 BGM: OFF</button>
+                <div class="header-controls" id="counter-header-controls">
+                    <!-- 動的にログインボタン / 管理ボタンに切り替わります -->
                 </div>
             </div>
 
@@ -859,7 +864,6 @@
                 <div class="photo-frame">
                     <img id="master-photo" src="">
                 </div>
-                <!-- 📖思い出ノート & 📸写真館 (画像ボタン化) -->
                 <div class="counter-action-buttons">
                     <div class="image-btn-box" onclick="navTo('notebook')">
                         <img src="btn-notebook.png" alt="ノート" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=200&q=80'">
@@ -872,11 +876,8 @@
                 </div>
             </div>
 
-            <!-- カウンター表面 -->
             <div class="counter-surface">
                 <div class="offerings-row" id="offerings-container"></div>
-
-                <!-- お供えアクションボタン -->
                 <div style="display:flex; gap:6px;">
                     <button class="btn" onclick="openGiftModal('coffee')">☕ 珈琲を淹れる</button>
                     <button class="btn" onclick="openGiftModal('flower')">💐 お花を飾る</button>
@@ -889,10 +890,7 @@
         <div id="scr-notebook" class="screen notebook-screen-view">
             <div class="header">
                 <span class="header-title-text">📖 思い出ノート</span>
-                <div class="header-controls">
-                    <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-notebook" class="notification-badge-dot"></span></button>
-                    <button class="bgm-toggle-btn" id="bgm-btn-notebook" onclick="toggleBgm()">🎵 BGM: OFF</button>
-                </div>
+                <div class="header-controls" id="notebook-header-controls"></div>
             </div>
 
             <div class="open-notebook-full">
@@ -922,10 +920,7 @@
         <div id="scr-album" class="screen album-screen-view">
             <div class="header">
                 <span class="header-title-text">📸 想い出の写真館</span>
-                <div class="header-controls">
-                    <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-album" class="notification-badge-dot"></span></button>
-                    <button class="bgm-toggle-btn" id="bgm-btn-album" onclick="toggleBgm()">🎵 BGM: OFF</button>
-                </div>
+                <div class="header-controls" id="album-header-controls"></div>
             </div>
 
             <div class="album-grid-full">
@@ -982,9 +977,9 @@
     <div id="modal-master-login" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:6px; color:#38bdf8;">🔒 マスター専用ログイン</h3>
-            <p style="font-size:0.7rem; color:#555; margin-bottom:8px;">マスター管理画面に入るためのパスワードを入力してください。</p>
-            <input type="password" id="master-pass-input" placeholder="パスワードを入力 (初期: master123)">
-            <button class="btn" style="background:#0284c7; color:#fff; border:none; margin-top:6px;" onclick="submitMasterLogin()">ログイン</button>
+            <p style="font-size:0.7rem; color:#555; margin-bottom:8px;" id="login-modal-sub">このカフェのマスター管理パスワードを入力してください。</p>
+            <input type="password" id="master-pass-input" placeholder="パスワードを入力">
+            <button class="btn" style="background:#0284c7; color:#fff; border:none; margin-top:6px;" onclick="submitMasterLogin()">ログインする</button>
             <button class="btn" style="background:#886655; margin-top:3px;" onclick="closeModals()">キャンセル</button>
         </div>
     </div>
@@ -1007,11 +1002,11 @@
             <div style="font-size:0.7rem; line-height:1.5; color:#332211;">
                 <strong>👥 ゲストの方へ:</strong><br>
                 ・扉をノックして店内に入ります（承認制カフェの場合はマスターの許可をお待ちください）。<br>
-                ・カウンターでお好きなお供え物（珈琲・お花・お線香）を手向けることができます。<br>
-                ・「思い出ノート」や「写真館」で昔話に花を咲かせましょう。<br><br>
+                ・一度承認された方は、次からドアが半分開いてスムーズに入店できます。<br>
+                ・カウンターでお好きなお供え物（珈琲・お花・お線香）を手向けることができます。<br><br>
                 <strong>🔒 マスター（カフェの開設者）の方へ:</strong><br>
                 ・ポータルの「新しいカフェを開店する」からどなたでもカフェを作れます。<br>
-                ・右上またはメニューの「🔒 管理」からパスワードを入力して管理画面へお進みください。
+                ・ログインすると管理ボタンが表示され、承認や返信が行えます。
             </div>
             <button class="btn" style="margin-top:10px;" onclick="closeModals()">閉じる</button>
         </div>
@@ -1180,7 +1175,7 @@
             <label style="font-size:0.68rem;">マスターのお名前:</label>
             <input type="text" id="reg-master" placeholder="例: 鈴木 太郎">
 
-            <label style="font-size:0.68rem;">マスター管理パスワード:</label>
+            <label style="font-size:0.68rem;">マスター管理パスワード (ログイン用):</label>
             <input type="password" id="reg-pass" placeholder="管理画面用パスワード">
 
             <label style="font-size:0.68rem; color:var(--accent-gold); font-weight:bold; margin-top:3px; display:block;">🔒 カフェの公開タイプ:</label>
@@ -1307,7 +1302,23 @@
         function openGuideModal() { document.getElementById('modal-guide').style.display = 'flex'; }
         function openTermsModal() { document.getElementById('modal-terms').style.display = 'flex'; }
 
+        // ログイン状態管理 (LocalStorageに保存してセッションを維持)
+        function isMasterLoggedIn() {
+            let loggedInCafeId = localStorage.getItem('memorial_cafe_logged_in');
+            return loggedInCafeId === curId;
+        }
+
+        function logoutMaster() {
+            localStorage.removeItem('memorial_cafe_logged_in');
+            showToast("🔒 マスターをログアウトしました");
+            updateHeaderControls();
+            navTo('portal');
+        }
+
         function openMasterLoginModal() {
+            let c = db.cafes.find(x => x.id === curId);
+            let cafeTitle = c ? c.title : 'このカフェ';
+            document.getElementById('login-modal-sub').innerText = `『${cafeTitle}』のマスター管理パスワードを入力してください。`;
             document.getElementById('master-pass-input').value = '';
             document.getElementById('modal-master-login').style.display = 'flex';
         }
@@ -1318,14 +1329,49 @@
             let correctPass = (c && c.password) ? c.password : 'master123';
 
             if (inputPass === correctPass || inputPass === 'master123') {
+                localStorage.setItem('memorial_cafe_logged_in', curId);
                 closeModals();
-                showToast("🔓 マスター認証に成功しました");
-                document.getElementById('main-nav').style.display = 'none';
-                showScreen('master');
-                renderMaster();
+                showToast("🔓 マスターログインに成功しました");
+                updateHeaderControls();
+                navTo('master');
             } else {
                 showToast("❌ パスワードが一致しません");
             }
+        }
+
+        // ヘッダーコントロールをログイン状態に応じて切り替える
+        function updateHeaderControls() {
+            let loggedIn = isMasterLoggedIn();
+            
+            let htmlPortal = '';
+            if (loggedIn) {
+                htmlPortal += `<button class="master-login-link-btn" onclick="navTo('master')">🔒 管理</button>`;
+                htmlPortal += `<button class="master-logout-link-btn" onclick="logoutMaster()">🔓 ログアウト</button>`;
+            } else {
+                htmlPortal += `<button class="master-login-link-btn" onclick="openMasterLoginModal()">🔒 ログイン</button>`;
+            }
+            htmlPortal += `<button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-portal" class="notification-badge-dot"></span></button>`;
+            htmlPortal += `<button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>`;
+            
+            let portalControls = document.getElementById('portal-header-controls');
+            if (portalControls) portalControls.innerHTML = htmlPortal;
+
+            let htmlCounter = '';
+            if (loggedIn) {
+                htmlCounter += `<button class="master-login-link-btn" onclick="navTo('master')">🔒 管理</button>`;
+                htmlCounter += `<button class="master-logout-link-btn" onclick="logoutMaster()">🔓 ログアウト</button>`;
+            } else {
+                htmlCounter += `<button class="master-login-link-btn" onclick="openMasterLoginModal()">🔒 ログイン</button>`;
+            }
+            htmlCounter += `<button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-counter" class="notification-badge-dot"></span></button>`;
+            htmlCounter += `<button class="bgm-toggle-btn" id="bgm-btn-counter" onclick="toggleBgm()">🎵 BGM: OFF</button>`;
+
+            ['counter-header-controls', 'notebook-header-controls', 'album-header-controls'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el) el.innerHTML = htmlCounter;
+            });
+
+            updateBellBadge();
         }
 
         const SUPABASE_URL = 'https://rwkqhtvieictjlnwwndz.supabase.co';
@@ -1377,7 +1423,7 @@
 
         window.onload = async function() {
             try {
-                let saved = localStorage.getItem('memorial_cafe_perfect_v27');
+                let saved = localStorage.getItem('memorial_cafe_perfect_v28');
                 if (saved) db = JSON.parse(saved);
             } catch(e) {}
 
@@ -1394,10 +1440,11 @@
                 const targetCafe = db.cafes.find(c => c.id === directCafeId);
                 if (targetCafe) selectCafe(directCafeId);
             }
+            updateHeaderControls();
         };
 
         function saveData() {
-            try { localStorage.setItem('memorial_cafe_perfect_v27', JSON.stringify(db)); } catch(e) {}
+            try { localStorage.setItem('memorial_cafe_perfect_v28', JSON.stringify(db)); } catch(e) {}
         }
 
         async function loadCafesFromSupabase() {
@@ -1532,7 +1579,7 @@
             });
         }
 
-        function selectCafe(id) {
+        async function selectCafe(id) {
             curId = id;
             let c = db.cafes.find(x => x.id === id);
             if (!c) return;
@@ -1540,7 +1587,44 @@
             document.getElementById('ent-cafe-sub').innerText = c.master + ' の席';
             document.getElementById('master-photo').src = c.img;
             document.getElementById('counter-header-title').innerText = c.title;
+
+            updateHeaderControls();
+
+            // 承認済みかどうかをチェックしてドアを半開きにする
+            await checkGuestApprovalState();
+
             showScreen('entrance');
+        }
+
+        async function checkGuestApprovalState() {
+            const doorEl = document.getElementById('entrance-door');
+            const doorLabel = document.getElementById('entrance-door-label');
+            const currentCafe = db.cafes.find(c => c.id === curId);
+
+            if (currentCafe && currentCafe.type === 'public' || isMasterLoggedIn()) {
+                doorEl.classList.add('half-open');
+                doorLabel.innerText = '🚪 扉が半分開いています（タップして直行）';
+                return;
+            }
+
+            if (db.guest && db.guest.name && db.guest.relation && mySupabaseClient) {
+                const { data } = await mySupabaseClient
+                    .from('guests')
+                    .select('*')
+                    .eq('cafe_id', curId)
+                    .eq('guest_name', db.guest.name)
+                    .eq('relation', db.guest.relation)
+                    .maybeSingle();
+
+                if (data && data.status === 'approved') {
+                    doorEl.classList.add('half-open');
+                    doorLabel.innerText = `✨ ${db.guest.name}さん、承認済みです（タップして店内へ）`;
+                    return;
+                }
+            }
+
+            doorEl.classList.remove('half-open');
+            doorLabel.innerText = '🚪 ドアをノックして店内へ';
         }
 
         function getShareUrl() {
@@ -1588,28 +1672,26 @@
         async function knockDoor() {
             const currentCafe = db.cafes.find(c => c.id === curId);
 
-            if (currentCafe && currentCafe.type === 'public') {
+            if (currentCafe && currentCafe.type === 'public' || isMasterLoggedIn()) {
                 if (!db.guest || !db.guest.name) {
-                    db.guest = { name: 'ゲスト', relation: '来訪者' };
+                    db.guest = { name: isMasterLoggedIn() ? 'マスター' : 'ゲスト', relation: isMasterLoggedIn() ? '管理者' : '来訪者' };
                 }
                 navTo('counter');
                 return;
             }
 
-            if (db.guest && db.guest.name && db.guest.relation) {
-                if (mySupabaseClient) {
-                    const { data } = await mySupabaseClient
-                        .from('guests')
-                        .select('*')
-                        .eq('cafe_id', curId)
-                        .eq('guest_name', db.guest.name)
-                        .eq('relation', db.guest.relation)
-                        .maybeSingle();
+            if (db.guest && db.guest.name && db.guest.relation && mySupabaseClient) {
+                const { data } = await mySupabaseClient
+                    .from('guests')
+                    .select('*')
+                    .eq('cafe_id', curId)
+                    .eq('guest_name', db.guest.name)
+                    .eq('relation', db.guest.relation)
+                    .maybeSingle();
 
-                    if (data && data.status === 'approved') {
-                        navTo('counter');
-                        return;
-                    }
+                if (data && data.status === 'approved') {
+                    navTo('counter');
+                    return;
                 }
             }
 
@@ -1691,7 +1773,14 @@
             }
             if (scr === 'notebook') loadNotesFromSupabase();
             if (scr === 'album') loadPhotosFromSupabase();
-            if (scr === 'master') renderMaster();
+            if (scr === 'master') {
+                if (!isMasterLoggedIn()) {
+                    showToast("⚠️ マスターログインが必要です");
+                    openMasterLoginModal();
+                    return;
+                }
+                renderMaster();
+            }
         }
 
         function setupRealtimeListener() {
@@ -1751,8 +1840,8 @@
             let userMsg = giftMsgEl ? giftMsgEl.value.trim() : '';
             let finalMsg = userMsg || '心ばかりのお供えです。';
             
-            let guestName = (db.guest && db.guest.name) ? db.guest.name : 'ゲスト';
-            let relation = (db.guest && db.guest.relation) ? db.guest.relation : '来訪者';
+            let guestName = (db.guest && db.guest.name) ? db.guest.name : (isMasterLoggedIn() ? 'マスター' : 'ゲスト');
+            let relation = (db.guest && db.guest.relation) ? db.guest.relation : (isMasterLoggedIn() ? '管理者' : '来訪者');
             let guestLabel = `${guestName} (${relation})`;
 
             let limitMin = 120;
@@ -1983,7 +2072,7 @@
             if (!post) return;
 
             document.getElementById('thread-orig-author').innerText = post.name;
-            document.getElementById('thread-orig-content').innerText = `「${post.msg}」`;
+            document.getElementById('thread-orig-content').innerText = `“${post.msg}”`;
             document.getElementById('thread-orig-time').innerText = post.time;
             document.getElementById('thread-comment-input').value = '';
 
@@ -2050,7 +2139,7 @@
                 return;
             }
 
-            let guestLabel = `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
+            let guestLabel = isMasterLoggedIn() ? `${db.cafes.find(c=>c.id===curId).master} (マスター)` : `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
 
             if (!mySupabaseClient) {
                 showToast("⚠️ Supabase未接続");
@@ -2084,7 +2173,7 @@
                 showToast("⚠️ メッセージを入力してください");
                 return;
             }
-            let guestLabel = `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
+            let guestLabel = isMasterLoggedIn() ? `${db.cafes.find(c=>c.id===curId).master} (マスター)` : `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
 
             if (!mySupabaseClient) {
                 showToast("⚠️ Supabase未接続");
@@ -2155,7 +2244,7 @@
                 return;
             }
             let cap = document.getElementById('photo-cap').value.trim() || '想い出の1枚';
-            let guestLabel = `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
+            let guestLabel = isMasterLoggedIn() ? `${db.cafes.find(c=>c.id===curId).master} (マスター)` : `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
 
             if (!mySupabaseClient) {
                 showToast("⚠️ Supabase未接続");
@@ -2322,10 +2411,14 @@
                 return;
             }
 
+            // 開店と同時に自動ログインさせる
+            localStorage.setItem('memorial_cafe_logged_in', id);
+
             showToast('☕ 新しいカフェがオープンしました！');
             closeModals();
             selectedRegFile = null;
             await loadCafesFromSupabase();
+            selectCafe(id);
         }
 
         async function renderMaster() {
@@ -2406,7 +2499,7 @@
                 container.innerHTML += `
                     <div style="background:rgba(0,0,0,0.3); padding:5px; margin-bottom:5px; border-radius:4px;">
                         <div style="font-size:0.62rem; color:#38bdf8; font-weight:bold;">${p.author || 'ゲスト'}</div>
-                        <div style="font-size:0.68rem; color:#fff; margin:2px 0;">「${p.content}」</div>
+                        <div style="font-size:0.68rem; color:#fff; margin:2px 0;">“${p.content}”</div>
                         <div style="display:flex; gap:4px; margin-top:3px;">
                             <input type="text" id="reply-input-${p.id}" value="" placeholder="マスターからの一言返信..." style="padding:2px 4px; font-size:0.62rem; margin:0; flex:1;">
                             <button class="btn" style="width:auto; padding:2px 6px; font-size:0.62rem; margin:0; background:#34d399; color:#120a05; border:none;" onclick="submitMasterReply('${p.id}')">返信</button>
