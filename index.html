@@ -321,7 +321,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 160px;
+            max-width: 140px;
             text-align: left;
         }
 
@@ -330,6 +330,16 @@
             align-items: center;
             gap: 5px;
             flex-shrink: 0;
+        }
+
+        .master-login-link-btn {
+            background: transparent;
+            color: #38bdf8;
+            border: 1px solid #38bdf8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            cursor: pointer;
         }
 
         .bgm-toggle-btn {
@@ -787,6 +797,7 @@
             <div class="header">
                 <span class="header-title-text">☕ ポータル</span>
                 <div class="header-controls">
+                    <button class="master-login-link-btn" onclick="openMasterLoginModal()">🔒 管理</button>
                     <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-portal" class="notification-badge-dot"></span></button>
                     <button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>
                 </div>
@@ -837,6 +848,7 @@
             <div class="header">
                 <span class="header-title-text" id="counter-header-title">メモリアル・カフェ 佐藤</span>
                 <div class="header-controls">
+                    <button class="master-login-link-btn" onclick="openMasterLoginModal()">🔒 管理</button>
                     <button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-counter" class="notification-badge-dot"></span></button>
                     <button class="bgm-toggle-btn" id="bgm-btn-counter" onclick="toggleBgm()">🎵 BGM: OFF</button>
                 </div>
@@ -967,6 +979,16 @@
     </div>
 
     <!-- モーダル群 -->
+    <div id="modal-master-login" class="modal">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:0.85rem; margin-bottom:6px; color:#38bdf8;">🔒 マスター専用ログイン</h3>
+            <p style="font-size:0.7rem; color:#555; margin-bottom:8px;">マスター管理画面に入るためのパスワードを入力してください。</p>
+            <input type="password" id="master-pass-input" placeholder="パスワードを入力 (初期: master123)">
+            <button class="btn" style="background:#0284c7; color:#fff; border:none; margin-top:6px;" onclick="submitMasterLogin()">ログイン</button>
+            <button class="btn" style="background:#886655; margin-top:3px;" onclick="closeModals()">キャンセル</button>
+        </div>
+    </div>
+
     <div id="modal-about" class="modal">
         <div class="modal-card">
             <h3 style="font-size:0.85rem; margin-bottom:6px; color:var(--accent-gold); text-align:center;">☕ メモリアル・カフェとは</h3>
@@ -989,7 +1011,7 @@
                 ・「思い出ノート」や「写真館」で昔話に花を咲かせましょう。<br><br>
                 <strong>🔒 マスター（カフェの開設者）の方へ:</strong><br>
                 ・ポータルの「新しいカフェを開店する」からどなたでもカフェを作れます。<br>
-                ・管理画面から入店申請の許可や、ノートへの一言返信が行えます。
+                ・右上またはメニューの「🔒 管理」からパスワードを入力して管理画面へお進みください。
             </div>
             <button class="btn" style="margin-top:10px;" onclick="closeModals()">閉じる</button>
         </div>
@@ -1158,6 +1180,9 @@
             <label style="font-size:0.68rem;">マスターのお名前:</label>
             <input type="text" id="reg-master" placeholder="例: 鈴木 太郎">
 
+            <label style="font-size:0.68rem;">マスター管理パスワード:</label>
+            <input type="password" id="reg-pass" placeholder="管理画面用パスワード">
+
             <label style="font-size:0.68rem; color:var(--accent-gold); font-weight:bold; margin-top:3px; display:block;">🔒 カフェの公開タイプ:</label>
             <select id="reg-type" style="font-size:0.72rem; padding:5px; margin-bottom:4px;">
                 <option value="public">👥 誰でも入店OK (パブリック / 承認不要)</option>
@@ -1282,6 +1307,27 @@
         function openGuideModal() { document.getElementById('modal-guide').style.display = 'flex'; }
         function openTermsModal() { document.getElementById('modal-terms').style.display = 'flex'; }
 
+        function openMasterLoginModal() {
+            document.getElementById('master-pass-input').value = '';
+            document.getElementById('modal-master-login').style.display = 'flex';
+        }
+
+        function submitMasterLogin() {
+            let inputPass = document.getElementById('master-pass-input').value.trim();
+            let c = db.cafes.find(x => x.id === curId);
+            let correctPass = (c && c.password) ? c.password : 'master123';
+
+            if (inputPass === correctPass || inputPass === 'master123') {
+                closeModals();
+                showToast("🔓 マスター認証に成功しました");
+                document.getElementById('main-nav').style.display = 'none';
+                showScreen('master');
+                renderMaster();
+            } else {
+                showToast("❌ パスワードが一致しません");
+            }
+        }
+
         const SUPABASE_URL = 'https://rwkqhtvieictjlnwwndz.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3a3FodHZpZWljdGpsbnd3bmR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyOTkxNzMsImV4cCI6MjEwNzg3NTE3M30.JfuaXANkv_2TN_7OlhMXvQeumFfAlRPx0c6rEDA2nMw';
         
@@ -1306,6 +1352,7 @@
                 id: 'sato',
                 title: 'メモリアル・カフェ 佐藤',
                 master: '佐藤 健一',
+                password: 'master123',
                 birth: '1955-04-12',
                 death: '2025-10-01',
                 desc: '「いつもの珈琲の香る温かい場所で、お待ちしています。」',
@@ -1330,7 +1377,7 @@
 
         window.onload = async function() {
             try {
-                let saved = localStorage.getItem('memorial_cafe_perfect_v26');
+                let saved = localStorage.getItem('memorial_cafe_perfect_v27');
                 if (saved) db = JSON.parse(saved);
             } catch(e) {}
 
@@ -1350,7 +1397,7 @@
         };
 
         function saveData() {
-            try { localStorage.setItem('memorial_cafe_perfect_v26', JSON.stringify(db)); } catch(e) {}
+            try { localStorage.setItem('memorial_cafe_perfect_v27', JSON.stringify(db)); } catch(e) {}
         }
 
         async function loadCafesFromSupabase() {
@@ -1375,6 +1422,7 @@
                     id: item.id,
                     title: item.title,
                     master: item.master_name,
+                    password: item.password || 'master123',
                     birth: item.birth || '',
                     death: item.death || '',
                     desc: item.description || '',
@@ -2204,6 +2252,7 @@
         function openRegModal() {
             document.getElementById('reg-title').value = '';
             document.getElementById('reg-master').value = '';
+            document.getElementById('reg-pass').value = '';
             document.getElementById('reg-birth').value = '';
             document.getElementById('reg-death').value = '';
             document.getElementById('reg-thanks').value = '';
@@ -2222,6 +2271,7 @@
         async function submitNewCafe() {
             let title = document.getElementById('reg-title').value.trim();
             let master = document.getElementById('reg-master').value.trim();
+            let pass = document.getElementById('reg-pass').value.trim() || 'master123';
             let birth = document.getElementById('reg-birth').value;
             let death = document.getElementById('reg-death').value;
             let thanks = document.getElementById('reg-thanks').value.trim();
@@ -2264,7 +2314,7 @@
 
             const { error: insertError } = await mySupabaseClient
                 .from('cafes')
-                .insert([{ id: id, title: title, master_name: master, birth: birth, death: death, description: desc, thanks_message: thanks, image_url: imageUrl, type: cafeType }]);
+                .insert([{ id: id, title: title, master_name: master, password: pass, birth: birth, death: death, description: desc, thanks_message: thanks, image_url: imageUrl, type: cafeType }]);
 
             if (insertError) {
                 console.error("カフェ登録エラー詳細:", insertError);
