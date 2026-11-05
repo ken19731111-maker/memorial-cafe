@@ -831,23 +831,24 @@
             </div>
         </div>
 
-        <!-- 1. エントランス画面 -->
-        <div id="scr-entrance" class="screen entrance-view">
-            <div class="signboard">
-                <div class="signboard-title" id="ent-cafe-title">メモリアル・カフェ</div>
-                <div class="signboard-sub" id="ent-cafe-sub">カフェへ、ようこそ</div>
-            </div>
+    <!-- 1. エントランス画面（問い合わせボタン削除版） -->
+<div id="scr-entrance" class="screen entrance-view">
+    <div class="signboard">
+        <div class="signboard-title" id="ent-cafe-title">メモリアル・カフェ</div>
+        <div class="signboard-sub" id="ent-cafe-sub">カフェへ、ようこそ</div>
+    </div>
 
-            <div class="door" id="entrance-door" onclick="knockDoor()"></div>
-            <p id="entrance-door-label" style="font-size:0.68rem; color:var(--accent-gold); margin-top:2px;">🚪 ドアをノックして店内へ</p>
-            
-            <div style="width: 90%; max-width: 280px; margin-top: 6px;">
-                <button class="btn" style="background:linear-gradient(135deg, #422315, #2b170e);" onclick="openShareModal()">🔗 このカフェをご案内する（シェア）</button>
-                <button class="donate-banner-btn" onclick="openDonateModal()">☕ サイトを応援する（寄付）</button>
-                <button class="btn" style="background:#4a271a; margin-top:2px; font-size:0.72rem;" onclick="openContactModal()">📮 マスターへ問い合わせ</button>
-                <button class="btn" style="margin-top:3px; background:#2b170e; font-size:0.72rem;" onclick="navTo('portal')">◀ ポータルへ戻る</button>
-            </div>
-        </div>
+    <div class="door" id="entrance-door" onclick="knockDoor()"></div>
+    <p id="entrance-door-label" style="font-size:0.68rem; color:var(--accent-gold); margin-top:2px;">🚪 ドアをノックして店内へ</p>
+    
+    <div style="width: 90%; max-width: 280px; margin-top: 6px;">
+        <button class="btn" style="background:linear-gradient(135deg, #422315, #2b170e);" onclick="openShareModal()">🔗 このカフェをご案内する（シェア）</button>
+        <button class="donate-banner-btn" onclick="openDonateModal()">☕ サイトを応援する（寄付）</button>
+        <!-- 📮 問い合わせボタンを削除しました -->
+        <button class="btn" style="margin-top:3px; background:#2b170e; font-size:0.72rem;" onclick="navTo('portal')">◀ ポータルへ戻る</button>
+    </div>
+</div>
+
 
         <!-- 2. 店内カウンター画面 -->
         <div id="scr-counter" class="screen counter-view">
