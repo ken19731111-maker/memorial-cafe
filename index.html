@@ -1065,7 +1065,7 @@
         </div>
     </div>
 
-    <div id="modal-donate" class="modal">
+       <div id="modal-donate" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:4px; color:var(--accent-gold);">☕ サイトの維持・マスターを応援する</h3>
             <p style="font-size:0.72rem; line-height:1.4; color:#555; margin-bottom:10px;">
@@ -1074,16 +1074,17 @@
             </p>
             <div style="background:#f0ebe1; border:1px solid #d4af37; padding:8px; border-radius:4px; margin-bottom:10px; font-size:0.7rem; color:#332211;">
                 <strong>💡 ご支援方法について</strong><br>
-                下記のサポートリンク、またはお心づけの窓口よりお手続きいただけます。
+                決済は安全なStripeシステムを通じて行われます。
             </div>
             <div class="share-btn-group">
-                <button class="btn" style="background:#d4af37; color:#120a05;" onclick="showToast('☕ 応援メッセージをお送りしました'); closeModals();">☕ 珈琲1杯分（¥500）のサポート</button>
-                <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="showToast('💌 マスターへ温かい感謝を届けました'); closeModals();">💌 マスターへメッセージ付きで応援する</button>
+                <!-- ★ここにStripeで作成した決済リンクのURLを指定します -->
+                <button class="btn" style="background:#d4af37; color:#120a05;" onclick="window.open('https://buy.stripe.com/test_14A8wP8Ds0lgaTr9s09oc00', '_blank'); closeModals();">☕ 珈琲1杯分（¥500）のサポート</button>
+                <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="showToast('💌 マスターへ温かい感謝を届けました'); closeModals();">💌 マスターへメッセージを心に留める</button>
             </div>
             <button class="btn" style="background:#886655; margin-top:8px;" onclick="closeModals()">閉じる</button>
         </div>
     </div>
-https://buy.stripe.com/test_14A8wP8Ds0lgaTr9s09oc00
+    
     <div id="modal-thanks" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:4px; color:var(--accent-gold);">☕ マスターからの伝言</h3>
