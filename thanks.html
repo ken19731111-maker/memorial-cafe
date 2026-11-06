@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ご支援ありがとうございました - メモリアル・カフェ</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+    <style>
+        :root {
+            --bg-color: #120a05;
+            --paper-bg: #f7f4ed;
+            --text-main: #332211;
+            --accent-gold: #c5a059;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Hiragino Mincho ProN", "Yu Mincho", "Shippori Mincho", Georgia, serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #e6dfd5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), 
+                        url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+        }
+
+        .thanks-box {
+            width: 100%;
+            max-width: 420px;
+            background: var(--paper-bg);
+            border: 3px solid #4a271a;
+            border-radius: 12px;
+            color: var(--text-main);
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(197, 160, 89, 0.3);
+            animation: softAppear 0.8s ease-out forwards;
+        }
+
+        .cup-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 1rem;
+            color: var(--accent-gold);
+            color: #78350f;
+            margin-bottom: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        p {
+            font-size: 0.78rem;
+            line-height: 1.6;
+            color: #443322;
+            margin-bottom: 18px;
+        }
+
+        .btn {
+            background: #3e2217;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.8rem;
+            width: 100%;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .btn:hover {
+            background: #522614;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes softAppear {
+            0% { opacity: 0; transform: translateY(15px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="thanks-box">
+        <div class="cup-icon">☕</div>
+        <h1>温かいご支援、心より感謝申し上げます</h1>
+        <p>
+            「メモリアル・カフェ」の維持と、温かい空間を続けるためのサポートをいただき、本当にありがとうございます。<br><br>
+            いただいたお気持ちは、大切にサーバー運営やより良い空間づくりに活用させていただきます。
+        </p>
+        <a href="index.html" class="btn">カフェの入り口へ戻る</a>
+    </div>
+
+</body>
+</html>
