@@ -2672,6 +2672,21 @@
         function closeModals() {
             document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         }
+        // Stripe決済完了後（?thankyou=true）の帰還判定
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('thankyou') === 'true') {
+        // 少しだけ間を置いて優しくモーダルを表示
+        setTimeout(() => {
+            const modal = document.getElementById('modal-thankyou');
+            if (modal) modal.style.display = 'flex';
+        }, 500);
+
+        // URLからパラメータを消してスッキリさせる（履歴を汚さない）
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+});
+
     </script>
 </body>
 </html>
