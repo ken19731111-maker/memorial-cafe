@@ -2575,7 +2575,7 @@
             selectCafe(id);
         }
 
-        async function renderMaster() {
+                async function renderMaster() {
             let store = db.data[curId];
             if (!store) {
                 db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
@@ -2626,7 +2626,9 @@
 
             renderMasterNoteReplyList();
             renderMasterContacts();
-            loadMasterEditForm(); 
+            
+            // ★ 管理画面が開いたときに現在の登録情報を入力欄へ自動で入力する処理を実行
+            loadMasterEditForm();
         }
 
         async function renderMasterNoteReplyList() {
