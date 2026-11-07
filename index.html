@@ -877,6 +877,39 @@
             <div style="width: 90%; max-width: 280px; margin-top: 6px;">
                 <button class="btn" style="background:linear-gradient(135deg, #422315, #2b170e);" onclick="openShareModal()">🔗 このカフェをご案内する（シェア）</button>
                 <button class="donate-banner-btn" onclick="openDonateModal()">☕ サイトを応援する（寄付）</button>
+                            <!-- ⚙️ カフェの編集・削除エリア -->
+            <div class="card" style="border:1px solid #38bdf8;">
+                <div style="font-size:0.72rem; color:#38bdf8; font-weight:bold; margin-bottom:6px;">⚙️ カフェ情報の変更・削除</div>
+                
+                <label style="font-size:0.62rem; color:#cbd5e1; display:block;">店名:</label>
+                <input type="text" id="edit-cafe-title" style="font-size:0.7rem; padding:4px;">
+
+                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">マスターのお名前:</label>
+                <input type="text" id="edit-master-name" style="font-size:0.7rem; padding:4px;">
+
+                <div style="display:flex; gap:6px; margin-top:3px;">
+                    <div style="flex:1;">
+                        <label style="font-size:0.62rem; color:#cbd5e1; display:block;">誕生日:</label>
+                        <input type="date" id="edit-birth" style="font-size:0.7rem; padding:4px;">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="font-size:0.62rem; color:#cbd5e1; display:block;">命日:</label>
+                        <input type="date" id="edit-death" style="font-size:0.7rem; padding:4px;">
+                    </div>
+                </div>
+
+                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">マスターからの感謝の一言:</label>
+                <input type="text" id="edit-thanks" style="font-size:0.7rem; padding:4px;">
+
+                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">フリーコメント:</label>
+                <textarea id="edit-desc" style="font-size:0.7rem; padding:4px; height:40px;"></textarea>
+
+                <div style="display:flex; gap:6px; margin-top:8px;">
+                    <button class="btn" style="background:#0284c7; color:#fff; border:none; font-size:0.68rem; padding:5px; margin:0; flex:1;" onclick="updateCafeInfo()">変更を保存する</button>
+                    <button class="btn" style="background:#e11d48; color:#fff; border:none; font-size:0.68rem; padding:5px; margin:0; flex:1;" onclick="deleteThisCafe()">このカフェを削除</button>
+                </div>
+            </div>
+
                 <button class="btn" style="margin-top:3px; background:#2b170e; font-size:0.72rem;" onclick="navTo('portal')">◀ ポータルへ戻る</button>
             </div>
         </div>
