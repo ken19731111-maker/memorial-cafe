@@ -2807,16 +2807,24 @@
             }
         }
                 // 📋 管理画面を開いたときに現在のカフェ情報をフォームに読み込む関数
+                // 📋 管理画面を開いたときに現在のカフェ情報をフォームに自動セットする関数
         function loadMasterEditForm() {
             let c = db.cafes.find(x => x.id === curId);
             if (!c) return;
 
-            document.getElementById('edit-cafe-title').value = c.title || '';
-            document.getElementById('edit-master-name').value = c.master || '';
-            document.getElementById('edit-birth').value = c.birth || '';
-            document.getElementById('edit-death').value = c.death || '';
-            document.getElementById('edit-thanks').value = c.thanks || '';
-            document.getElementById('edit-desc').value = c.desc || '';
+            const titleEl = document.getElementById('edit-cafe-title');
+            const masterEl = document.getElementById('edit-master-name');
+            const birthEl = document.getElementById('edit-birth');
+            const deathEl = document.getElementById('edit-death');
+            const thanksEl = document.getElementById('edit-thanks');
+            const descEl = document.getElementById('edit-desc');
+
+            if (titleEl) titleEl.value = c.title || '';
+            if (masterEl) masterEl.value = c.master || '';
+            if (birthEl) birthEl.value = c.birth || '';
+            if (deathEl) deathEl.value = c.death || '';
+            if (thanksEl) thanksEl.value = c.thanks || '';
+            if (descEl) descEl.value = c.desc || '';
         }
 
         // 💾 「変更を保存する」ボタンの処理
