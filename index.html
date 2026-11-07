@@ -2626,6 +2626,7 @@
 
             renderMasterNoteReplyList();
             renderMasterContacts();
+            loadMasterEditForm(); 
         }
 
         async function renderMasterNoteReplyList() {
@@ -2803,6 +2804,88 @@
                 document.body.classList.remove('anniversary-mode');
             }
         }
+                // 📋 管理画面を開いたときに現在のカフェ情報をフォームに読み込む関数
+        function loadMasterEditForm() {
+            let c = db.cafes.find(x => x.id === curId);
+            if (!c) return;
+
+            document.getElementById('edit-cafe-title').value = c.title || '';
+            document.getElementById('edit-master-name').value = c.master || '';
+            document.getElementById('edit-birth').value = c.birth || '';
+            document.getElementById('edit-death').value = c.death || '';
+            document.getElementById('edit-thanks').value = c.thanks || '';
+            document.getElementById('edit-desc').value = c.desc || '';
+        }
+
+        // 💾 「変更を保存する」ボタンの処理
+        async function updateCafeInfo() {
+            let newTitle = document.getElementById('edit-cafe-title').value.trim();
+            let newMaster = document.getElementById('edit-master-name').value.trim();
+            let newBirth = document.getElementById('edit-birth').value;
+            let newDeath = document.getElementById('edit-death').value;
+            let newThanks = document.getElementById('edit-thanks').value.trim();
+            let newDesc = document.getElementById('edit-desc').value.trim();
+
+            if (!newTitle || !newMaster) {
+                showToast("⚠️ 店名とマスター名は必須です");
+                return;
+            }
+
+            if (!mySupabaseClient) {
+                showToast("⚠️ Supabase未接続");
+                return;
+            }
+
+            const { error } = await mySupabaseClient
+                .from('cafes')
+                .update({
+                    title: newTitle,
+                    master_name: newMaster,
+                    birth: newBirth || null,
+                    death: newDeath || null,
+                    thanks_message: newThanks,
+                    description: newDesc
+                })
+                .eq('id', curId);
+
+            if (error) {
+                console.error("更新エラー:", error);
+                showToast("❌ 保存に失敗しました: " + error.message);
+                return;
+            }
+
+            showToast("✨ カフェ情報を更新しました");
+            await loadCafesFromSupabase();
+            selectCafe(curId);
+        }
+
+        // 🗑️ 「このカフェを削除」ボタンの処理
+        async function deleteThisCafe() {
+            const confirmed = confirm("本当にこのカフェを削除しますか？\nお供えや思い出ノートのデータもすべて削除され、元に戻せません。");
+            if (!confirmed) return;
+
+            if (!mySupabaseClient) {
+                showToast("⚠️ Supabase未接続");
+                return;
+            }
+
+            const { error } = await mySupabaseClient
+                .from('cafes')
+                .delete()
+                .eq('id', curId);
+
+            if (error) {
+                console.error("削除エラー:", error);
+                showToast("❌ 削除に失敗しました: " + error.message);
+                return;
+            }
+
+            localStorage.removeItem('memorial_cafe_logged_in');
+            showToast("🗑️ カフェを削除しました");
+            await loadCafesFromSupabase();
+            navTo('portal');
+        }
+
     </script>
 </body>
 </html>
