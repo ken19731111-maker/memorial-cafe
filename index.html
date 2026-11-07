@@ -791,44 +791,42 @@
             width: 85%;
             max-width: 320px;
         }
-        /* 🕯️ 記念日モード用のスペシャルスタイル */
-body.anniversary-mode {
-    /* 画面全体に柔らかなキャンドル光をプラス */
-    box-shadow: inset 0 0 100px rgba(212, 175, 55, 0.25);
-}
 
-/* 記念日の案内ヘッダーバー */
-.anniversary-banner {
-    display: none;
-    background: linear-gradient(90deg, rgba(66,35,21,0.9), rgba(120,53,15,0.9), rgba(66,35,21,0.9));
-    color: var(--accent-gold, #c5a059);
-    border-bottom: 1px solid #d4af37;
-    text-align: center;
-    padding: 6px 12px;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    position: relative;
-    z-index: 100;
-}
+        /* 🕯️ 記念日モード用のスペシャルスタイル（さりげないともしび） */
+        body.anniversary-mode {
+            box-shadow: inset 0 0 60px rgba(212, 175, 55, 0.15);
+        }
 
-body.anniversary-mode .anniversary-banner {
-    display: block;
-    animation: fadeInDown 1s ease-out;
-}
+        .anniversary-banner {
+            display: none;
+            background: linear-gradient(90deg, rgba(66,35,21,0.9), rgba(120,53,15,0.9), rgba(66,35,21,0.9));
+            color: var(--accent-gold, #c5a059);
+            border-bottom: 1px solid #d4af37;
+            text-align: center;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 100;
+        }
 
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        body.anniversary-mode .anniversary-banner {
+            display: block;
+            animation: fadeInDown 1s ease-out;
+        }
 
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
-<!-- 🕯️ 記念日ヘッダーバー -->
-<div id="anniversary-banner" class="anniversary-banner">
-    🕯️ 本日は大切な記念日（ともしびの日）です。特別な灯りでお迎えしております。
-</div>
+    <!-- 🕯️ 記念日ヘッダーバー -->
+    <div id="anniversary-banner" class="anniversary-banner">
+        🕯️ 本日は大切な記念日（ともしびの日）です。特別な灯りでお迎えしております。
+    </div>
 
     <audio id="cafe-bgm" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3"></audio>
 
@@ -866,24 +864,22 @@ body.anniversary-mode .anniversary-banner {
             </div>
         </div>
 
-    <!-- 1. エントランス画面（問い合わせボタン削除版） -->
-<div id="scr-entrance" class="screen entrance-view">
-    <div class="signboard">
-        <div class="signboard-title" id="ent-cafe-title">メモリアル・カフェ</div>
-        <div class="signboard-sub" id="ent-cafe-sub">カフェへ、ようこそ</div>
-    </div>
+        <!-- 1. エントランス画面 -->
+        <div id="scr-entrance" class="screen entrance-view">
+            <div class="signboard">
+                <div class="signboard-title" id="ent-cafe-title">メモリアル・カフェ</div>
+                <div class="signboard-sub" id="ent-cafe-sub">カフェへ、ようこそ</div>
+            </div>
 
-    <div class="door" id="entrance-door" onclick="knockDoor()"></div>
-    <p id="entrance-door-label" style="font-size:0.68rem; color:var(--accent-gold); margin-top:2px;">🚪 ドアをノックして店内へ</p>
-    
-    <div style="width: 90%; max-width: 280px; margin-top: 6px;">
-        <button class="btn" style="background:linear-gradient(135deg, #422315, #2b170e);" onclick="openShareModal()">🔗 このカフェをご案内する（シェア）</button>
-        <button class="donate-banner-btn" onclick="openDonateModal()">☕ サイトを応援する（寄付）</button>
-        <!-- 📮 問い合わせボタンを削除しました -->
-        <button class="btn" style="margin-top:3px; background:#2b170e; font-size:0.72rem;" onclick="navTo('portal')">◀ ポータルへ戻る</button>
-    </div>
-</div>
-
+            <div class="door" id="entrance-door" onclick="knockDoor()"></div>
+            <p id="entrance-door-label" style="font-size:0.68rem; color:var(--accent-gold); margin-top:2px;">🚪 ドアをノックして店内へ</p>
+            
+            <div style="width: 90%; max-width: 280px; margin-top: 6px;">
+                <button class="btn" style="background:linear-gradient(135deg, #422315, #2b170e);" onclick="openShareModal()">🔗 このカフェをご案内する（シェア）</button>
+                <button class="donate-banner-btn" onclick="openDonateModal()">☕ サイトを応援する（寄付）</button>
+                <button class="btn" style="margin-top:3px; background:#2b170e; font-size:0.72rem;" onclick="navTo('portal')">◀ ポータルへ戻る</button>
+            </div>
+        </div>
 
         <!-- 2. 店内カウンター画面 -->
         <div id="scr-counter" class="screen counter-view">
@@ -1011,7 +1007,7 @@ body.anniversary-mode .anniversary-banner {
         </div>
     </div>
 
-    <!-- モーダル群（問い合わせ対応版） -->
+    <!-- モーダル群 -->
     <div id="modal-master-login" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:6px; color:#38bdf8;">🔒 マスター専用ログイン</h3>
@@ -1071,7 +1067,6 @@ body.anniversary-mode .anniversary-banner {
         </div>
     </div>
 
-    <!-- 📮 問い合わせ用モーダル（Supabase連携） -->
     <div id="modal-contact" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:4px; color:var(--accent-gold);">📮 問い合わせフォーム</h3>
@@ -1100,7 +1095,7 @@ body.anniversary-mode .anniversary-banner {
         </div>
     </div>
 
-       <div id="modal-donate" class="modal">
+    <div id="modal-donate" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:4px; color:var(--accent-gold);">☕ サイトの維持・マスターを応援する</h3>
             <p style="font-size:0.72rem; line-height:1.4; color:#555; margin-bottom:10px;">
@@ -1112,41 +1107,41 @@ body.anniversary-mode .anniversary-banner {
                 決済は安全なStripeシステムを通じて行われます。
             </div>
             <div class="share-btn-group">
-                <!-- ★ここにStripeで作成した決済リンクのURLを指定します -->
                 <button class="btn" style="background:#d4af37; color:#120a05;" onclick="window.open('https://buy.stripe.com/test_14A8wP8Ds0lgaTr9s09oc00', '_blank'); closeModals();">☕ 珈琲1杯分（¥500）のサポート</button>
                 <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="showToast('💌 マスターへ温かい感謝を届けました'); closeModals();">💌 マスターへメッセージを心に留める</button>
             </div>
             <button class="btn" style="background:#886655; margin-top:8px;" onclick="closeModals()">閉じる</button>
         </div>
     </div>
-    <!-- 🕯️ 記念日お迎えモーダル -->
-<div id="modal-anniversary" class="modal">
-    <div class="modal-card" style="text-align:center; border:2px solid var(--accent-gold);">
-        <div style="font-size:2.2rem; margin-bottom:6px;">🕯️✨</div>
-        <h3 style="font-size:0.9rem; margin-bottom:8px; color:var(--accent-gold);">特別な日のともしび</h3>
-        <p style="font-size:0.75rem; line-height:1.6; color:#432; margin-bottom:14px;">
-            本日もお越しいただきありがとうございます。<br>
-            本日は大切な記念日でございます。<br><br>
-            いつもより少し温かい灯りを点してお待ちしておりました。<br>
-            思い出とともに、どうぞごゆっくりお過ごしください。
-        </p>
-        <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="closeModals()">店内に進む</button>
-    </div>
-</div>
 
-    <!-- 🎉 お心づけへのお礼モーダル -->
-<div id="modal-thankyou" class="modal">
-    <div class="modal-card" style="text-align:center; border:2px solid var(--accent-gold);">
-        <div style="font-size:2rem; margin-bottom:6px;">☕✨</div>
-        <h3 style="font-size:0.9rem; margin-bottom:8px; color:var(--accent-gold);">マスターからの特別なおもてなし</h3>
-        <p style="font-size:0.75rem; line-height:1.6; color:#432; margin-bottom:14px;">
-            温かいお心づけをいただき、誠にありがとうございます。<br>
-            いただいたお気持ちは、この空間を静かに守り続けるために大切に使わせていただきます。<br><br>
-            どうぞ、心ゆくまでごゆっくりお過ごしください。
-        </p>
-        <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="closeModals()">店内に戻る</button>
+    <!-- 🕯️ 記念日お迎えモーダル -->
+    <div id="modal-anniversary" class="modal">
+        <div class="modal-card" style="text-align:center; border:2px solid var(--accent-gold);">
+            <div style="font-size:2.2rem; margin-bottom:6px;">🕯️✨</div>
+            <h3 style="font-size:0.9rem; margin-bottom:8px; color:var(--accent-gold);">特別な日のともしび</h3>
+            <p style="font-size:0.75rem; line-height:1.6; color:#432; margin-bottom:14px;">
+                本日もお越しいただきありがとうございます。<br>
+                本日は大切な記念日でございます。<br><br>
+                いつもより少し温かい灯りを点してお待ちしておりました。<br>
+                思い出とともに、どうぞごゆっくりお過ごしください。
+            </p>
+            <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="closeModals()">店内に進む</button>
+        </div>
     </div>
-</div>
+
+    <!-- 🎉 お心づけへのお礼モーダル（Stripe決済完了後） -->
+    <div id="modal-thankyou" class="modal">
+        <div class="modal-card" style="text-align:center; border:2px solid var(--accent-gold);">
+            <div style="font-size:2rem; margin-bottom:6px;">☕✨</div>
+            <h3 style="font-size:0.9rem; margin-bottom:8px; color:var(--accent-gold);">マスターからの特別なおもてなし</h3>
+            <p style="font-size:0.75rem; line-height:1.6; color:#432; margin-bottom:14px;">
+                温かいお心づけをいただき、誠にありがとうございます。<br>
+                いただいたお気持ちは、この空間を静かに守り続けるために大切に使わせていただきます。<br><br>
+                どうぞ、心ゆくまでごゆっくりお過ごしください。
+            </p>
+            <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="closeModals()">店内に戻る</button>
+        </div>
+    </div>
 
     <div id="modal-thanks" class="modal">
         <div class="modal-card" style="text-align:center;">
@@ -1279,11 +1274,11 @@ body.anniversary-mode .anniversary-banner {
                 
                 <div style="display:flex; gap:6px;">
                     <div style="flex:1;">
-                        <label style="font-size:0.68rem;">生年月日:</label>
+                        <label style="font-size:0.68rem;">生年月日 (birth):</label>
                         <input type="date" id="reg-birth">
                     </div>
                     <div style="flex:1;">
-                        <label style="font-size:0.68rem;">没年月日 (命日):</label>
+                        <label style="font-size:0.68rem;">没年月日・命日 (death):</label>
                         <input type="date" id="reg-death">
                     </div>
                 </div>
@@ -1718,6 +1713,10 @@ body.anniversary-mode .anniversary-banner {
 
             updateHeaderControls();
             await checkGuestApprovalState();
+            
+            // 🕯️ カフェが選ばれた時に birth / death をチェックしてさりげなくともしびモード発動
+            checkDatabaseAnniversaryForCurrentCafe(c);
+
             showScreen('entrance');
         }
 
@@ -1920,7 +1919,7 @@ body.anniversary-mode .anniversary-banner {
                     let typeName = newItem.type === 'coffee' ? '珈琲' : (newItem.type === 'flower' ? 'お花' : 'お線香');
                     let shortName = newItem.guest_name ? newItem.guest_name.split(' ')[0] : 'どなたか';
                     showToast(`☕ ${shortName}さんが${typeName}をお供えしました`);
-                    unreadNotifications.push(`☕ ${shortName}さんが${typeName}を手向けました（${newItem.message}）`);
+                    unreadNotifications.push(`☕ ${shortName}さんが${typeName}を手えました（${newItem.message}）`);
                     updateBellBadge();
                     loadOfferingsFromSupabase();
                 })
@@ -2722,76 +2721,57 @@ body.anniversary-mode .anniversary-banner {
         function closeModals() {
             document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         }
-        // Stripe決済完了後（?thankyou=true）の帰還判定
-window.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('thankyou') === 'true') {
-        // 少しだけ間を置いて優しくモーダルを表示
-        setTimeout(() => {
-            const modal = document.getElementById('modal-thankyou');
-            if (modal) modal.style.display = 'flex';
-        }, 500);
 
-        // URLからパラメータを消してスッキリさせる（履歴を汚さない）
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-});
-// 🕯️ データベースの birth (誕生日) と death (命日) からさりげなく記念日を判定する処理
-async function checkDatabaseAnniversary() {
-    try {
-        // ※お使いのSupabaseのテーブル名（例: 'cafes' など）や取得方法に合わせて調整してください
-        // 例として現在ログイン中のカフェ情報やデータを取得するクエリを想定しています
-        const { data, error } = await supabase
-            .from('cafes') // ← お使いのテーブル名に合わせて変更してください
-            .select('birth, death')
-            .single();
+        // ☕ Stripe決済完了後（?thankyou=true）のお礼モーダル表示
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('thankyou') === 'true') {
+                setTimeout(() => {
+                    const modal = document.getElementById('modal-thankyou');
+                    if (modal) modal.style.display = 'flex';
+                }, 500);
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
 
-        if (error || !data) return;
+        // 🕯️ データベースの birth (誕生日) と death (命日) からさりげなく記念日を判定する処理
+        function checkDatabaseAnniversaryForCurrentCafe(cafe) {
+            if (!cafe) return;
 
-        const today = new Date();
-        const currentMonth = today.getMonth() + 1;
-        const currentDate = today.getDate();
+            const today = new Date();
+            const currentMonth = today.getMonth() + 1;
+            const currentDate = today.getDate();
 
-        let isAnniversaryDay = false;
+            let isAnniversaryDay = false;
 
-        // birth（誕生日）の月日チェック
-        if (data.birth) {
-            const birthDate = new Date(data.birth);
-            if (birthDate.getMonth() + 1 === currentMonth && birthDate.getDate() === currentDate) {
-                isAnniversaryDay = true;
+            // birth（誕生日）の月日チェック
+            if (cafe.birth) {
+                const birthDate = new Date(cafe.birth);
+                if (birthDate.getMonth() + 1 === currentMonth && birthDate.getDate() === currentDate) {
+                    isAnniversaryDay = true;
+                }
+            }
+
+            // death（命日）の月日チェック
+            if (cafe.death) {
+                const deathDate = new Date(cafe.death);
+                if (deathDate.getMonth() + 1 === currentMonth && deathDate.getDate() === currentDate) {
+                    isAnniversaryDay = true;
+                }
+            }
+
+            // 🎂 誕生日または命日の場合、さりげなく演出を適用
+            if (isAnniversaryDay) {
+                document.body.classList.add('anniversary-mode');
+
+                setTimeout(() => {
+                    const modal = document.getElementById('modal-anniversary');
+                    if (modal) modal.style.display = 'flex';
+                }, 800);
+            } else {
+                document.body.classList.remove('anniversary-mode');
             }
         }
-
-        // death（命日）の月日チェック
-        if (data.death) {
-            const deathDate = new Date(data.death);
-            if (deathDate.getMonth() + 1 === currentMonth && deathDate.getDate() === currentDate) {
-                isAnniversaryDay = true;
-            }
-        }
-
-        // 🎂 誕生日または命日の場合、さりげなく演出を適用
-        if (isAnniversaryDay) {
-            // あまり派手すぎず、ほんのり温かい灯りのクラスを追加
-            document.body.classList.add('anniversary-mode');
-
-            // 控えめで上品なお迎えモーダルを少し遅れて優しく表示
-            setTimeout(() => {
-                const modal = document.getElementById('modal-anniversary');
-                if (modal) modal.style.display = 'flex';
-            }, 800);
-        }
-
-    } catch (err) {
-        console.error('記念日データの読み込みに失敗しました', err);
-    }
-}
-
-// ページ読み込み時にチェックを実行
-window.addEventListener('DOMContentLoaded', () => {
-    checkDatabaseAnniversary();
-});
-
     </script>
 </body>
 </html>
