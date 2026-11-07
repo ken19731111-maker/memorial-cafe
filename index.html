@@ -2813,7 +2813,7 @@
         }
                 // 📋 管理画面を開いたときに現在のカフェ情報をフォームに読み込む関数
                 // 📋 管理画面を開いたときに現在のカフェ情報をフォームに自動セットする関数
-        function loadMasterEditForm() {
+                function loadMasterEditForm() {
             let c = db.cafes.find(x => x.id === curId);
             if (!c) return;
 
@@ -2823,6 +2823,7 @@
             const deathEl = document.getElementById('edit-death');
             const thanksEl = document.getElementById('edit-thanks');
             const descEl = document.getElementById('edit-desc');
+            const tagsEl = document.getElementById('edit-tags');
 
             if (titleEl) titleEl.value = c.title || '';
             if (masterEl) masterEl.value = c.master || '';
@@ -2830,16 +2831,20 @@
             if (deathEl) deathEl.value = c.death || '';
             if (thanksEl) thanksEl.value = c.thanks || '';
             if (descEl) descEl.value = c.desc || '';
+            if (tagsEl) tagsEl.value = c.tags || ''; // ★ タグを自動入力
         }
+
 
         // 💾 「変更を保存する」ボタンの処理
         async function updateCafeInfo() {
+                async function updateCafeInfo() {
             let newTitle = document.getElementById('edit-cafe-title').value.trim();
             let newMaster = document.getElementById('edit-master-name').value.trim();
             let newBirth = document.getElementById('edit-birth').value;
             let newDeath = document.getElementById('edit-death').value;
             let newThanks = document.getElementById('edit-thanks').value.trim();
             let newDesc = document.getElementById('edit-desc').value.trim();
+            let newTags = document.getElementById('edit-tags').value.trim();
 
             if (!newTitle || !newMaster) {
                 showToast("⚠️ 店名とマスター名は必須です");
@@ -2859,7 +2864,8 @@
                     birth: newBirth || null,
                     death: newDeath || null,
                     thanks_message: newThanks,
-                    description: newDesc
+                    description: newDesc,
+                    tags: newTags
                 })
                 .eq('id', curId);
 
@@ -2873,6 +2879,7 @@
             await loadCafesFromSupabase();
             selectCafe(curId);
         }
+
 
         // 🗑️ 「このカフェを削除」ボタンの処理
         async function deleteThisCafe() {
