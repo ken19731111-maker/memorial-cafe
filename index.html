@@ -995,7 +995,8 @@
                 <div style="font-size:0.72rem; color:#a855f7; font-weight:bold; margin-bottom:3px;">📮 届いた問い合わせ一覧（自分宛てのみ）</div>
                 <div id="master-contact-list" style="font-size:0.68rem; color:#cbd5e1; max-height:90px; overflow-y:auto;"></div>
             </div>
- <!-- ⚙️ カフェの編集・削除エリア -->
+
+            <!-- ⚙️ カフェの編集・削除エリア -->
             <div class="card" style="border:1px solid #38bdf8;">
                 <div style="font-size:0.72rem; color:#38bdf8; font-weight:bold; margin-bottom:6px;">⚙️ カフェ情報の変更・削除</div>
                 
@@ -1021,14 +1022,16 @@
 
                 <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">フリーコメント:</label>
                 <textarea id="edit-desc" style="font-size:0.7rem; padding:4px; height:40px;"></textarea>
-<!-- ★★★ ここにタグ編集欄を追加 ★★★ -->
-                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">タグ (スペース区切り):</label>
+
+                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">🏷️ タグ (スペース区切り):</label>
                 <input type="text" id="edit-tags" style="font-size:0.7rem; padding:4px;">
+
                 <div style="display:flex; gap:6px; margin-top:8px;">
                     <button class="btn" style="background:#0284c7; color:#fff; border:none; font-size:0.68rem; padding:5px; margin:0; flex:1;" onclick="updateCafeInfo()">変更を保存する</button>
                     <button class="btn" style="background:#e11d48; color:#fff; border:none; font-size:0.68rem; padding:5px; margin:0; flex:1;" onclick="deleteThisCafe()">このカフェを削除</button>
                 </div>
             </div>
+
             <button class="btn" style="margin-top:auto;" onclick="navTo('portal')">🏠 ポータルへ戻る</button>
         </div>
 
@@ -1321,10 +1324,10 @@
 
                 <label style="font-size:0.68rem;">フリーコメント (職業・趣味・人柄など):</label>
                 <textarea id="reg-desc" placeholder="例: 珈琲とジャズを愛した職人。いつも穏やかな笑顔でした。" style="height:45px;"></textarea>
-                <!-- ★★★ ここに「タグ」の入力欄を追加 ★★★ -->
+                
                 <label style="font-size:0.68rem; margin-top:3px; display:block;">タグ (スペースやカンマ区切り):</label>
                 <input type="text" id="reg-tags" placeholder="例: 珈琲 ジャズ 読書 穏やか">
-                <!-- 追加ここまで -->
+
                 <label style="font-size:0.68rem;">マスターの写真 (遺影):</label>
                 <input type="file" id="reg-file" accept="image/*" style="font-size:0.72rem;">
                 
@@ -1562,6 +1565,7 @@
                 death: '2025-10-01',
                 desc: '「いつもの珈琲の香る温かい場所で、お待ちしています。」',
                 thanks: '「いつもの席で、ゆっくりしていってくださいね。」',
+                tags: '珈琲 ジャズ 穏やか',
                 img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
                 fav: false,
                 type: 'private'
@@ -1633,6 +1637,7 @@
                     death: item.death || '',
                     desc: item.description || '',
                     thanks: item.thanks_message || '「いつもの席で、ゆっくりしていってくださいね。」',
+                    tags: item.tags || '',
                     img: item.image_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
                     type: item.type || 'private',
                     fav: false
@@ -1712,7 +1717,7 @@
             el.innerHTML = '';
 
             let filtered = db.cafes.filter(c => {
-                let matchKeyword = c.title.toLowerCase().includes(keyword) || c.master.toLowerCase().includes(keyword) || (c.desc && c.desc.toLowerCase().includes(keyword));
+                let matchKeyword = c.title.toLowerCase().includes(keyword) || c.master.toLowerCase().includes(keyword) || (c.desc && c.desc.toLowerCase().includes(keyword)) || (c.tags && c.tags.toLowerCase().includes(keyword));
                 let matchFav = showOnlyFav ? c.fav : true;
                 return matchKeyword && matchFav;
             });
@@ -1727,11 +1732,20 @@
                 let starClass = c.fav ? 'fav-star active' : 'fav-star';
                 let typeBadge = c.type === 'public' ? `<span style="font-size:0.52rem; background:#16a34a; color:#fff; padding:1px 4px; border-radius:3px; margin-left:4px;">👥 公開</span>` : `<span style="font-size:0.52rem; background:#d97706; color:#fff; padding:1px 4px; border-radius:3px; margin-left:4px;">🔒 承認制</span>`;
                 
+                let tagsHtml = '';
+                if (c.tags) {
+                    let tagArr = c.tags.split(/[\s,]+/);
+                    tagArr.forEach(t => {
+                        if (t) tagsHtml += `<span style="font-size:0.5rem; background:rgba(197,160,89,0.2); color:var(--accent-gold); padding:1px 4px; border-radius:3px; margin-right:3px;">#${t}</span>`;
+                    });
+                }
+
                 el.innerHTML += `<div class="card cafe-card" onclick="selectCafe('${c.id}')">
                     <img src="${c.img}" class="cafe-thumb">
                     <div style="flex:1; padding-right:18px;">
                         <strong style="color:var(--accent-gold); font-size:0.82rem;">${c.title}</strong>${typeBadge}<br>
-                        <span style="font-size:0.68rem; color:#d1c7bd;">マスター: ${c.master}</span>${lifespan}
+                        <span style="font-size:0.68rem; color:#d1c7bd;">マスター: ${c.master}</span>${lifespan}<br>
+                        <div style="margin-top:3px;">${tagsHtml}</div>
                     </div>
                     <div class="${starClass}" onclick="toggleFav('${c.id}', event)">★</div>
                 </div>`;
@@ -1750,7 +1764,6 @@
             updateHeaderControls();
             await checkGuestApprovalState();
             
-            // 🕯️ カフェが選ばれた時に birth / death をチェックしてさりげなくともしびモード発動
             checkDatabaseAnniversaryForCurrentCafe(c);
 
             showScreen('entrance');
@@ -2506,6 +2519,7 @@
             document.getElementById('reg-death').value = '';
             document.getElementById('reg-thanks').value = '';
             document.getElementById('reg-desc').value = '';
+            document.getElementById('reg-tags').value = '';
             document.getElementById('reg-file').value = '';
             document.getElementById('reg-type').value = 'public';
             selectedRegFile = null;
@@ -2517,7 +2531,7 @@
             if (f) selectedRegFile = f;
         };
 
-                async function submitNewCafe() {
+        async function submitNewCafe() {
             let title = document.getElementById('reg-title').value.trim();
             let master = document.getElementById('reg-master').value.trim();
             let pass = document.getElementById('reg-pass').value.trim() || 'master123';
@@ -2525,7 +2539,7 @@
             let death = document.getElementById('reg-death').value;
             let thanks = document.getElementById('reg-thanks').value.trim();
             let desc = document.getElementById('reg-desc').value.trim();
-            let tags = document.getElementById('reg-tags').value.trim(); // ★ タグを取得
+            let tags = document.getElementById('reg-tags').value.trim();
             let cafeType = document.getElementById('reg-type').value;
 
             if (!title || !master) {
@@ -2575,7 +2589,7 @@
                     thanks_message: thanks, 
                     image_url: imageUrl, 
                     type: cafeType,
-                    tags: tags // ★ Supabaseへ送信
+                    tags: tags 
                 }]);
 
             if (insertError) {
@@ -2593,8 +2607,7 @@
             selectCafe(id);
         }
 
-
-                async function renderMaster() {
+        async function renderMaster() {
             let store = db.data[curId];
             if (!store) {
                 db.data[curId] = { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} };
@@ -2645,8 +2658,6 @@
 
             renderMasterNoteReplyList();
             renderMasterContacts();
-            
-            // ★ 管理画面が開いたときに現在の登録情報を入力欄へ自動で入力する処理を実行
             loadMasterEditForm();
         }
 
@@ -2775,7 +2786,6 @@
             document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         }
 
-        // ☕ Stripe決済完了後（?thankyou=true）のお礼モーダル表示
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('thankyou') === 'true') {
@@ -2787,7 +2797,6 @@
             }
         });
 
-        // 🕯️ データベースの birth (誕生日) と death (命日) からさりげなく記念日を判定する処理
         function checkDatabaseAnniversaryForCurrentCafe(cafe) {
             if (!cafe) return;
 
@@ -2797,7 +2806,6 @@
 
             let isAnniversaryDay = false;
 
-            // birth（誕生日）の月日チェック
             if (cafe.birth) {
                 const birthDate = new Date(cafe.birth);
                 if (birthDate.getMonth() + 1 === currentMonth && birthDate.getDate() === currentDate) {
@@ -2805,7 +2813,6 @@
                 }
             }
 
-            // death（命日）の月日チェック
             if (cafe.death) {
                 const deathDate = new Date(cafe.death);
                 if (deathDate.getMonth() + 1 === currentMonth && deathDate.getDate() === currentDate) {
@@ -2813,7 +2820,6 @@
                 }
             }
 
-            // 🎂 誕生日または命日の場合、さりげなく演出を適用
             if (isAnniversaryDay) {
                 document.body.classList.add('anniversary-mode');
 
@@ -2825,9 +2831,8 @@
                 document.body.classList.remove('anniversary-mode');
             }
         }
-                // 📋 管理画面を開いたときに現在のカフェ情報をフォームに読み込む関数
-                // 📋 管理画面を開いたときに現在のカフェ情報をフォームに自動セットする関数
-                function loadMasterEditForm() {
+
+        function loadMasterEditForm() {
             let c = db.cafes.find(x => x.id === curId);
             if (!c) return;
 
@@ -2845,13 +2850,10 @@
             if (deathEl) deathEl.value = c.death || '';
             if (thanksEl) thanksEl.value = c.thanks || '';
             if (descEl) descEl.value = c.desc || '';
-            if (tagsEl) tagsEl.value = c.tags || ''; // ★ タグを自動入力
+            if (tagsEl) tagsEl.value = c.tags || '';
         }
 
-
-        // 💾 「変更を保存する」ボタンの処理
         async function updateCafeInfo() {
-                async function updateCafeInfo() {
             let newTitle = document.getElementById('edit-cafe-title').value.trim();
             let newMaster = document.getElementById('edit-master-name').value.trim();
             let newBirth = document.getElementById('edit-birth').value;
@@ -2894,8 +2896,6 @@
             selectCafe(curId);
         }
 
-
-        // 🗑️ 「このカフェを削除」ボタンの処理
         async function deleteThisCafe() {
             const confirmed = confirm("本当にこのカフェを削除しますか？\nお供えや思い出ノートのデータもすべて削除され、元に戻せません。");
             if (!confirmed) return;
@@ -2921,7 +2921,6 @@
             await loadCafesFromSupabase();
             navTo('portal');
         }
-
     </script>
 </body>
 </html>
