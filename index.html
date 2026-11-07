@@ -2517,7 +2517,7 @@
             if (f) selectedRegFile = f;
         };
 
-        async function submitNewCafe() {
+                async function submitNewCafe() {
             let title = document.getElementById('reg-title').value.trim();
             let master = document.getElementById('reg-master').value.trim();
             let pass = document.getElementById('reg-pass').value.trim() || 'master123';
@@ -2525,6 +2525,7 @@
             let death = document.getElementById('reg-death').value;
             let thanks = document.getElementById('reg-thanks').value.trim();
             let desc = document.getElementById('reg-desc').value.trim();
+            let tags = document.getElementById('reg-tags').value.trim(); // ★ タグを取得
             let cafeType = document.getElementById('reg-type').value;
 
             if (!title || !master) {
@@ -2563,7 +2564,19 @@
 
             const { error: insertError } = await mySupabaseClient
                 .from('cafes')
-                .insert([{ id: id, title: title, master_name: master, password: pass, birth: birth, death: death, description: desc, thanks_message: thanks, image_url: imageUrl, type: cafeType }]);
+                .insert([{ 
+                    id: id, 
+                    title: title, 
+                    master_name: master, 
+                    password: pass, 
+                    birth: birth, 
+                    death: death, 
+                    description: desc, 
+                    thanks_message: thanks, 
+                    image_url: imageUrl, 
+                    type: cafeType,
+                    tags: tags // ★ Supabaseへ送信
+                }]);
 
             if (insertError) {
                 console.error("カフェ登録エラー詳細:", insertError);
@@ -2579,6 +2592,7 @@
             await loadCafesFromSupabase();
             selectCafe(id);
         }
+
 
                 async function renderMaster() {
             let store = db.data[curId];
