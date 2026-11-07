@@ -2736,39 +2736,60 @@ window.addEventListener('DOMContentLoaded', () => {
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 });
-// 🕯️ 記念日の設定（月, 日のペアを配列で指定できます）
-// 例: 11月7日なら { month: 11, day: 7 }
-const ANNIVERSARY_DATES = [
-    { month: 11, day: 7 }, // ←テスト用に本日の日付や、設定したい記念日に書き換えてください
-    { month: 12, day: 25 }
-];
+// 🕯️ データベースの birth (誕生日) と death (命日) からさりげなく記念日を判定する処理
+async function checkDatabaseAnniversary() {
+    try {
+        // ※お使いのSupabaseのテーブル名（例: 'cafes' など）や取得方法に合わせて調整してください
+        // 例として現在ログイン中のカフェ情報やデータを取得するクエリを想定しています
+        const { data, error } = await supabase
+            .from('cafes') // ← お使いのテーブル名に合わせて変更してください
+            .select('birth, death')
+            .single();
 
-// 記念日判定の実行
-function checkAnniversaryMode() {
-    const today = new Date();
-    const currentMonth = today.getMonth() + 1; // 1〜12月
-    const currentDate = today.getDate();       // 1〜31日
+        if (error || !data) return;
 
-    // 今日の日付が記念日リストに含まれているかチェック
-    const isAnniversary = ANNIVERSARY_DATES.some(item => 
-        item.month === currentMonth && item.day === currentDate
-    );
+        const today = new Date();
+        const currentMonth = today.getMonth() + 1;
+        const currentDate = today.getDate();
 
-    if (isAnniversary) {
-        // 記念日モードを有効化
-        document.body.classList.add('anniversary-mode');
+        let isAnniversaryDay = false;
 
-        // 少し間を置いて温かいお迎えモーダルを表示
-        setTimeout(() => {
-            const modal = document.getElementById('modal-anniversary');
-            if (modal) modal.style.display = 'flex';
-        }, 600);
+        // birth（誕生日）の月日チェック
+        if (data.birth) {
+            const birthDate = new Date(data.birth);
+            if (birthDate.getMonth() + 1 === currentMonth && birthDate.getDate() === currentDate) {
+                isAnniversaryDay = true;
+            }
+        }
+
+        // death（命日）の月日チェック
+        if (data.death) {
+            const deathDate = new Date(data.death);
+            if (deathDate.getMonth() + 1 === currentMonth && deathDate.getDate() === currentDate) {
+                isAnniversaryDay = true;
+            }
+        }
+
+        // 🎂 誕生日または命日の場合、さりげなく演出を適用
+        if (isAnniversaryDay) {
+            // あまり派手すぎず、ほんのり温かい灯りのクラスを追加
+            document.body.classList.add('anniversary-mode');
+
+            // 控えめで上品なお迎えモーダルを少し遅れて優しく表示
+            setTimeout(() => {
+                const modal = document.getElementById('modal-anniversary');
+                if (modal) modal.style.display = 'flex';
+            }, 800);
+        }
+
+    } catch (err) {
+        console.error('記念日データの読み込みに失敗しました', err);
     }
 }
 
-// ページ読み込み時に実行
+// ページ読み込み時にチェックを実行
 window.addEventListener('DOMContentLoaded', () => {
-    checkAnniversaryMode();
+    checkDatabaseAnniversary();
 });
 
     </script>
