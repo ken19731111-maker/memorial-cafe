@@ -824,11 +824,7 @@
 @keyframes placeOffering {
     0% {
         opacity: 0;
-        transform: translateY(-30px) scale(1.2);
-    }
-    70% {
-        opacity: 1;
-        transform: translateY(4px) scale(0.95);
+        transform: translateY(-15px) scale(1.05); /* 動きを小さめに */
     }
     100% {
         opacity: 1;
@@ -837,8 +833,8 @@
 }
 
 .offering-item, .rand-flower {
-    /* 画面に登場するときに上のアニメーションを自動再生 */
-    animation: placeOffering 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    /* 0.8s から 1.5s にして「ゆっくり」に、cubic-bezier を ease-out にして「ふんわり」止まるように */
+    animation: placeOffering 1.5s ease-out forwards;
 }
     </style>
 </head>
