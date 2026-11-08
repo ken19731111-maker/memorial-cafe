@@ -2869,27 +2869,74 @@
             }
         }
 
-        function loadMasterEditForm() {
-            let c = db.cafes.find(x => x.id === curId);
-            if (!c) return;
+        // JavaScript側のフォーム読み込み・更新関数
+function loadMasterEditForm() {
+    let c = db.cafes.find(x => x.id === curId);
+    if (!c) return;
 
-            const titleEl = document.getElementById('edit-cafe-title');
-            const masterEl = document.getElementById('edit-master-name');
-            const birthEl = document.getElementById('edit-birth');
-            const deathEl = document.getElementById('edit-death');
-            const thanksEl = document.getElementById('edit-thanks');
-            const descEl = document.getElementById('edit-desc');
-            const tagsEl = document.getElementById('edit-tags');
+    const titleEl = document.getElementById('edit-cafe-title');
+    const masterEl = document.getElementById('edit-master-name');
+    const passEl = document.getElementById('edit-password'); // パスワード
+    const birthEl = document.getElementById('edit-birth');
+    const deathEl = document.getElementById('edit-death');
+    const thanksEl = document.getElementById('edit-thanks');
+    const descEl = document.getElementById('edit-desc');
+    const tagsEl = document.getElementById('edit-tags');
 
-            if (titleEl) titleEl.value = c.title || '';
-            if (masterEl) masterEl.value = c.master || '';
-            if (birthEl) birthEl.value = c.birth || '';
-            if (deathEl) deathEl.value = c.death || '';
-            if (thanksEl) thanksEl.value = c.thanks || '';
-            if (descEl) descEl.value = c.desc || '';
-            if (tagsEl) tagsEl.value = c.tags || '';
-        }
+    if (titleEl) titleEl.value = c.title || '';
+    if (masterEl) masterEl.value = c.master || '';
+    if (passEl) passEl.value = c.password || ''; // 現在のパスワードをセット
+    if (birthEl) birthEl.value = c.birth || '';
+    if (deathEl) deathEl.value = c.death || '';
+    if (thanksEl) thanksEl.value = c.thanks || '';
+    if (descEl) descEl.value = c.desc || '';
+    if (tagsEl) tagsEl.value = c.tags || '';
+}
 
+async function updateCafeInfo() {
+    let newTitle = document.getElementById('edit-cafe-title').value.trim();
+    let newMaster = document.getElementById('edit-master-name').value.trim();
+    let newPass = document.getElementById('edit-password').value.trim(); // 新パスワード取得
+    let newBirth = document.getElementById('edit-birth').value;
+    let newDeath = document.getElementById('edit-death').value;
+    let newThanks = document.getElementById('edit-thanks').value.trim();
+    let newDesc = document.getElementById('edit-desc').value.trim();
+    let newTags = document.getElementById('edit-tags').value.trim();
+
+    if (!newTitle || !newMaster || !newPass) {
+        showToast("⚠️ 店名、マスター名、パスワードは必須です");
+        return;
+    }
+
+    if (!mySupabaseClient) {
+        showToast("⚠️ Supabase未接続");
+        return;
+    }
+
+    const { error } = await mySupabaseClient
+        .from('cafes')
+        .update({
+            title: newTitle,
+            master_name: newMaster,
+            password: newPass, // Supabaseへ更新送信
+            birth: newBirth || null,
+            death: newDeath || null,
+            thanks_message: newThanks,
+            description: newDesc,
+            tags: newTags
+        })
+        .eq('id', curId);
+
+    if (error) {
+        console.error("更新エラー:", error);
+        showToast("❌ 保存に失敗しました: " + error.message);
+        return;
+    }
+
+    showToast("✨ カフェ情報とパスワードを更新しました");
+    await loadCafesFromSupabase();
+    selectCafe(curId);
+}
         async function updateCafeInfo() {
             let newTitle = document.getElementById('edit-cafe-title').value.trim();
             let newMaster = document.getElementById('edit-master-name').value.trim();
