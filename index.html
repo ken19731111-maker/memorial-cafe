@@ -820,6 +820,26 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        /* お供え物が「とん」と置かれるアニメーション */
+@keyframes placeOffering {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(1.2);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(4px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.offering-item, .rand-flower {
+    /* 画面に登場するときに上のアニメーションを自動再生 */
+    animation: placeOffering 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
     </style>
 </head>
 <body>
