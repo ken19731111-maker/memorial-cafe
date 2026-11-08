@@ -915,7 +915,30 @@
                 </div>
             </div>
         </div>
+<!-- カウンターのボタンエリアに追加 -->
+<button onclick="openGuestbook()" class="btn btn-secondary">📖 訪問帳を開く</button>
 
+<!-- モーダル画面（</body> の直前などに追加） -->
+<div id="guestbook-modal" class="modal-backdrop" style="display: none;">
+  <div class="modal-content" style="max-width: 500px; background: #2c221e; color: #f5efe6; border: 1px solid #c8a261; border-radius: 12px; padding: 20px;">
+    <div style="display:flex; justify-space-between; align-items: center; border-bottom: 1px solid #55443d; padding-bottom: 10px;">
+      <h3 style="margin:0; font-family: 'serif'; color: #c8a261;">📖 カフェ訪問帳</h3>
+      <button onclick="closeGuestbook()" style="background:none; border:none; color:#aaa; font-size:20px; cursor:pointer;">✕</button>
+    </div>
+
+    <!-- 書き込みフォーム -->
+    <div style="margin-top: 15px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
+      <input type="text" id="gb-name" placeholder="お名前（空欄で「名無しの旅人」）" style="width: 100%; padding: 8px; margin-bottom: 8px; border-radius: 4px; border: 1px solid #55443d; background: #1a1412; color: #fff;" />
+      <textarea id="gb-message" placeholder="足跡やあたたかい一言を残す..." rows="2" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #55443d; background: #1a1412; color: #fff; resize: none;"></textarea>
+      <button onclick="submitGuestbook()" class="btn" style="margin-top: 8px; width: 100%; background: #c8a261; color: #1a1412; font-weight: bold;">記帳する</button>
+    </div>
+
+    <!-- メッセージ一覧 -->
+    <div id="guestbook-list" style="margin-top: 15px; max-height: 250px; overflow-y: auto; text-align: left;">
+      <!-- JavaScriptでここにメッセージが入ります -->
+    </div>
+  </div>
+</div>
         <!-- 3A. 📖 思い出ノート専用画面 -->
         <div id="scr-notebook" class="screen notebook-screen-view">
             <div class="header">
@@ -2922,6 +2945,94 @@
             await loadCafesFromSupabase();
             navTo('portal');
         }
+        // 訪問帳モーダルを開く
+async function openGuestbook() {
+    document.getElementById('guestbook-modal').style.display = 'flex';
+    await loadGuestbook();
+}
+
+// 訪問帳モーダルを閉じ
+function closeGuestbook() {
+    document.getElementById('guestbook-modal').style.display = 'none';
+}
+
+// 足跡一覧を取得して表示
+async function loadGuestbook() {
+    const listEl = document.getElementById('guestbook-list');
+    listEl.innerHTML = '<p style="color:#aaa; text-align:center;">読み込み中...</p>';
+
+    // Supabaseからデータを取得（最新順）
+    const { data, error } = await supabaseClient
+        .from('guestbook')
+        .select('*')
+        .eq('cafe_id', currentCafeId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('訪問帳読み込みエラー:', error);
+        listEl.innerHTML = '<p style="color:#ff8888;">読み込みに失敗しました。</p>';
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        listEl.innerHTML = '<p style="color:#aaa; text-align:center;">まだ訪問帳への記帳はありません。<br>最初の一言を残してみませんか？</p>';
+        return;
+    }
+
+    listEl.innerHTML = data.map(item => {
+        const date = new Date(item.created_at).toLocaleDateString('ja-JP', {
+            year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+        });
+        const name = escapeHtml(item.name || '名無しの旅人');
+        const msg = escapeHtml(item.message);
+
+        return `
+            <div style="border-bottom: 1px dashed #55443d; padding: 10px 0;">
+                <div style="font-size: 0.85em; color: #c8a261; display: flex; justify-content: space-between;">
+                    <span>✍️ ${name}</span>
+                    <span style="color: #888;">${date}</span>
+                </div>
+                <div style="margin-top: 4px; font-size: 0.95em; color: #e0d8cc; white-space: pre-wrap;">${msg}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+// 新しい足跡を送信
+async function submitGuestbook() {
+    const nameInput = document.getElementById('gb-name');
+    const msgInput = document.getElementById('gb-message');
+
+    const name = nameInput.value.trim() || '名無しの旅人';
+    const message = msgInput.value.trim();
+
+    if (!message) {
+        alert('メッセージを入力してください☕');
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('guestbook')
+        .insert([
+            { cafe_id: currentCafeId, name: name, message: message }
+        ]);
+
+    if (error) {
+        console.error('記帳エラー:', error);
+        alert('送信に失敗しました。');
+        return;
+    }
+
+    // フォームをクリアして再読み込み
+    msgInput.value = '';
+    await loadGuestbook();
+}
+
+// XSS対策用エスケープ関数（まだなければ追加）
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
     </script>
 </body>
 </html>
