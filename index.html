@@ -820,22 +820,7 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* お供え物が「とん」と置かれるアニメーション */
-@keyframes placeOffering {
-    0% {
-        opacity: 0;
-        transform: translateY(-15px) scale(1.05); /* 動きを小さめに */
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.offering-item, .rand-flower {
-    /* 0.8s から 1.5s にして「ゆっくり」に、cubic-bezier を ease-out にして「ふんわり」止まるように */
-    animation: placeOffering 1.5s ease-out forwards;
-}
+  
     </style>
 </head>
 <body>
