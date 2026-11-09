@@ -1567,7 +1567,10 @@
             document.getElementById('new-auth-password').value = '';
         }
 
-        function updateAuthUI() {
+function updateAuthUI() {
+            // ↓ あなたの管理者用メールアドレスを設定（小文字で記述）
+            const ADMIN_EMAIL = 'ken.c.1173.surf@gmail.com'; 
+
             let btn = document.getElementById('auth-status-btn');
             if (btn) {
                 if (db.currentUser) {
@@ -1581,13 +1584,16 @@
                 }
             }
             
-                        let portalControls = document.getElementById('portal-header-controls');
+            let portalControls = document.getElementById('portal-header-controls');
             if (portalControls) {
                 let html = '';
                 if (db.currentUser) {
                     html += `<button class="master-login-link-btn" style="color:#34d399; border-color:#34d399;" onclick="openAuthModal()">👤 ログイン中</button>`;
-                    /* ↓ ホーム画面でもログアウトボタンを表示する行を追加 ↓ */
-                    html += `<button class="master-logout-link-btn" onclick="signOutMaster()">ログアウト</button>`;
+                    
+                    // ↓ ログイン中ユーザーのメールアドレスが管理者アドレスと完全一致する場合のみ表示
+                    if (db.currentUser.email && db.currentUser.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                        html += `<button class="master-login-link-btn" style="color:#f59e0b; border-color:#f59e0b;" onclick="openAdminContactsModal()">📮 運営問い合わせ</button>`;
+                    }
                 } else {
                     html += `<button class="master-login-link-btn" onclick="openAuthModal()">🔒 ログイン</button>`;
                 }
@@ -1616,6 +1622,7 @@
 
             updateBellBadge();
         }
+
 
         const SUPABASE_URL = 'https://rwkqhtvieictjlnwwndz.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3a3FodHZpZWljdGpsbnd3bmR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyOTkxNzMsImV4cCI6MjEwNzg3NTE3M30.JfuaXANkv_2TN_7OlhMXvQeumFfAlRPx0c6rEDA2nMw';
@@ -3044,6 +3051,51 @@
             if (!str) return '';
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
+        async function openAdminContactsModal() {
+    const ADMIN_EMAIL = 'ken.c.1173.surf@gmail.com'; // 上記と同じメールアドレス
+
+    if (!mySupabaseClient || !db.currentUser) {
+        showToast("⚠️ ログインが必要です");
+        return;
+    }
+
+    // 管理者以外のユーザーが実行した場合は弾く
+    if (!db.currentUser.email || db.currentUser.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        showToast("⚠️ 運営者権限が必要です");
+        return;
+    }
+
+    const { data: contacts, error } = await mySupabaseClient
+        .from('contacts')
+        .select('*')
+        .is('cafe_id', null) // cafe_id が null（運営宛て）のデータを取得
+        .order('created_at', { ascending: false });
+
+    let container = document.getElementById('admin-contact-list-container');
+    if (!container) return;
+
+    if (error || !contacts || contacts.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#886655; padding:10px;">届いている運営宛て問い合わせはありません。</div>`;
+    } else {
+        container.innerHTML = contacts.map(item => {
+            let dateObj = new Date(item.created_at);
+            let timeStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
+            let emailText = item.sender_email ? `<span style="font-size:0.58rem; color:#94a3b8;">(${item.sender_email})</span>` : '';
+
+            return `
+                <div style="background:rgba(0,0,0,0.4); border:1px solid #334155; padding:6px; margin-bottom:5px; border-radius:4px; text-align:left;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong style="font-size:0.68rem; color:#38bdf8;">${escapeHtml(item.sender_name)} ${emailText}</strong>
+                        <span style="font-size:0.52rem; color:#64748b;">${timeStr}</span>
+                    </div>
+                    <div style="font-size:0.7rem; color:#e2e8f0; margin-top:3px; white-space:pre-wrap;">${escapeHtml(item.message)}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    document.getElementById('modal-admin-contacts').style.display = 'flex';
+}
     </script>
 </body>
 </html>
