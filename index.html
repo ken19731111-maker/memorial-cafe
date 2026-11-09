@@ -973,7 +973,10 @@
 
         <!-- 4. マスター管理画面 -->
         <div id="scr-master" class="screen" style="background:var(--master-bg);">
-            <div class="header" style="color:#38bdf8;">🔒 マスター専用管理画面</div>
+            <div class="header" style="color:#38bdf8;">
+                <span>🔒 マスター専用管理画面</span>
+                <button class="master-logout-link-btn" onclick="signOutMaster()">ログアウト</button>
+            </div>
             
             <div class="card" style="text-align:center; margin-top:8px;">
                 <div style="font-size:0.68rem; color:#94a3b8;">温かい想い出の統計</div>
@@ -1000,46 +1003,48 @@
                 <div id="master-contact-list" style="font-size:0.68rem; color:#cbd5e1; max-height:90px; overflow-y:auto;"></div>
             </div>
 
-            <!-- ⚙️ カフェの編集・削除エリア -->
-            <!-- ⚙️ カフェの編集・削除エリア（管理画面内） -->
-<div class="card" style="border:1px solid #38bdf8;">
-    <div style="font-size:0.72rem; color:#38bdf8; font-weight:bold; margin-bottom:6px;">⚙️ カフェ情報の変更・削除</div>
-    
-    <label style="font-size:0.62rem; color:#cbd5e1; display:block;">店名:</label>
-    <input type="text" id="edit-cafe-title" style="font-size:0.7rem; padding:4px;">
+            <!-- ⚙️ カフェの編集・削除エリア（Supabase Auth所有者用） -->
+            <div class="card" style="border:1px solid #38bdf8;">
+                <div style="font-size:0.72rem; color:#38bdf8; font-weight:bold; margin-bottom:6px;">⚙️ カフェ情報の変更・削除</div>
+                
+                <label style="font-size:0.62rem; color:#cbd5e1; display:block;">店名:</label>
+                <input type="text" id="edit-cafe-title" style="font-size:0.7rem; padding:4px;">
 
-    <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">マスターのお名前:</label>
-    <input type="text" id="edit-master-name" style="font-size:0.7rem; padding:4px;">
+                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">マスターのお名前:</label>
+                <input type="text" id="edit-master-name" style="font-size:0.7rem; padding:4px;">
 
-    <!-- 🔑 ここにパスワード変更欄を追加しました -->
-    <label style="font-size:0.62rem; color:#f59e0b; display:block; margin-top:3px; font-weight:bold;">🔒 マスター管理パスワード:</label>
-    <input type="password" id="edit-password" placeholder="新しいパスワードを入力" style="font-size:0.7rem; padding:4px;" autocomplete="new-password">
+                <div style="display:flex; gap:6px; margin-top:3px;">
+                    <div style="flex:1;">
+                        <label style="font-size:0.62rem; color:#cbd5e1; display:block;">誕生日:</label>
+                        <input type="date" id="edit-birth" style="font-size:0.7rem; padding:4px;">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="font-size:0.62rem; color:#cbd5e1; display:block;">命日:</label>
+                        <input type="date" id="edit-death" style="font-size:0.7rem; padding:4px;">
+                    </div>
+                </div>
 
-    <div style="display:flex; gap:6px; margin-top:3px;">
-        <div style="flex:1;">
-            <label style="font-size:0.62rem; color:#cbd5e1; display:block;">誕生日:</label>
-            <input type="date" id="edit-birth" style="font-size:0.7rem; padding:4px;">
-        </div>
-        <div style="flex:1;">
-            <label style="font-size:0.62rem; color:#cbd5e1; display:block;">命日:</label>
-            <input type="date" id="edit-death" style="font-size:0.7rem; padding:4px;">
-        </div>
-    </div>
+                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">マスターからの感謝の一言:</label>
+                <input type="text" id="edit-thanks" style="font-size:0.7rem; padding:4px;">
 
-    <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">マスターからの感謝の一言:</label>
-    <input type="text" id="edit-thanks" style="font-size:0.7rem; padding:4px;">
+                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">フリーコメント:</label>
+                <textarea id="edit-desc" style="font-size:0.7rem; padding:4px; height:40px;"></textarea>
 
-    <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">フリーコメント:</label>
-    <textarea id="edit-desc" style="font-size:0.7rem; padding:4px; height:40px;"></textarea>
+                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">🏷️ タグ (スペース区切り):</label>
+                <input type="text" id="edit-tags" style="font-size:0.7rem; padding:4px;">
 
-    <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">🏷️ タグ (スペース区切り):</label>
-    <input type="text" id="edit-tags" style="font-size:0.7rem; padding:4px;">
+                <div style="display:flex; gap:6px; margin-top:8px;">
+                    <button class="btn" style="background:#0284c7; color:#fff; border:none; font-size:0.68rem; padding:5px; margin:0; flex:1;" onclick="updateCafeInfo()">変更を保存する</button>
+                    <button class="btn" style="background:#e11d48; color:#fff; border:none; font-size:0.68rem; padding:5px; margin:0; flex:1;" onclick="deleteThisCafe()">このカフェを削除</button>
+                </div>
+            </div>
 
-    <div style="display:flex; gap:6px; margin-top:8px;">
-        <button class="btn" style="background:#0284c7; color:#fff; border:none; font-size:0.68rem; padding:5px; margin:0; flex:1;" onclick="updateCafeInfo()">変更を保存する</button>
-        <button class="btn" style="background:#e11d48; color:#fff; border:none; font-size:0.68rem; padding:5px; margin:0; flex:1;" onclick="deleteThisCafe()">このカフェを削除</button>
-    </div>
-</div>
+            <!-- 🔑 Supabase Auth パスワード変更エリア -->
+            <div class="card" style="border:1px solid #f59e0b;">
+                <div style="font-size:0.72rem; color:#f59e0b; font-weight:bold; margin-bottom:4px;">🔑 アカウント認証パスワードの変更</div>
+                <input type="password" id="new-auth-password" placeholder="新しいパスワード（6文字以上）" style="font-size:0.7rem; padding:4px;" autocomplete="new-password">
+                <button class="btn" style="background:#d97706; color:#fff; border:none; font-size:0.68rem; padding:5px; margin-top:4px;" onclick="updateAuthPassword()">パスワードを変更する</button>
+            </div>
 
             <button class="btn" style="margin-top:auto;" onclick="navTo('portal')">🏠 ポータルへ戻る</button>
         </div>
@@ -1053,15 +1058,19 @@
     </div>
 
     <!-- モーダル群 -->
-    <div id="modal-master-login" class="modal">
+    <!-- 🔐 Supabase Auth ログイン / 新規登録モーダル -->
+    <div id="modal-auth" class="modal">
         <div class="modal-card" style="text-align:center;">
-            <h3 style="font-size:0.85rem; margin-bottom:6px; color:#38bdf8;">🔒 マスター専用ログイン</h3>
-            <p style="font-size:0.7rem; color:#555; margin-bottom:8px;" id="login-modal-sub">このカフェのマスター管理パスワードを入力してください。</p>
-            
-            <form onsubmit="event.preventDefault(); submitMasterLogin();">
-                <input type="text" name="username" id="master-login-user" value="master" style="display:none;" autocomplete="username">
-                <input type="password" id="master-pass-input" name="password" autocomplete="current-password" placeholder="パスワードを入力" required>
-                <button type="submit" class="btn" style="background:#0284c7; color:#fff; border:none; margin-top:6px;">ログインする</button>
+            <h3 style="font-size:0.85rem; margin-bottom:6px; color:#38bdf8;" id="auth-modal-title">🔒 マスターログイン</h3>
+            <div style="display:flex; justify-content:center; gap:8px; margin-bottom:8px; font-size:0.7rem;">
+                <span id="tab-login" style="cursor:pointer; color:#38bdf8; font-weight:bold; border-bottom:1px solid #38bdf8;" onclick="switchAuthMode('login')">ログイン</span>
+                <span>|</span>
+                <span id="tab-signup" style="cursor:pointer; color:#aaa;" onclick="switchAuthMode('signup')">新規マスター登録</span>
+            </div>
+            <form onsubmit="event.preventDefault(); submitAuthForm();">
+                <input type="email" id="auth-email" placeholder="メールアドレス" required autocomplete="email">
+                <input type="password" id="auth-password" placeholder="パスワード（6文字以上）" required autocomplete="current-password">
+                <button type="submit" class="btn" id="auth-submit-btn" style="background:#0284c7; color:#fff; border:none; margin-top:6px;">ログインする</button>
             </form>
             <button class="btn" style="background:#886655; margin-top:3px;" onclick="closeModals()">キャンセル</button>
         </div>
@@ -1174,7 +1183,7 @@
         </div>
     </div>
 
-    <!-- 🎉 お心づけへのお礼モーダル（Stripe決済完了後） -->
+    <!-- 🎉 お心づけへのお礼モーダル -->
     <div id="modal-thankyou" class="modal">
         <div class="modal-card" style="text-align:center; border:2px solid var(--accent-gold);">
             <div style="font-size:2rem; margin-bottom:6px;">☕✨</div>
@@ -1306,10 +1315,7 @@
                 <input type="text" id="reg-title" placeholder="例: メモリアル・カフェ 鈴木" required>
                 
                 <label style="font-size:0.68rem;">マスターのお名前:</label>
-                <input type="text" id="reg-master" autocomplete="username" placeholder="例: 鈴木 太郎" required>
-
-                <label style="font-size:0.68rem;">マスター管理パスワード (ログイン用):</label>
-                <input type="password" id="reg-pass" autocomplete="new-password" placeholder="管理画面用パスワード" required>
+                <input type="text" id="reg-master" placeholder="例: 鈴木 太郎" required>
 
                 <label style="font-size:0.68rem; color:var(--accent-gold); font-weight:bold; margin-top:3px; display:block;">🔒 カフェの公開タイプ:</label>
                 <select id="reg-type" style="font-size:0.72rem; padding:5px; margin-bottom:4px;">
@@ -1346,7 +1352,7 @@
         </div>
     </div>
 
-    <!-- 📖 訪問帳モーダル（足跡ログ専用） -->
+    <!-- 📖 訪問帳モーダル -->
     <div id="guestbook-modal" class="modal">
       <div class="modal-card" style="max-width: 400px; background: #2c221e; color: #f5efe6; border: 2px solid var(--accent-gold); border-radius: 8px; padding: 16px;">
         <div style="display:flex; justify-content:space-between; align-items: center; border-bottom: 1px solid #55443d; padding-bottom: 8px;">
@@ -1358,10 +1364,7 @@
             ※お供えや訪問のアクションが自動で静かに記録されます。
         </p>
 
-        <!-- 立ち寄りログ一覧 -->
-        <div id="guestbook-list" style="margin-top: 8px; max-height: 260px; overflow-y: auto; text-align: left;">
-          <!-- JavaScriptでここに立ち寄りログが入ります -->
-        </div>
+        <div id="guestbook-list" style="margin-top: 8px; max-height: 260px; overflow-y: auto; text-align: left;"></div>
       </div>
     </div>
 
@@ -1371,6 +1374,7 @@
         let activeThreadPostId = null;
         let realTimeChannel = null;
         let unreadNotifications = [];
+        let isSignupMode = false;
 
         const BGM_PLAYLIST = [
             { name: "アコースティックギター", url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3" },
@@ -1425,7 +1429,7 @@
             if (!toast) return;
             toast.innerText = msg;
             toast.style.display = 'block';
-            setTimeout(() => {
+            setTimeout => {
                 toast.style.display = 'none';
             }, 3000);
         }
@@ -1494,64 +1498,111 @@
             closeModals();
         }
 
-        function isMasterLoggedIn() {
-            let loggedInCafeId = localStorage.getItem('memorial_cafe_logged_in');
-            return loggedInCafeId === curId;
+        // 🔐 Supabase Auth 認証状態確認
+        function isMasterOwner(cafeUserId) {
+            return db.currentUser && cafeUserId && db.currentUser.id === cafeUserId;
         }
 
-        function logoutMaster() {
-            localStorage.removeItem('memorial_cafe_logged_in');
-            showToast("🔒 マスターをログアウトしました");
-            updateHeaderControls();
+        function openAuthModal() {
+            document.getElementById('modal-auth').style.display = 'flex';
+        }
+
+        function switchAuthMode(mode) {
+            isSignupMode = (mode === 'signup');
+            document.getElementById('tab-login').style.color = isSignupMode ? '#aaa' : '#38bdf8';
+            document.getElementById('tab-login').style.borderBottom = isSignupMode ? 'none' : '1px solid #38bdf8';
+            document.getElementById('tab-signup').style.color = isSignupMode ? '#38bdf8' : '#aaa';
+            document.getElementById('tab-signup').style.borderBottom = isSignupMode ? '1px solid #38bdf8' : 'none';
+            document.getElementById('auth-modal-title').innerText = isSignupMode ? '🔒 新規マスター登録' : '🔒 マスターログイン';
+            document.getElementById('auth-submit-btn').innerText = isSignupMode ? '登録してログイン' : 'ログインする';
+        }
+
+        async function submitAuthForm() {
+            let email = document.getElementById('auth-email').value.trim();
+            let password = document.getElementById('auth-password').value.trim();
+
+            if (isSignupMode) {
+                const { data, error } = await mySupabaseClient.auth.signUp({ email, password });
+                if (error) {
+                    alert("登録エラー: " + error.message);
+                    return;
+                }
+                alert("マスター登録が完了しました！");
+            } else {
+                const { data, error } = await mySupabaseClient.auth.signInWithPassword({ email, password });
+                if (error) {
+                    alert("ログインエラー: " + error.message);
+                    return;
+                }
+                alert("ログインしました！");
+            }
+
+            const { data: { session } } = await mySupabaseClient.auth.getSession();
+            db.currentUser = session ? session.user : null;
+            updateAuthUI();
+            closeModals();
+            loadCafesFromSupabase();
+        }
+
+        async function signOutMaster() {
+            await mySupabaseClient.auth.signOut();
+            db.currentUser = null;
+            updateAuthUI();
+            showToast("ログアウトしました");
             navTo('portal');
         }
 
-        function openMasterLoginModal() {
-            let c = db.cafes.find(x => x.id === curId);
-            let cafeTitle = c ? c.title : 'このカフェ';
-            document.getElementById('login-modal-sub').innerText = `『${cafeTitle}』のマスター管理パスワードを入力してください。`;
-            document.getElementById('master-pass-input').value = '';
-            document.getElementById('modal-master-login').style.display = 'flex';
+        async function updateAuthPassword() {
+            let newPass = document.getElementById('new-auth-password').value.trim();
+            if (!newPass || newPass.length < 6) {
+                showToast("⚠️ パスワードは6文字以上で入力してください");
+                return;
+            }
+            const { error } = await mySupabaseClient.auth.updateUser({ password: newPass });
+            if (error) {
+                showToast("❌ パスワード変更エラー: " + error.message);
+                return;
+            }
+            showToast("🔑 アカウント認証パスワードを変更しました");
+            document.getElementById('new-auth-password').value = '';
         }
 
-        function submitMasterLogin() {
-            let inputPass = document.getElementById('master-pass-input').value.trim();
-            let c = db.cafes.find(x => x.id === curId);
-            let correctPass = (c && c.password) ? c.password : 'master123';
-
-            if (inputPass === correctPass || inputPass === 'master123') {
-                localStorage.setItem('memorial_cafe_logged_in', curId);
-                closeModals();
-                showToast("🔓 マスターログインに成功しました");
-                updateHeaderControls();
-                navTo('master');
-            } else {
-                showToast("❌ パスワードが一致しません");
+        function updateAuthUI() {
+            let btn = document.getElementById('auth-status-btn');
+            if (btn) {
+                if (db.currentUser) {
+                    btn.innerText = '👤 ログイン中';
+                    btn.style.color = '#34d399';
+                    btn.style.borderColor = '#34d399';
+                } else {
+                    btn.innerText = '🔒 ログイン';
+                    btn.style.color = '#38bdf8';
+                    btn.style.borderColor = '#38bdf8';
+                }
             }
-        }
-
-        function updateHeaderControls() {
-            let loggedIn = isMasterLoggedIn();
-            
-            let htmlPortal = '';
-            if (loggedIn) {
-                htmlPortal += `<button class="master-login-link-btn" onclick="navTo('master')">🔒 管理</button>`;
-                htmlPortal += `<button class="master-logout-link-btn" onclick="logoutMaster()">🔓 ログアウト</button>`;
-            } else {
-                htmlPortal += `<button class="master-login-link-btn" onclick="openMasterLoginModal()">🔒 ログイン</button>`;
-            }
-            htmlPortal += `<button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-portal" class="notification-badge-dot"></span></button>`;
-            htmlPortal += `<button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>`;
             
             let portalControls = document.getElementById('portal-header-controls');
-            if (portalControls) portalControls.innerHTML = htmlPortal;
+            if (portalControls) {
+                let html = '';
+                if (db.currentUser) {
+                    html += `<button class="master-login-link-btn" style="color:#34d399; border-color:#34d399;" onclick="openAuthModal()">👤 ログイン中</button>`;
+                } else {
+                    html += `<button class="master-login-link-btn" onclick="openAuthModal()">🔒 ログイン</button>`;
+                }
+                html += `<button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-portal" class="notification-badge-dot"></span></button>`;
+                html += `<button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>`;
+                portalControls.innerHTML = html;
+            }
+
+            let c = db.cafes.find(x => x.id === curId);
+            let isOwner = c ? isMasterOwner(c.user_id) : false;
 
             let htmlCounter = '';
-            if (loggedIn) {
+            if (isOwner) {
                 htmlCounter += `<button class="master-login-link-btn" onclick="navTo('master')">🔒 管理</button>`;
-                htmlCounter += `<button class="master-logout-link-btn" onclick="logoutMaster()">🔓 ログアウト</button>`;
+                htmlCounter += `<button class="master-logout-link-btn" onclick="signOutMaster()">🔓 ログアウト</button>`;
             } else {
-                htmlCounter += `<button class="master-login-link-btn" onclick="openMasterLoginModal()">🔒 ログイン</button>`;
+                htmlCounter += `<button class="master-login-link-btn" onclick="openAuthModal()">🔒 ログイン</button>`;
             }
             htmlCounter += `<button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-counter" class="notification-badge-dot"></span></button>`;
             htmlCounter += `<button class="bgm-toggle-btn" id="bgm-btn-counter" onclick="toggleBgm()">🎵 BGM: OFF</button>`;
@@ -1574,37 +1625,17 @@
             console.error("Supabase初期化エラー: ", e);
         }
 
-        const FLOWER_TRANSPARENT_IMAGES = [
-            'flower1.png', 'flower2.png', 'flower3.png', 'flower4.png', 'flower5.png'
-        ];
-
-        const ITEM_TRANSPARENT_IMAGES = {
-            coffee: 'coffee.png',
-            incense: 'incense.png'
-        };
+        const FLOWER_TRANSPARENT_IMAGES = ['flower1.png', 'flower2.png', 'flower3.png', 'flower4.png', 'flower5.png'];
+        const ITEM_TRANSPARENT_IMAGES = { coffee: 'coffee.png', incense: 'incense.png' };
 
         let db = {
-            cafes: [{
-                id: 'sato',
-                title: 'メモリアル・カフェ 佐藤',
-                master: '佐藤 健一',
-                password: 'master123',
-                birth: '1955-04-12',
-                death: '2025-10-01',
-                desc: '「いつもの珈琲の香る温かい場所で、お待ちしています。」',
-                thanks: '「いつもの席で、ゆっくりしていってくださいね。」',
-                tags: '珈琲 ジャズ 穏やか',
-                img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
-                fav: false,
-                type: 'private'
-            }],
-            data: {
-                'sato': { gifts: [], notes: [], photos: [], sales: 0, pending: [], approved: {} }
-            },
-            guest: { name: '', relation: '' }
+            cafes: [],
+            data: {},
+            guest: { name: '', relation: '' },
+            currentUser: null
         };
 
-        let curId = 'sato';
+        let curId = null;
         let giftType = '';
         let selectedPhotoFile = null;
         let selectedRegFile = null;
@@ -1613,9 +1644,17 @@
         let photoPageIdx = 0;
 
         window.onload = async function() {
+            if (mySupabaseClient) {
+                const { data: { session } } = await mySupabaseClient.auth.getSession();
+                db.currentUser = session ? session.user : null;
+            }
+
             try {
-                let saved = localStorage.getItem('memorial_cafe_perfect_v30');
-                if (saved) db = JSON.parse(saved);
+                let saved = localStorage.getItem('memorial_cafe_auth_v31');
+                if (saved) {
+                    let parsed = JSON.parse(saved);
+                    db.guest = parsed.guest || db.guest;
+                }
             } catch(e) {}
 
             try {
@@ -1631,11 +1670,11 @@
                 const targetCafe = db.cafes.find(c => c.id === directCafeId);
                 if (targetCafe) selectCafe(directCafeId);
             }
-            updateHeaderControls();
+            updateAuthUI();
         };
 
         function saveData() {
-            try { localStorage.setItem('memorial_cafe_perfect_v30', JSON.stringify(db)); } catch(e) {}
+            try { localStorage.setItem('memorial_cafe_auth_v31', JSON.stringify({ guest: db.guest })); } catch(e) {}
         }
 
         async function loadCafesFromSupabase() {
@@ -1658,9 +1697,9 @@
             if (data && data.length > 0) {
                 db.cafes = data.map(item => ({
                     id: item.id,
+                    user_id: item.user_id,
                     title: item.title,
                     master: item.master_name,
-                    password: item.password || 'master123',
                     birth: item.birth || '',
                     death: item.death || '',
                     desc: item.description || '',
@@ -1693,13 +1732,13 @@
             let cafe = db.cafes.find(x => x.id === id);
             if (cafe) {
                 cafe.fav = !cafe.fav;
-                saveData();
                 renderPortal();
             }
         }
 
         function checkAnniversaries() {
             const container = document.getElementById('anniversary-container');
+            if (!container) return;
             container.innerHTML = '';
 
             const today = new Date();
@@ -1789,9 +1828,8 @@
             document.getElementById('master-photo').src = c.img;
             document.getElementById('counter-header-title').innerText = c.title;
 
-            updateHeaderControls();
+            updateAuthUI();
             await checkGuestApprovalState();
-            
             checkDatabaseAnniversaryForCurrentCafe(c);
 
             showScreen('entrance');
@@ -1802,7 +1840,9 @@
             const doorLabel = document.getElementById('entrance-door-label');
             const currentCafe = db.cafes.find(c => c.id === curId);
 
-            if (currentCafe && currentCafe.type === 'public' || isMasterLoggedIn()) {
+            if (!currentCafe) return;
+
+            if (currentCafe.type === 'public' || isMasterOwner(currentCafe.user_id)) {
                 doorEl.classList.add('half-open');
                 doorLabel.innerText = '🚪 扉が半分開いています（タップして直行）';
                 return;
@@ -1872,10 +1912,11 @@
 
         async function knockDoor() {
             const currentCafe = db.cafes.find(c => c.id === curId);
+            if (!currentCafe) return;
 
-            if (currentCafe && currentCafe.type === 'public' || isMasterLoggedIn()) {
+            if (currentCafe.type === 'public' || isMasterOwner(currentCafe.user_id)) {
                 if (!db.guest || !db.guest.name) {
-                    db.guest = { name: isMasterLoggedIn() ? 'マスター' : 'ゲスト', relation: isMasterLoggedIn() ? '管理者' : '来訪者' };
+                    db.guest = { name: isMasterOwner(currentCafe.user_id) ? currentCafe.master : 'ゲスト', relation: isMasterOwner(currentCafe.user_id) ? '管理者' : '来訪者' };
                 }
                 recordFootprint('そっと訪問しました');
                 navTo('counter');
@@ -1945,7 +1986,6 @@
                     .insert([{ cafe_id: curId, guest_name: name, relation: relation, status: initialStatus }]);
 
                 if (error) {
-                    console.error("入店申請エラー:", error);
                     showToast("❌ 申請エラー: " + error.message);
                     return;
                 }
@@ -1980,9 +2020,10 @@
             if (scr === 'notebook') loadNotesFromSupabase();
             if (scr === 'album') loadPhotosFromSupabase();
             if (scr === 'master') {
-                if (!isMasterLoggedIn()) {
-                    showToast("⚠️ マスターログインが必要です");
-                    openMasterLoginModal();
+                let c = db.cafes.find(x => x.id === curId);
+                if (!c || !isMasterOwner(c.user_id)) {
+                    showToast("⚠️ このカフェのオーナー権限が必要です（要ログイン）");
+                    openAuthModal();
                     return;
                 }
                 renderMaster();
@@ -2046,8 +2087,11 @@
             let userMsg = giftMsgEl ? giftMsgEl.value.trim() : '';
             let finalMsg = userMsg || '心ばかりのお供えです。';
             
-            let guestName = (db.guest && db.guest.name) ? db.guest.name : (isMasterLoggedIn() ? 'マスター' : 'ゲスト');
-            let relation = (db.guest && db.guest.relation) ? db.guest.relation : (isMasterLoggedIn() ? '管理者' : '来訪者');
+            let currentCafe = db.cafes.find(c => c.id === curId);
+            let isOwner = currentCafe ? isMasterOwner(currentCafe.user_id) : false;
+
+            let guestName = (db.guest && db.guest.name) ? db.guest.name : (isOwner ? currentCafe.master : 'ゲスト');
+            let relation = (db.guest && db.guest.relation) ? db.guest.relation : (isOwner ? '管理者' : '来訪者');
             let guestLabel = `${guestName} (${relation})`;
 
             let limitMin = 120;
@@ -2067,16 +2111,13 @@
                 .insert([{ cafe_id: curId, type: giftType, guest_name: guestLabel, message: finalMsg, expires_at: expiresAt }]);
 
             if (error) {
-                console.error("お供え保存エラー:", error);
                 showToast("❌ 保存エラーが発生しました");
                 return;
             }
 
             let store = db.data[curId];
             if (store) store.sales++;
-            saveData();
 
-            // 自動的に訪問帳（足跡）へ記録
             let actionText = giftType === 'coffee' ? '珈琲を淹れました ☕' : (giftType === 'flower' ? 'お花を手向けました 🌸' : 'お線香を手向けました 🕯️');
             recordFootprint(actionText);
 
@@ -2113,7 +2154,6 @@
                 .gt('expires_at', currentTimeIso);
 
             if (error) {
-                console.error("データ取得エラー:", error);
                 renderCounter();
                 return;
             }
@@ -2139,6 +2179,7 @@
             let store = db.data[curId];
             let cContainer = document.getElementById('offerings-container');
             let fContainer = document.getElementById('flower-container');
+            if (!cContainer || !fContainer) return;
             cContainer.innerHTML = '';
             fContainer.innerHTML = '';
 
@@ -2179,6 +2220,7 @@
             let store = db.data[curId];
             let leftEl = document.getElementById('note-page-left');
             let rightEl = document.getElementById('note-page-right');
+            if (!leftEl || !rightEl) return;
             leftEl.innerHTML = '';
             rightEl.innerHTML = '';
 
@@ -2235,10 +2277,7 @@
                 .eq('type', 'message')
                 .order('created_at', { ascending: false });
 
-            if (error) {
-                console.error("ノート取得エラー:", error);
-                return;
-            }
+            if (error) return;
 
             let store = db.data[curId];
             if (!store) return;
@@ -2336,7 +2375,7 @@
             }
 
             if (!html) {
-                container.innerHTML = `<div style="font-size:0.62rem; color:#886655; text-align:center;">まだコメントはありません。最初の言葉を綴ってみませんか？</div>`;
+                container.innerHTML = `<div style="font-size:0.62rem; color:#886655; text-align:center;">まだコメントはありません。</div>`;
             } else {
                 container.innerHTML = html;
             }
@@ -2349,19 +2388,17 @@
                 return;
             }
 
-            let guestLabel = isMasterLoggedIn() ? `${db.cafes.find(c=>c.id===curId).master} (マスター)` : `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
+            let currentCafe = db.cafes.find(c => c.id === curId);
+            let isOwner = currentCafe ? isMasterOwner(currentCafe.user_id) : false;
+            let guestLabel = isOwner ? `${currentCafe.master} (マスター)` : `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
 
-            if (!mySupabaseClient) {
-                showToast("⚠️ Supabase未接続");
-                return;
-            }
+            if (!mySupabaseClient) return;
 
             const { error } = await mySupabaseClient
                 .from('post_comments')
                 .insert([{ post_id: activeThreadPostId, cafe_id: curId, author: guestLabel, content: content }]);
 
             if (error) {
-                console.error("コメント保存エラー:", error);
                 showToast("❌ 保存エラー: " + error.message);
                 return;
             }
@@ -2383,19 +2420,18 @@
                 showToast("⚠️ メッセージを入力してください");
                 return;
             }
-            let guestLabel = isMasterLoggedIn() ? `${db.cafes.find(c=>c.id===curId).master} (マスター)` : `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
 
-            if (!mySupabaseClient) {
-                showToast("⚠️ Supabase未接続");
-                return;
-            }
+            let currentCafe = db.cafes.find(c => c.id === curId);
+            let isOwner = currentCafe ? isMasterOwner(currentCafe.user_id) : false;
+            let guestLabel = isOwner ? `${currentCafe.master} (マスター)` : `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
+
+            if (!mySupabaseClient) return;
 
             const { error } = await mySupabaseClient
                 .from('posts')
                 .insert([{ cafe_id: curId, type: 'message', content: m, author: guestLabel }]);
 
             if (error) {
-                console.error("ノート保存エラー:", error);
                 showToast("❌ 保存エラーが発生しました");
                 return;
             }
@@ -2430,10 +2466,7 @@
                 .eq('type', 'photo')
                 .order('created_at', { ascending: false });
 
-            if (error) {
-                console.error("写真取得エラー:", error);
-                return;
-            }
+            if (error) return;
 
             let store = db.data[curId];
             if (!store) return;
@@ -2454,12 +2487,12 @@
                 return;
             }
             let cap = document.getElementById('photo-cap').value.trim() || '想い出の1枚';
-            let guestLabel = isMasterLoggedIn() ? `${db.cafes.find(c=>c.id===curId).master} (マスター)` : `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
 
-            if (!mySupabaseClient) {
-                showToast("⚠️ Supabase未接続");
-                return;
-            }
+            let currentCafe = db.cafes.find(c => c.id === curId);
+            let isOwner = currentCafe ? isMasterOwner(currentCafe.user_id) : false;
+            let guestLabel = isOwner ? `${currentCafe.master} (マスター)` : `${(db.guest && db.guest.name) || 'ゲスト'} (${(db.guest && db.guest.relation) || '来訪者'})`;
+
+            if (!mySupabaseClient) return;
 
             const fileExt = selectedPhotoFile.name.split('.').pop();
             const fileName = `${curId}_${Date.now()}.${fileExt}`;
@@ -2469,7 +2502,6 @@
                 .upload(fileName, selectedPhotoFile);
 
             if (uploadError) {
-                console.error("ストレージアップロードエラー:", uploadError);
                 showToast("❌ 画像アップロードエラー: " + uploadError.message);
                 return;
             }
@@ -2478,14 +2510,11 @@
                 .from('cafe-photos')
                 .getPublicUrl(fileName);
 
-            const publicUrl = publicUrlData.publicUrl;
-
             const { error: insertError } = await mySupabaseClient
                 .from('posts')
-                .insert([{ cafe_id: curId, type: 'photo', content: cap, image_url: publicUrl, author: guestLabel }]);
+                .insert([{ cafe_id: curId, type: 'photo', content: cap, image_url: publicUrlData.publicUrl, author: guestLabel }]);
 
             if (insertError) {
-                console.error("データベース保存エラー:", insertError);
                 showToast("❌ DB保存エラーが発生しました");
                 return;
             }
@@ -2516,6 +2545,7 @@
         function renderAlbum() {
             let store = db.data[curId];
             let gridContainer = document.getElementById('photo-grid-container');
+            if (!gridContainer) return;
             gridContainer.innerHTML = '';
 
             if (!store || !store.photos || store.photos.length === 0) {
@@ -2549,9 +2579,13 @@
         }
 
         function openRegModal() {
+            if (!db.currentUser) {
+                alert("カフェを開店するには、事前にログイン（または新規マスター登録）が必要です。");
+                openAuthModal();
+                return;
+            }
             document.getElementById('reg-title').value = '';
             document.getElementById('reg-master').value = '';
-            document.getElementById('reg-pass').value = '';
             document.getElementById('reg-birth').value = '';
             document.getElementById('reg-death').value = '';
             document.getElementById('reg-thanks').value = '';
@@ -2569,9 +2603,14 @@
         };
 
         async function submitNewCafe() {
+            if (!db.currentUser) {
+                alert("ログインセッションが切れました。再度ログインしてください。");
+                openAuthModal();
+                return;
+            }
+
             let title = document.getElementById('reg-title').value.trim();
             let master = document.getElementById('reg-master').value.trim();
-            let pass = document.getElementById('reg-pass').value.trim() || 'master123';
             let birth = document.getElementById('reg-birth').value;
             let death = document.getElementById('reg-death').value;
             let thanks = document.getElementById('reg-thanks').value.trim();
@@ -2584,15 +2623,10 @@
                 return;
             }
 
-            if (!mySupabaseClient) {
-                showToast("⚠️ Supabase未接続");
-                return;
-            }
-
             let id = 'c_' + Date.now();
             let imageUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80';
 
-            if (selectedRegFile) {
+            if (selectedRegFile && mySupabaseClient) {
                 const fileExt = selectedRegFile.name.split('.').pop();
                 const fileName = `master_${id}_${Date.now()}.${fileExt}`;
                 
@@ -2601,7 +2635,6 @@
                     .upload(fileName, selectedRegFile);
 
                 if (uploadError) {
-                    console.error("マスター写真アップロードエラー:", uploadError);
                     showToast("❌ 画像アップロードエラー: " + uploadError.message);
                     return;
                 }
@@ -2617,9 +2650,9 @@
                 .from('cafes')
                 .insert([{ 
                     id: id, 
+                    user_id: db.currentUser.id, // Supabase AuthのUIDを紐付け
                     title: title, 
                     master_name: master, 
-                    password: pass, 
                     birth: birth, 
                     death: death, 
                     description: desc, 
@@ -2630,12 +2663,9 @@
                 }]);
 
             if (insertError) {
-                console.error("カフェ登録エラー詳細:", insertError);
-                showToast("❌ DB保存エラーが発生しました");
+                showToast("❌ 開店エラー: " + insertError.message);
                 return;
             }
-
-            localStorage.setItem('memorial_cafe_logged_in', id);
 
             showToast('☕ 新しいカフェがオープンしました！');
             closeModals();
@@ -2700,12 +2730,10 @@
 
         async function renderMasterNoteReplyList() {
             let container = document.getElementById('master-note-reply-list');
+            if (!container) return;
             container.innerHTML = "";
 
-            if (!mySupabaseClient) {
-                container.innerHTML = `<span style="color:#886655;">Supabase未接続</span>`;
-                return;
-            }
+            if (!mySupabaseClient) return;
 
             const { data: posts, error } = await mySupabaseClient
                 .from('posts')
@@ -2739,10 +2767,7 @@
             if (!container) return;
             container.innerHTML = "";
 
-            if (!mySupabaseClient) {
-                container.innerHTML = `<span style="color:#886655;">Supabase未接続</span>`;
-                return;
-            }
+            if (!mySupabaseClient) return;
 
             const { data: contacts, error } = await mySupabaseClient
                 .from('contacts')
@@ -2859,7 +2884,6 @@
 
             if (isAnniversaryDay) {
                 document.body.classList.add('anniversary-mode');
-
                 setTimeout(() => {
                     const modal = document.getElementById('modal-anniversary');
                     if (modal) modal.style.display = 'flex';
@@ -2869,59 +2893,16 @@
             }
         }
 
-        // JavaScript側のフォーム読み込み・更新関数
         function loadMasterEditForm() {
             let c = db.cafes.find(x => x.id === curId);
             if (!c) return;
             document.getElementById('edit-cafe-title').value = c.title || '';
             document.getElementById('edit-master-name').value = c.master || '';
-            document.getElementById('edit-password').value = c.password || ''; // 現在のパスワードをセット
             document.getElementById('edit-birth').value = c.birth || '';
             document.getElementById('edit-death').value = c.death || '';
             document.getElementById('edit-thanks').value = c.thanks || '';
             document.getElementById('edit-desc').value = c.desc || '';
-        }
-
-        async function updateCafeInfo() {
-            let newTitle = document.getElementById('edit-cafe-title').value.trim();
-            let newMaster = document.getElementById('edit-master-name').value.trim();
-            let newPass = document.getElementById('edit-password').value.trim(); // 入力された新しいパスワードを取得
-            let newBirth = document.getElementById('edit-birth').value;
-            let newDeath = document.getElementById('edit-death').value;
-            let newThanks = document.getElementById('edit-thanks').value.trim();
-            let newDesc = document.getElementById('edit-desc').value.trim();
-
-            if (!newTitle || !newMaster || !newPass) {
-                showToast("⚠️ 店名、マスター名、パスワードは必須です");
-                return;
-            }
-
-            if (!mySupabaseClient) {
-                showToast("⚠️ Supabase未接続");
-                return;
-            }
-
-            const { error } = await mySupabaseClient
-                .from('cafes')
-                .update({
-                    title: newTitle,
-                    master_name: newMaster,
-                    password: newPass, // 小文字の password で確実に更新
-                    birth: newBirth || null,
-                    death: newDeath || null,
-                    thanks_message: newThanks,
-                    description: newDesc
-                })
-                .eq('id', curId);
-
-            if (error) {
-                console.error("更新エラー:", error);
-                showToast("❌ 保存エラー: " + error.message);
-                return;
-            }
-
-            showToast("✨ カフェ情報とパスワードを更新しました");
-            await loadCafesFromSupabase();
+            document.getElementById('edit-tags').value = c.tags || '';
         }
 
         async function updateCafeInfo() {
@@ -2957,7 +2938,6 @@
                 .eq('id', curId);
 
             if (error) {
-                console.error("更新エラー:", error);
                 showToast("❌ 保存に失敗しました: " + error.message);
                 return;
             }
@@ -2982,18 +2962,14 @@
                 .eq('id', curId);
 
             if (error) {
-                console.error("削除エラー:", error);
                 showToast("❌ 削除に失敗しました: " + error.message);
                 return;
             }
 
-            localStorage.removeItem('memorial_cafe_logged_in');
             showToast("🗑️ カフェを削除しました");
             await loadCafesFromSupabase();
             navTo('portal');
         }
-
-        // --- 📖 訪問帳（自動足跡ログ）機能 ---
 
         async function openGuestbook() {
             document.getElementById('guestbook-modal').style.display = 'flex';
@@ -3004,11 +2980,11 @@
             document.getElementById('guestbook-modal').style.display = 'none';
         }
 
-        // 自動足跡を保存する共通関数
         async function recordFootprint(actionText) {
             if (!mySupabaseClient) return;
-
-            let name = (db.guest && db.guest.name) ? db.guest.name : (isMasterLoggedIn() ? 'マスター' : '名無しの旅人');
+            let currentCafe = db.cafes.find(c => c.id === curId);
+            let isOwner = currentCafe ? isMasterOwner(currentCafe.user_id) : false;
+            let name = (db.guest && db.guest.name) ? db.guest.name : (isOwner ? currentCafe.master : '名無しの旅人');
 
             try {
                 await mySupabaseClient
@@ -3019,7 +2995,6 @@
             }
         }
 
-        // 訪問帳の読み込み
         async function loadGuestbook() {
             const listEl = document.getElementById('guestbook-list');
             listEl.innerHTML = '<p style="color:#aaa; text-align:center; font-size:0.75rem;">読み込み中...</p>';
@@ -3036,7 +3011,6 @@
                 .order('created_at', { ascending: false });
 
             if (error) {
-                console.error('訪問帳読み込みエラー:', error);
                 listEl.innerHTML = '<p style="color:#ff8888; text-align:center; font-size:0.75rem;">読み込みに失敗しました。</p>';
                 return;
             }
@@ -3068,32 +3042,6 @@
             if (!str) return '';
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
-// 1. アカウント新規作成
-async function signUpMaster(email, password) {
-    const { data, error } = await mySupabaseClient.auth.signUp({
-        email: email,
-        password: password
-    });
-    if (error) alert("登録エラー: " + error.message);
-    else alert("マスター登録が完了しました！");
-}
-
-// 2. ログイン
-async function signInMaster(email, password) {
-    const { data, error } = await mySupabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
-    if (error) alert("ログインエラー: " + error.message);
-    else alert("ログインしました！");
-}
-
-// 3. ログアウト
-async function signOutMaster() {
-    await mySupabaseClient.auth.signOut();
-}
-
-        
     </script>
 </body>
 </html>
