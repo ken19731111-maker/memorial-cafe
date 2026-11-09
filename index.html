@@ -1581,11 +1581,13 @@
                 }
             }
             
-            let portalControls = document.getElementById('portal-header-controls');
+                        let portalControls = document.getElementById('portal-header-controls');
             if (portalControls) {
                 let html = '';
                 if (db.currentUser) {
                     html += `<button class="master-login-link-btn" style="color:#34d399; border-color:#34d399;" onclick="openAuthModal()">👤 ログイン中</button>`;
+                    /* ↓ ホーム画面でもログアウトボタンを表示する行を追加 ↓ */
+                    html += `<button class="master-logout-link-btn" onclick="signOutMaster()">ログアウト</button>`;
                 } else {
                     html += `<button class="master-login-link-btn" onclick="openAuthModal()">🔒 ログイン</button>`;
                 }
