@@ -3068,6 +3068,32 @@
             if (!str) return '';
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
+// 1. アカウント新規作成
+async function signUpMaster(email, password) {
+    const { data, error } = await mySupabaseClient.auth.signUp({
+        email: email,
+        password: password
+    });
+    if (error) alert("登録エラー: " + error.message);
+    else alert("マスター登録が完了しました！");
+}
+
+// 2. ログイン
+async function signInMaster(email, password) {
+    const { data, error } = await mySupabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+    if (error) alert("ログインエラー: " + error.message);
+    else alert("ログインしました！");
+}
+
+// 3. ログアウト
+async function signOutMaster() {
+    await mySupabaseClient.auth.signOut();
+}
+
+        
     </script>
 </body>
 </html>
