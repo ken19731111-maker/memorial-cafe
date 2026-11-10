@@ -1099,45 +1099,49 @@
     </div>
 
    <!-- 📖 かんたん使い方ガイド・ご利用規約セクション（イメージ） -->
-<div style="font-size:0.75rem; color:#cbd5e1; line-height:1.6; text-align:left; padding:8px;">
-    
-    <h3 style="color:#38bdf8; font-size:0.85rem; border-bottom:1px solid #334155; padding-bottom:4px; margin-bottom:8px;">
-        🏛️ メモリアル・カフェ「珈琲 宵待」とは？
-    </h3>
-    <p style="margin-bottom:8px;">
-        当サイトは、インターネット上に大切な故人やペットを偲ぶための<strong>「新しいネットのお墓（デジタルメモリアルスペース）」</strong>です。遠方にお墓参りに行けない方や、いつでもどこでも温かい気持ちで思い出を語り合いたい方のための、心安らぐ空間を提供しています。
-    </p>
+<div id="modal-guide" class="modal">
+        <div class="modal-card" style="width: 90%; max-width: 480px; max-height: 85vh; display: flex; flex-direction: column; background: var(--master-bg, #fdfbf7); border: 2px solid var(--accent-gold, #c5a059); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            
+            <!-- 固定タイトル -->
+            <h3 style="font-size: 0.85rem; margin: 0 0 8px 0; color: var(--accent-gold, #c5a059); text-align: center; flex-shrink: 0;">
+                💡 かんたん使い方ガイド ＆ ご案内
+            </h3>
+            
+            <!-- スクロール可能なコンテンツエリア -->
+            <div style="font-size: 0.7rem; line-height: 1.6; color: #332211; overflow-y: auto; flex-grow: 1; padding-right: 4px; margin-bottom: 10px; text-align: left;">
+                
+                <div style="margin-bottom: 10px; background: rgba(180,83,9,0.08); padding: 6px; border-radius: 4px;">
+                    <strong style="color: #b45309;">🏛️ 「珈琲 宵待」とは？（新しいネットのお墓）</strong><br>
+                    インターネット上に大切な故人やペットを偲ぶためのデジタルメモリアルスペースです。いつでもどこでも温かい気持ちでお参りとお供えができる場所です。
+                </div>
 
-    <h3 style="color:#34d399; font-size:0.85rem; border-bottom:1px solid #334155; padding-bottom:4px; margin-bottom:8px; margin-top:12px;">
-        👤 【マスター（管理者）向け】カフェの作り方ガイド
-    </h3>
-    <p style="margin-bottom:6px; color:#e2e8f0;">
-        自分専用のメモリアルスペース（お墓・カフェ）を開設したい方は、以下の3ステップを進めてください。
-    </p>
-    <ol style="padding-left:20px; margin-bottom:12px;">
-        <li style="margin-bottom:6px;">
-            <strong>ステップ1：ログイン画面を開く</strong><br>
-            画面右上の「🔒 ログイン」ボタンをクリックします。
-        </li>
-        <li style="margin-bottom:6px;">
-            <strong>ステップ2：新規アカウント登録（無料）</strong><br>
-            「アカウントをお持ちでない方はこちら（新規登録）」に切り替え、お使いの<strong>メールアドレス</strong>と<strong>パスワード（6文字以上）</strong>を入力して登録します。（登録完了後、自動的にログイン状態になります）
-        </li>
-        <li style="margin-bottom:6px;">
-            <strong>ステップ3：マイカフェ（メモリアル空間）を作る</strong><br>
-            管理画面から「新しいカフェを作る」を選び、故人様のお名前、プロフィール、背景画像を設定すれば、あなただけのネットのお墓・カフェがオープンします！
-        </li>
-    </ol>
+                <div style="margin-bottom: 10px;">
+                    <strong style="color: #1e3a8a;">👥 ゲスト（お参りする方）へ:</strong><br>
+                    ・扉をノックして店内に入ります（承認制カフェの場合はマスターの許可をお待ちください）。<br>
+                    ・一度承認された方は、次からドアが半分開いてスムーズに入店できます。<br>
+                    ・カウンターでお好きなお供え物（珈琲・お花・お線香など）を手向けることができます。
+                </div>
 
-    <h3 style="color:#f59e0b; font-size:0.85rem; border-bottom:1px solid #334155; padding-bottom:4px; margin-bottom:8px; margin-top:12px;">
-        🛡️ プライバシーとご利用上の注意
-    </h3>
-    <ul style="padding-left:20px; margin-bottom:8px;">
-        <li style="margin-bottom:4px;"><strong>プライバシー保護:</strong> 入力されたメールアドレスは管理・お問い合わせ対応のみに使用し、外部に公開されることはありません。</li>
-        <li style="margin-bottom:4px;"><strong>公開範囲の選択:</strong> カフェは「誰でも入れる公開状態」にするか、「ノック（承認）制のプライベート状態」にするか選択できます。</li>
-        <li style="margin-bottom:4px;"><strong>マナーと投稿管理:</strong> お供え物やメモリアルノートには、他者を誹謗中傷する内容や不適切な書き込みを禁止しています。管理者は不適切な投稿をいつでも削除できます。</li>
-    </ul>
-</div>
+                <div style="margin-bottom: 10px;">
+                    <strong style="color: #047857;">🔒 マスター（カフェを作る方）の始め方:</strong><br>
+                    1. 画面右上の<strong>「🔒 ログイン」</strong>をクリックする。<br>
+                    2. 「新規登録」に切り替え、<strong>メールアドレス</strong>と<strong>パスワード（6文字以上）</strong>を入力してアカウントを作成する（登録後、自動でログインされます）。<br>
+                    3. ポータルの「新しいカフェを開店する」から故人様のお名前やプロフィールを設定してカフェを開設する。<br>
+                    4. ログイン中は管理ボタンから入店承認や届いたメッセージを確認できます。
+                </div>
+
+                <div style="margin-bottom: 4px;">
+                    <strong style="color: #b91c1c;">🛡️ プライバシーとご利用上の注意:</strong><br>
+                    ・登録されたメールアドレスは認証およびお問い合わせ対応のみに使用され、外部には一切公開されません。<br>
+                    ・誹謗中傷や不適切な書き込みは禁止されており、管理者はいつでも該当の投稿を削除できます。
+                </div>
+
+            </div>
+
+            <!-- 固定の閉じるボタン -->
+            <button class="btn" style="margin-top: 0; flex-shrink: 0;" onclick="closeModals()">閉じる</button>
+        </div>
+    </div>
 
     <div id="modal-terms" class="modal">
         <div class="modal-card">
