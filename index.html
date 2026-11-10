@@ -1050,7 +1050,7 @@
                 </div>
             </div>
 
-                       <!-- 🔑 Supabase Auth パスワード変更エリア -->
+            <!-- 🔑 Supabase Auth パスワード変更エリア -->
             <div class="card" style="border:1px solid #f59e0b;">
                 <div style="font-size:0.72rem; color:#f59e0b; font-weight:bold; margin-bottom:2px;">🔑 アカウント認証パスワードの変更</div>
                 <div style="font-size:0.65rem; color:#ffffff; margin-bottom:4px;">※ログインパスワードを変更したい時のみ入力（通常は空欄でOK）</div>
@@ -1067,6 +1067,7 @@
             <button class="nav-btn share-nav-btn" onclick="openShareModal()">🔗 このカフェをご案内する</button>
             <button class="nav-btn" style="flex:1;" onclick="navTo('portal')">🏠 ホーム</button>
         </div>
+    </div>
 
     <!-- モーダル群 -->
     <!-- 🔐 Supabase Auth ログイン / 新規登録モーダル -->
@@ -1099,8 +1100,8 @@
         </div>
     </div>
 
-   <!-- 📖 かんたん使い方ガイド・ご利用規約セクション（イメージ） -->
-<div id="modal-guide" class="modal">
+    <!-- 📖 かんたん使い方ガイド・ご利用規約セクション -->
+    <div id="modal-guide" class="modal">
         <div class="modal-card" style="width: 90%; max-width: 480px; max-height: 85vh; display: flex; flex-direction: column; background: #1c1917; border: 2px solid var(--accent-gold, #c5a059); box-shadow: 0 4px 25px rgba(0,0,0,0.5);">
             
             <!-- 固定タイトル -->
@@ -1127,7 +1128,7 @@
                     <strong style="color: #34d399;">🔒 マスター（カフェを作る方）の始め方:</strong><br>
                     1. 画面右上の<strong>「🔒 ログイン」</strong>をクリックする。<br>
                     2. 「新規登録」に切り替え、<strong>メールアドレス</strong>と<strong>パスワード（6文字以上）</strong>を入力してアカウントを作成する（登録後、自動でログインされます）。<br>
-                    3. ポータルの「新しいカフェを開店する」から故人様のお名前やプロフィールを設定してカフェを開設する。<br>
+                    3. ポータルの/「新しいカフェを開店する」から故人様のお名前やプロフィールを設定してカフェを開設する。<br>
                     4. ログイン中は管理ボタンから入店承認や届いたメッセージを確認できます。
                 </div>
 
@@ -1179,7 +1180,8 @@
             <button class="btn" style="background:#886655; margin-top:3px;" onclick="closeModals()">閉じる</button>
         </div>
     </div>
-<!-- 📮 運営宛て問い合わせ確認モーダル -->
+
+    <!-- 📮 運営宛て問い合わせ確認モーダル -->
     <div id="modal-admin-contacts" class="modal">
         <div class="modal-card" style="background:var(--master-bg); border:2px solid #38bdf8;">
             <h3 style="font-size:0.85rem; margin-bottom:6px; color:#38bdf8; text-align:center;">📮 サイト全体（運営宛て）問い合わせ一覧</h3>
@@ -1187,6 +1189,7 @@
             <button class="btn" style="background:#886655;" onclick="closeModals()">閉じる</button>
         </div>
     </div>
+
     <div id="modal-notification" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:6px; color:var(--accent-gold);">🔔 新着の気配・お知らせ</h3>
@@ -1614,8 +1617,7 @@
             document.getElementById('new-auth-password').value = '';
         }
 
-function updateAuthUI() {
-            // ↓ あなたの管理者用メールアドレスを設定（小文字で記述）
+        function updateAuthUI() {
             const ADMIN_EMAIL = 'ken.c.1173.surf@gmail.com'; 
 
             let btn = document.getElementById('auth-status-btn');
@@ -1637,7 +1639,6 @@ function updateAuthUI() {
                 if (db.currentUser) {
                     html += `<button class="master-login-link-btn" style="color:#34d399; border-color:#34d399;" onclick="openAuthModal()">👤 ログイン中</button>`;
                     
-                    // ↓ ログイン中ユーザーのメールアドレスが管理者アドレスと完全一致する場合のみ表示
                     if (db.currentUser.email && db.currentUser.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
                         html += `<button class="master-login-link-btn" style="color:#f59e0b; border-color:#f59e0b;" onclick="openAdminContactsModal()">📮 運営問い合わせ</button>`;
                     }
@@ -1669,7 +1670,6 @@ function updateAuthUI() {
 
             updateBellBadge();
         }
-
 
         const SUPABASE_URL = 'https://rwkqhtvieictjlnwwndz.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3a3FodHZpZWljdGpsbnd3bmR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyOTkxNzMsImV4cCI6MjEwNzg3NTE3M30.JfuaXANkv_2TN_7OlhMXvQeumFfAlRPx0c6rEDA2nMw';
@@ -1832,15 +1832,21 @@ function updateAuthUI() {
             }
         }
 
+        // 🔍 改善版：ポータル画面の検索＆タグ分割表示ロジック
         function renderPortal() {
             checkAnniversaries();
 
-            let keyword = document.getElementById('search-input').value.toLowerCase();
+            let keywordInput = document.getElementById('search-input').value.toLowerCase().trim();
+            let keywords = keywordInput ? keywordInput.split(/[\s,\u3000]+/) : [];
             let el = document.getElementById('cafe-list');
             el.innerHTML = '';
 
             let filtered = db.cafes.filter(c => {
-                let matchKeyword = c.title.toLowerCase().includes(keyword) || c.master.toLowerCase().includes(keyword) || (c.desc && c.desc.toLowerCase().includes(keyword)) || (c.tags && c.tags.toLowerCase().includes(keyword));
+                let targetText = `${c.title} ${c.master} ${c.desc || ''} ${c.tags || ''}`.toLowerCase();
+                let matchKeyword = true;
+                if (keywords.length > 0) {
+                    matchKeyword = keywords.every(kw => targetText.includes(kw));
+                }
                 let matchFav = showOnlyFav ? c.fav : true;
                 return matchKeyword && matchFav;
             });
@@ -1855,11 +1861,16 @@ function updateAuthUI() {
                 let starClass = c.fav ? 'fav-star active' : 'fav-star';
                 let typeBadge = c.type === 'public' ? `<span style="font-size:0.52rem; background:#16a34a; color:#fff; padding:1px 4px; border-radius:3px; margin-left:4px;">👥 公開</span>` : `<span style="font-size:0.52rem; background:#d97706; color:#fff; padding:1px 4px; border-radius:3px; margin-left:4px;">🔒 承認制</span>`;
                 
+                // タグの複数分割表示処理
                 let tagsHtml = '';
                 if (c.tags) {
-                    let tagArr = c.tags.split(/[\s,]+/);
+                    let tagArr = c.tags.split(/[\s,\u3000]+/);
                     tagArr.forEach(t => {
-                        if (t) tagsHtml += `<span style="font-size:0.5rem; background:rgba(197,160,89,0.2); color:var(--accent-gold); padding:1px 4px; border-radius:3px; margin-right:3px;">#${t}</span>`;
+                        let cleanTag = t.trim();
+                        if (cleanTag) {
+                            let displayTag = cleanTag.startsWith('#') ? cleanTag.substring(1) : cleanTag;
+                            tagsHtml += `<span style="font-size:0.5rem; background:rgba(197,160,89,0.2); color:var(--accent-gold); padding:1px 4px; border-radius:3px; margin-right:3px;">#${displayTag}</span>`;
+                        }
                     });
                 }
 
@@ -2706,7 +2717,7 @@ function updateAuthUI() {
                 .from('cafes')
                 .insert([{ 
                     id: id, 
-                    user_id: db.currentUser.id, // Supabase AuthのUIDを紐付け
+                    user_id: db.currentUser.id, 
                     title: title, 
                     master_name: master, 
                     birth: birth, 
@@ -3098,51 +3109,51 @@ function updateAuthUI() {
             if (!str) return '';
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
+
         async function openAdminContactsModal() {
-    const ADMIN_EMAIL = 'ken.c.1173.surf@gmail.com'; // 上記と同じメールアドレス
+            const ADMIN_EMAIL = 'ken.c.1173.surf@gmail.com'; 
 
-    if (!mySupabaseClient || !db.currentUser) {
-        showToast("⚠️ ログインが必要です");
-        return;
-    }
+            if (!mySupabaseClient || !db.currentUser) {
+                showToast("⚠️ ログインが必要です");
+                return;
+            }
 
-    // 管理者以外のユーザーが実行した場合は弾く
-    if (!db.currentUser.email || db.currentUser.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-        showToast("⚠️ 運営者権限が必要です");
-        return;
-    }
+            if (!db.currentUser.email || db.currentUser.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                showToast("⚠️ 運営者権限が必要です");
+                return;
+            }
 
-    const { data: contacts, error } = await mySupabaseClient
-        .from('contacts')
-        .select('*')
-        .is('cafe_id', null) // cafe_id が null（運営宛て）のデータを取得
-        .order('created_at', { ascending: false });
+            const { data: contacts, error } = await mySupabaseClient
+                .from('contacts')
+                .select('*')
+                .is('cafe_id', null) 
+                .order('created_at', { ascending: false });
 
-    let container = document.getElementById('admin-contact-list-container');
-    if (!container) return;
+            let container = document.getElementById('admin-contact-list-container');
+            if (!container) return;
 
-    if (error || !contacts || contacts.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#886655; padding:10px;">届いている運営宛て問い合わせはありません。</div>`;
-    } else {
-        container.innerHTML = contacts.map(item => {
-            let dateObj = new Date(item.created_at);
-            let timeStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
-            let emailText = item.sender_email ? `<span style="font-size:0.58rem; color:#94a3b8;">(${item.sender_email})</span>` : '';
+            if (error || !contacts || contacts.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#886655; padding:10px;">届いている運営宛て問い合わせはありません。</div>`;
+            } else {
+                container.innerHTML = contacts.map(item => {
+                    let dateObj = new Date(item.created_at);
+                    let timeStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
+                    let emailText = item.sender_email ? `<span style="font-size:0.58rem; color:#94a3b8;">(${item.sender_email})</span>` : '';
 
-            return `
-                <div style="background:rgba(0,0,0,0.4); border:1px solid #334155; padding:6px; margin-bottom:5px; border-radius:4px; text-align:left;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <strong style="font-size:0.68rem; color:#38bdf8;">${escapeHtml(item.sender_name)} ${emailText}</strong>
-                        <span style="font-size:0.52rem; color:#64748b;">${timeStr}</span>
+                return `
+                    <div style="background:rgba(0,0,0,0.4); border:1px solid #334155; padding:6px; margin-bottom:5px; border-radius:4px; text-align:left;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="font-size:0.68rem; color:#38bdf8;">${escapeHtml(item.sender_name)} ${emailText}</strong>
+                            <span style="font-size:0.52rem; color:#64748b;">${timeStr}</span>
+                        </div>
+                        <div style="font-size:0.7rem; color:#e2e8f0; margin-top:3px; white-space:pre-wrap;">${escapeHtml(item.message)}</div>
                     </div>
-                    <div style="font-size:0.7rem; color:#e2e8f0; margin-top:3px; white-space:pre-wrap;">${escapeHtml(item.message)}</div>
-                </div>
-            `;
-        }).join('');
-    }
+                `;
+                }).join('');
+            }
 
-    document.getElementById('modal-admin-contacts').style.display = 'flex';
-}
+            document.getElementById('modal-admin-contacts').style.display = 'flex';
+        }
     </script>
 </body>
 </html>
