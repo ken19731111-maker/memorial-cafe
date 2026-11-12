@@ -839,20 +839,19 @@
 
         <!-- 0. ポータル画面 -->
         <div id="scr-portal" class="screen portal-view active">
-    <div class="header">
-        <span class="header-title-text">☕ メモリアル・カフェ「珈琲 宵待」</span>
-        <div class="header-controls" id="portal-header-controls"></div>
-    </div>
+            <div class="header">
+                <span class="header-title-text">☕ メモリアル・カフェ「珈琲 宵待」</span>
+                <div class="header-controls" id="portal-header-controls"></div>
+            </div>
 
-    <!-- ヘッダーのすぐ下のタイトル・説明文エリアの例 -->
-    <div style="text-align: center; margin: 12px 0 16px 0;">
-        <h1 style="font-size: 1.1rem; color: var(--accent-gold); margin: 0 0 4px 0; font-weight: normal;">
-            メモリアル・カフェ「珈琲 宵待」
-        </h1>
-        <p style="font-size: 0.68rem; color: #a1a1aa; margin: 0;">
-            ～ 大切な人を静かに偲ぶ、新しいネットのお墓 ～
-        </p>
-    </div>
+            <div style="text-align: center; margin: 12px 0 16px 0;">
+                <h1 style="font-size: 1.1rem; color: var(--accent-gold); margin: 0 0 4px 0; font-weight: normal;">
+                    メモリアル・カフェ「珈琲 宵待」
+                </h1>
+                <p style="font-size: 0.68rem; color: #a1a1aa; margin: 0;">
+                    ～ 大切な人を静かに偲ぶ、新しいネットのお墓 ～
+                </p>
+            </div>
 
             <div id="anniversary-container" style="margin-top: 4px;"></div>
 
@@ -909,11 +908,11 @@
                 <div class="counter-action-buttons">
                     <div class="image-btn-box" onclick="navTo('notebook')">
                         <img src="btn-notebook.png" alt="ノート" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=200&q=80'">
-                        <span></span>
+                        <span>ノート</span>
                     </div>
                     <div class="image-btn-box" onclick="navTo('album')">
                         <img src="btn-album.png" alt="写真館" onerror="this.src='https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=200&q=80'">
-                        <span></span>
+                        <span>写真館</span>
                     </div>
                 </div>
             </div>
@@ -925,7 +924,6 @@
                     <button class="btn" onclick="openGiftModal('flower')">💐 お花を飾る</button>
                     <button class="btn" onclick="openGiftModal('incense')">🕯️ お線香を手向ける</button>
                 </div>
-                <!-- 訪問帳を開くボタン -->
                 <button onclick="openGuestbook()" class="btn" style="margin-top: 4px; background: #2b170e; border-color: var(--accent-gold);">📖 訪問帳（立ち寄り履歴）を開く</button>
             </div>
         </div>
@@ -1014,7 +1012,7 @@
                 <div id="master-contact-list" style="font-size:0.68rem; color:#cbd5e1; max-height:90px; overflow-y:auto;"></div>
             </div>
 
-                        <!-- ⚙️ カフェの編集・削除エリア（Supabase Auth所有者用） -->
+            <!-- ⚙️ カフェの編集・削除エリア（Supabase Auth所有者用） -->
             <div class="card" style="border:1px solid #38bdf8;">
                 <div style="font-size:0.72rem; color:#38bdf8; font-weight:bold; margin-bottom:6px;">⚙️ カフェ情報の変更・削除</div>
                 
@@ -1058,22 +1056,6 @@
                 </div>
             </div>
 
-
-                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">マスターからの感謝の一言:</label>
-                <input type="text" id="edit-thanks" style="font-size:0.7rem; padding:4px;">
-
-                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">フリーコメント:</label>
-                <textarea id="edit-desc" style="font-size:0.7rem; padding:4px; height:40px;"></textarea>
-
-                <label style="font-size:0.62rem; color:#cbd5e1; display:block; margin-top:3px;">🏷️ タグ (スペース区切り):</label>
-                <input type="text" id="edit-tags" style="font-size:0.7rem; padding:4px;">
-
-                <div style="display:flex; gap:6px; margin-top:8px;">
-                    <button class="btn" style="background:#0284c7; color:#fff; border:none; font-size:0.68rem; padding:5px; margin:0; flex:1;" onclick="updateCafeInfo()">変更を保存する</button>
-                    <button class="btn" style="background:#e11d48; color:#fff; border:none; font-size:0.68rem; padding:5px; margin:0; flex:1;" onclick="deleteThisCafe()">このカフェを削除</button>
-                </div>
-            </div>
-
             <!-- 🔑 Supabase Auth パスワード変更エリア -->
             <div class="card" style="border:1px solid #f59e0b;">
                 <div style="font-size:0.72rem; color:#f59e0b; font-weight:bold; margin-bottom:2px;">🔑 アカウント認証パスワードの変更</div>
@@ -1094,7 +1076,6 @@
     </div>
 
     <!-- モーダル群 -->
-    <!-- 🔐 Supabase Auth ログイン / 新規登録モーダル -->
     <div id="modal-auth" class="modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="font-size:0.85rem; margin-bottom:6px; color:#38bdf8;" id="auth-modal-title">🔒 マスターログイン</h3>
@@ -1124,47 +1105,35 @@
         </div>
     </div>
 
-    <!-- 📖 かんたん使い方ガイド・ご利用規約セクション -->
     <div id="modal-guide" class="modal">
         <div class="modal-card" style="width: 90%; max-width: 480px; max-height: 85vh; display: flex; flex-direction: column; background: #1c1917; border: 2px solid var(--accent-gold, #c5a059); box-shadow: 0 4px 25px rgba(0,0,0,0.5);">
-            
-            <!-- 固定タイトル -->
             <h3 style="font-size: 0.85rem; margin: 0 0 10px 0; color: #fde047; text-align: center; flex-shrink: 0;">
                 💡 かんたん使い方ガイド ＆ ご案内
             </h3>
-            
-            <!-- スクロール可能なコンテンツエリア（白系文字） -->
             <div style="font-size: 0.7rem; line-height: 1.6; color: #f1f5f9; overflow-y: auto; flex-grow: 1; padding-right: 4px; margin-bottom: 10px; text-align: left;">
-                
                 <div style="margin-bottom: 12px; background: rgba(217,119,6,0.15); padding: 8px; border-radius: 4px; border-left: 3px solid #f59e0b;">
                     <strong style="color: #fbbf24;">🏛️ 「珈琲 宵待」とは？（新しいネットのお墓）</strong><br>
                     インターネット上に大切な故人やペットを偲ぶためのデジタルメモリアルスペースです。いつでもどこでも温かい気持ちでお参りとお供えができる場所です。
                 </div>
-
                 <div style="margin-bottom: 12px;">
                     <strong style="color: #60a5fa;">👥 ゲスト（お参りする方）へ:</strong><br>
                     ・扉をノックして店内に入ります（承認制カフェの場合はマスターの許可をお待ちください）。<br>
                     ・一度承認された方は、次からドアが半分開いてスムーズに入店できます。<br>
                     ・カウンターでお好きなお供え物（珈琲・お花・お線香など）を手向けることができます。
                 </div>
-
                 <div style="margin-bottom: 12px;">
                     <strong style="color: #34d399;">🔒 マスター（カフェを作る方）の始め方:</strong><br>
                     1. 画面右上の<strong>「🔒 ログイン」</strong>をクリックする。<br>
-                    2. 「新規登録」に切り替え、<strong>メールアドレス</strong>と<strong>パスワード（6文字以上）</strong>を入力してアカウントを作成する（登録後、自動でログインされます）。<br>
-                    3. ポータルの/「新しいカフェを開店する」から故人様のお名前やプロフィールを設定してカフェを開設する。<br>
+                    2. 「新規登録」に切り替え、<strong>メールアドレス</strong>と<strong>パスワード（6文字以上）</strong>を入力してアカウントを作成する。<br>
+                    3. ポータルの「新しいカフェを開店する」から故人様のお名前やプロフィールを設定してカフェを開設する。<br>
                     4. ログイン中は管理ボタンから入店承認や届いたメッセージを確認できます。
                 </div>
-
                 <div style="margin-bottom: 4px;">
                     <strong style="color: #f87171;">🛡️ プライバシーとご利用上の注意:</strong><br>
-                    ・登録されたメールアドレスは認証およびお問い合わせ対応のみに使用され、外部には一切公開されません。<br>
+                    ・登録されたメールアドレスは認証およびお問い合わせ対応のみに使用されます。<br>
                     ・誹謗中傷や不適切な書き込みは禁止されており、管理者はいつでも該当の投稿を削除できます。
                 </div>
-
             </div>
-
-            <!-- 固定の閉じるボタン -->
             <button class="btn" style="margin-top: 0; flex-shrink: 0; background: #57463a; color: #fdfbf7;" onclick="closeModals()">閉じる</button>
         </div>
     </div>
@@ -1205,7 +1174,6 @@
         </div>
     </div>
 
-    <!-- 📮 運営宛て問い合わせ確認モーダル -->
     <div id="modal-admin-contacts" class="modal">
         <div class="modal-card" style="background:var(--master-bg); border:2px solid #38bdf8;">
             <h3 style="font-size:0.85rem; margin-bottom:6px; color:#38bdf8; text-align:center;">📮 サイト全体（運営宛て）問い合わせ一覧</h3>
@@ -1228,12 +1196,8 @@
             <h3 style="font-size:0.85rem; margin-bottom:4px; color:var(--accent-gold);">☕ サイトの維持・マスターを応援する</h3>
             <p style="font-size:0.72rem; line-height:1.4; color:#555; margin-bottom:10px;">
                 「メモリアル・カフェ」はすべての機能を無料でご利用いただけます。<br>
-                サーバー維持費のサポートや、温かい空間を続けるための応援（任意のご寄付）をいただけましたら、大変励みになります。
+                サーバー維持費のサポートや、温かい空間を続けるための応援をいただけましたら、大変励みになります。
             </p>
-            <div style="background:#f0ebe1; border:1px solid #d4af37; padding:8px; border-radius:4px; margin-bottom:10px; font-size:0.7rem; color:#332211;">
-                <strong>💡 ご支援方法について</strong><br>
-                決済は安全なStripeシステムを通じて行われます。
-            </div>
             <div class="share-btn-group">
                 <button class="btn" style="background:#d4af37; color:#120a05;" onclick="window.open('https://buy.stripe.com/test_14A8wP8Ds0lgaTr9s09oc00', '_blank'); closeModals();">☕ 珈琲1杯分（¥500）のサポート</button>
                 <button class="btn" style="background:#422315; color:var(--accent-gold);" onclick="showToast('💌 マスターへ温かい感謝を届けました'); closeModals();">💌 マスターへメッセージを心に留める</button>
@@ -1242,7 +1206,6 @@
         </div>
     </div>
 
-    <!-- 🕯️ 記念日お迎えモーダル -->
     <div id="modal-anniversary" class="modal">
         <div class="modal-card" style="text-align:center; border:2px solid var(--accent-gold);">
             <div style="font-size:2.2rem; margin-bottom:6px;">🕯️✨</div>
@@ -1257,7 +1220,6 @@
         </div>
     </div>
 
-    <!-- 🎉 お心づけへのお礼モーダル -->
     <div id="modal-thankyou" class="modal">
         <div class="modal-card" style="text-align:center; border:2px solid var(--accent-gold);">
             <div style="font-size:2rem; margin-bottom:6px;">☕✨</div>
@@ -1433,11 +1395,9 @@
           <h3 style="margin:0; font-size: 0.9rem; color: var(--accent-gold);">📖 訪問帳（立ち寄り履歴）</h3>
           <button onclick="closeGuestbook()" style="background:none; border:none; color:#aaa; font-size:18px; cursor:pointer;">✕</button>
         </div>
-
         <p style="font-size: 0.68rem; color: #b5a28f; margin-top: 8px; margin-bottom: 4px;">
             ※お供えや訪問のアクションが自動で静かに記録されます。
         </p>
-
         <div id="guestbook-list" style="margin-top: 8px; max-height: 260px; overflow-y: auto; text-align: left;"></div>
       </div>
     </div>
@@ -1572,7 +1532,6 @@
             closeModals();
         }
 
-        // 🔐 Supabase Auth 認証状態確認
         function isMasterOwner(cafeUserId) {
             return db.currentUser && cafeUserId && db.currentUser.id === cafeUserId;
         }
@@ -1644,19 +1603,6 @@
         function updateAuthUI() {
             const ADMIN_EMAIL = 'ken.c.1173.surf@gmail.com'; 
 
-            let btn = document.getElementById('auth-status-btn');
-            if (btn) {
-                if (db.currentUser) {
-                    btn.innerText = '👤 ログイン中';
-                    btn.style.color = '#34d399';
-                    btn.style.borderColor = '#34d399';
-                } else {
-                    btn.innerText = '🔒 ログイン';
-                    btn.style.color = '#38bdf8';
-                    btn.style.borderColor = '#38bdf8';
-                }
-            }
-            
             let portalControls = document.getElementById('portal-header-controls');
             if (portalControls) {
                 let html = '';
@@ -1856,7 +1802,6 @@
             }
         }
 
-        // 🔍 改善版：ポータル画面の検索＆タグ分割表示ロジック
         function renderPortal() {
             checkAnniversaries();
 
@@ -1885,7 +1830,6 @@
                 let starClass = c.fav ? 'fav-star active' : 'fav-star';
                 let typeBadge = c.type === 'public' ? `<span style="font-size:0.52rem; background:#16a34a; color:#fff; padding:1px 4px; border-radius:3px; margin-left:4px;">👥 公開</span>` : `<span style="font-size:0.52rem; background:#d97706; color:#fff; padding:1px 4px; border-radius:3px; margin-left:4px;">🔒 承認制</span>`;
                 
-                // タグの複数分割表示処理
                 let tagsHtml = '';
                 if (c.tags) {
                     let tagArr = c.tags.split(/[\s,\u3000]+/);
@@ -2984,54 +2928,6 @@
             }
         }
 
-                function loadMasterEditForm() {
-            let c = db.cafes.find(x => x.id === curId);
-            if (!c) return;
-            document.getElementById('edit-preview-img').src = c.img || '';
-            document.getElementById('edit-master-file').value = '';
-            document.getElementById('edit-cafe-title').value = c.title || '';
-            document.getElementById('edit-master-name').value = c.master || '';
-            document.getElementById('edit-birth').value = c.birth || '';
-            document.getElementById('edit-death').value = c.death || '';
-            document.getElementById('edit-thanks').value = c.thanks || '';
-            document.getElementById('edit-desc').value = c.desc || '';
-            document.getElementById('edit-tags').value = c.tags || '';
-        }
-
-        async function updateCafeInfo() {
-            let c = db.cafes.find(x => x.id === curId);
-            if (!c) return;
-
-            let newTitle = document.getElementById('edit-cafe-title').value.trim();
-            let newMaster = document.getElementById('edit-master-name').value.trim();
-            let newBirth = document.getElementById('edit-birth').value;
-            let newDeath = document.getElementById('edit-death').value;
-            let newThanks = document.getElementById('edit-thanks').value.trim();
-            let newDesc = document.getElementById('edit-desc').value.trim();
-            let newTags = document.getElementById('edit-tags').value.trim();
-            let fileInput = document.getElementById('edit-master-file');
-            let newFile = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
-
-            if (!newTitle || !newMaster) {
-                showToast("⚠️ 店名とマスター名は必須です");
-                return;
-            }
-
-            if (!mySupabaseClient) {
-                showToast("⚠️ Supabase未接続");
-                return;
-            }
-
-            let imageUrl = c.img;
-
-            if (newFile) {
-                showToast("⏳ 画像をアップロード中...");
-                const fileExt = newFile.name.split('.').pop();
-                const fileName = `master_${curId}_${Date.now()}.${fileExt}`;
-
-                const { error: uploadError } = await mySupabaseClient.storage
-                    .from('cafe-photos')
-                    .upload(fileName, newFile);
         function loadMasterEditForm() {
             let c = db.cafes.find(x => x.id === curId);
             if (!c) return;
@@ -3104,50 +3000,6 @@
                     description: newDesc,
                     tags: newTags,
                     image_url: imageUrl
-                })
-                .eq('id', curId);
-
-            if (error) {
-                showToast("❌ 保存に失敗しました: " + error.message);
-                return;
-            }
-
-            showToast("✨ カフェ情報を更新しました");
-            await loadCafesFromSupabase();
-            selectCafe(curId);
-        }
-
-
-
-        async function updateCafeInfo() {
-            let newTitle = document.getElementById('edit-cafe-title').value.trim();
-            let newMaster = document.getElementById('edit-master-name').value.trim();
-            let newBirth = document.getElementById('edit-birth').value;
-            let newDeath = document.getElementById('edit-death').value;
-            let newThanks = document.getElementById('edit-thanks').value.trim();
-            let newDesc = document.getElementById('edit-desc').value.trim();
-            let newTags = document.getElementById('edit-tags').value.trim();
-
-            if (!newTitle || !newMaster) {
-                showToast("⚠️ 店名とマスター名は必須です");
-                return;
-            }
-
-            if (!mySupabaseClient) {
-                showToast("⚠️ Supabase未接続");
-                return;
-            }
-
-            const { error } = await mySupabaseClient
-                .from('cafes')
-                .update({
-                    title: newTitle,
-                    master_name: newMaster,
-                    birth: newBirth || null,
-                    death: newDeath || null,
-                    thanks_message: newThanks,
-                    description: newDesc,
-                    tags: newTags
                 })
                 .eq('id', curId);
 
