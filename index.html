@@ -2984,9 +2984,11 @@
             }
         }
 
-        function loadMasterEditForm() {
+                function loadMasterEditForm() {
             let c = db.cafes.find(x => x.id === curId);
             if (!c) return;
+            document.getElementById('edit-preview-img').src = c.img || '';
+            document.getElementById('edit-master-file').value = '';
             document.getElementById('edit-cafe-title').value = c.title || '';
             document.getElementById('edit-master-name').value = c.master || '';
             document.getElementById('edit-birth').value = c.birth || '';
@@ -2995,6 +2997,127 @@
             document.getElementById('edit-desc').value = c.desc || '';
             document.getElementById('edit-tags').value = c.tags || '';
         }
+
+        async function updateCafeInfo() {
+            let c = db.cafes.find(x => x.id === curId);
+            if (!c) return;
+
+            let newTitle = document.getElementById('edit-cafe-title').value.trim();
+            let newMaster = document.getElementById('edit-master-name').value.trim();
+            let newBirth = document.getElementById('edit-birth').value;
+            let newDeath = document.getElementById('edit-death').value;
+            let newThanks = document.getElementById('edit-thanks').value.trim();
+            let newDesc = document.getElementById('edit-desc').value.trim();
+            let newTags = document.getElementById('edit-tags').value.trim();
+            let fileInput = document.getElementById('edit-master-file');
+            let newFile = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
+
+            if (!newTitle || !newMaster) {
+                showToast("⚠️ 店名とマスター名は必須です");
+                return;
+            }
+
+            if (!mySupabaseClient) {
+                showToast("⚠️ Supabase未接続");
+                return;
+            }
+
+            let imageUrl = c.img;
+
+            if (newFile) {
+                showToast("⏳ 画像をアップロード中...");
+                const fileExt = newFile.name.split('.').pop();
+                const fileName = `master_${curId}_${Date.now()}.${fileExt}`;
+
+                const { error: uploadError } = await mySupabaseClient.storage
+                    .from('cafe-photos')
+                    .upload(fileName, newFile);
+        function loadMasterEditForm() {
+            let c = db.cafes.find(x => x.id === curId);
+            if (!c) return;
+            document.getElementById('edit-preview-img').src = c.img || '';
+            document.getElementById('edit-master-file').value = '';
+            document.getElementById('edit-cafe-title').value = c.title || '';
+            document.getElementById('edit-master-name').value = c.master || '';
+            document.getElementById('edit-birth').value = c.birth || '';
+            document.getElementById('edit-death').value = c.death || '';
+            document.getElementById('edit-thanks').value = c.thanks || '';
+            document.getElementById('edit-desc').value = c.desc || '';
+            document.getElementById('edit-tags').value = c.tags || '';
+        }
+
+        async function updateCafeInfo() {
+            let c = db.cafes.find(x => x.id === curId);
+            if (!c) return;
+
+            let newTitle = document.getElementById('edit-cafe-title').value.trim();
+            let newMaster = document.getElementById('edit-master-name').value.trim();
+            let newBirth = document.getElementById('edit-birth').value;
+            let newDeath = document.getElementById('edit-death').value;
+            let newThanks = document.getElementById('edit-thanks').value.trim();
+            let newDesc = document.getElementById('edit-desc').value.trim();
+            let newTags = document.getElementById('edit-tags').value.trim();
+            let fileInput = document.getElementById('edit-master-file');
+            let newFile = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
+
+            if (!newTitle || !newMaster) {
+                showToast("⚠️ 店名とマスター名は必須です");
+                return;
+            }
+
+            if (!mySupabaseClient) {
+                showToast("⚠️ Supabase未接続");
+                return;
+            }
+
+            let imageUrl = c.img;
+
+            if (newFile) {
+                showToast("⏳ 画像をアップロード中...");
+                const fileExt = newFile.name.split('.').pop();
+                const fileName = `master_${curId}_${Date.now()}.${fileExt}`;
+
+                const { error: uploadError } = await mySupabaseClient.storage
+                    .from('cafe-photos')
+                    .upload(fileName, newFile);
+
+                if (uploadError) {
+                    showToast("❌ 画像アップロードエラー: " + uploadError.message);
+                    return;
+                }
+
+                const { data: publicUrlData } = mySupabaseClient.storage
+                    .from('cafe-photos')
+                    .getPublicUrl(fileName);
+
+                imageUrl = publicUrlData.publicUrl;
+            }
+
+            const { error } = await mySupabaseClient
+                .from('cafes')
+                .update({
+                    title: newTitle,
+                    master_name: newMaster,
+                    birth: newBirth || null,
+                    death: newDeath || null,
+                    thanks_message: newThanks,
+                    description: newDesc,
+                    tags: newTags,
+                    image_url: imageUrl
+                })
+                .eq('id', curId);
+
+            if (error) {
+                showToast("❌ 保存に失敗しました: " + error.message);
+                return;
+            }
+
+            showToast("✨ カフェ情報を更新しました");
+            await loadCafesFromSupabase();
+            selectCafe(curId);
+        }
+
+
 
         async function updateCafeInfo() {
             let newTitle = document.getElementById('edit-cafe-title').value.trim();
