@@ -1726,7 +1726,15 @@
                 return;
             }
 
-            if (data && data.length > 0) {
+                        if (data && data.length > 0) {
+                let savedFavIds = [];
+                try {
+                    let saved = localStorage.getItem('memorial_cafe_auth_v31');
+                    if (saved) {
+                        savedFavIds = JSON.parse(saved).favIds || [];
+                    }
+                } catch(e) {}
+
                 db.cafes = data.map(item => ({
                     id: item.id,
                     user_id: item.user_id,
@@ -1739,7 +1747,7 @@
                     tags: item.tags || '',
                     img: item.image_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
                     type: item.type || 'private',
-                    fav: false
+                    fav: savedFavIds.includes(item.id)
                 }));
 
                 data.forEach(item => {
@@ -1748,6 +1756,7 @@
                     }
                 });
             }
+
 
             renderPortal();
         }
