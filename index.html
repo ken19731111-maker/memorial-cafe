@@ -1752,11 +1752,14 @@
             renderPortal();
         }
 
-        function toggleFavFilter() {
-            showOnlyFav = !showOnlyFav;
-            let btn = document.getElementById('filter-fav-btn');
-            btn.classList.toggle('active', showOnlyFav);
-            renderPortal();
+                function toggleFav(id, event) {
+            event.stopPropagation();
+            let cafe = db.cafes.find(x => x.id === id);
+            if (cafe) {
+                cafe.fav = !cafe.fav;
+                saveData(); // ← これを追加
+                renderPortal();
+            }
         }
 
         function toggleFav(id, event) {
