@@ -1409,6 +1409,7 @@
         let realTimeChannel = null;
         let unreadNotifications = [];
         let isSignupMode = false;
+        let showOnlyFav = false; // お気に入りフィルターの状態
 
         const BGM_PLAYLIST = [
             { name: "アコースティックギター", url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=acoustic-guitar-relaxing-113220.mp3" },
@@ -1665,7 +1666,6 @@
         let giftType = '';
         let selectedPhotoFile = null;
         let selectedRegFile = null;
-        let showOnlyFav = false;
         let notebookSpreadIdx = 0;
         let photoPageIdx = 0;
 
@@ -1699,7 +1699,7 @@
             updateAuthUI();
         };
 
-                function saveData() {
+        function saveData() {
             try {
                 let favIds = db.cafes.filter(c => c.fav).map(c => c.id);
                 localStorage.setItem('memorial_cafe_auth_v31', JSON.stringify({
@@ -1726,7 +1726,7 @@
                 return;
             }
 
-                        if (data && data.length > 0) {
+            if (data && data.length > 0) {
                 let savedFavIds = [];
                 try {
                     let saved = localStorage.getItem('memorial_cafe_auth_v31');
@@ -1757,18 +1757,7 @@
                 });
             }
 
-
             renderPortal();
-        }
-
-                function toggleFav(id, event) {
-            event.stopPropagation();
-            let cafe = db.cafes.find(x => x.id === id);
-            if (cafe) {
-                cafe.fav = !cafe.fav;
-                saveData(); // ← これを追加
-                renderPortal();
-            }
         }
 
         function toggleFav(id, event) {
@@ -1776,8 +1765,18 @@
             let cafe = db.cafes.find(x => x.id === id);
             if (cafe) {
                 cafe.fav = !cafe.fav;
+                saveData(); // ← ブラウザに保存
                 renderPortal();
             }
+        }
+
+        function toggleFavFilter() {
+            showOnlyFav = !showOnlyFav;
+            let btn = document.getElementById('filter-fav-btn');
+            if (btn) {
+                btn.classList.toggle('active', showOnlyFav);
+            }
+            renderPortal();
         }
 
         function checkAnniversaries() {
