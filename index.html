@@ -1563,7 +1563,7 @@
                     return;
                 }
                 alert("マスター登録が完了しました！");
-            } else {
+                       } else {
                 const { data, error } = await mySupabaseClient.auth.signInWithPassword({ email, password });
                 if (error) {
                     alert("ログインエラー: " + error.message);
@@ -1574,9 +1574,14 @@
 
             const { data: { session } } = await mySupabaseClient.auth.getSession();
             db.currentUser = session ? session.user : null;
+            
+            // 👇 【追加】ログイン直後にも管理者権限をチェック
+            await checkAdminRole();
+
             updateAuthUI();
             closeModals();
             loadCafesFromSupabase();
+
         }
 
         async function signOutMaster() {
