@@ -1629,12 +1629,11 @@
             document.getElementById('new-auth-password').value = '';
         }
 
-                function updateAuthUI() {
+                        function updateAuthUI() {
             let portalControls = document.getElementById('portal-header-controls');
             if (portalControls) {
                 let html = '';
-                                if (db.currentUser) {
-                    // 👇 openAuthModal() から openAccountModal() に変更！
+                if (db.currentUser) {
                     html += `<button class="master-login-link-btn" style="color:#34d399; border-color:#34d399;" onclick="openAccountModal()">👤 ログイン中</button>`;
                     
                     // Supabase側で管理者判定された場合のみ表示
@@ -1644,13 +1643,11 @@
                 } else {
                     html += `<button class="master-login-link-btn" onclick="openAuthModal()">🔒 ログイン</button>`;
                 }
-
                 html += `<button class="notification-bell-btn" onclick="openNotificationModal()">🔔<span id="bell-dot-portal" class="notification-badge-dot"></span></button>`;
                 html += `<button class="bgm-toggle-btn" id="bgm-btn-portal" onclick="toggleBgm()">🎵 BGM: OFF</button>`;
                 portalControls.innerHTML = html;
             }
 
-            // (中略: カウンター側のコントロール生成部分はそのまま)
             let c = db.cafes.find(x => x.id === curId);
             let isOwner = c ? isMasterOwner(c.user_id) : false;
 
