@@ -1671,11 +1671,14 @@
         let notebookSpreadIdx = 0;
         let photoPageIdx = 0;
 
-        window.onload = async function() {
+                window.onload = async function() {
             if (mySupabaseClient) {
                 const { data: { session } } = await mySupabaseClient.auth.getSession();
                 db.currentUser = session ? session.user : null;
             }
+
+            // 👇 【追加】ログイン中のユーザーが管理者かどうかをSupabaseに問い合わせる
+            await checkAdminRole();
 
             try {
                 let saved = localStorage.getItem('memorial_cafe_auth_v31');
@@ -1700,6 +1703,7 @@
             }
             updateAuthUI();
         };
+
 
         function saveData() {
             try {
