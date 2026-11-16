@@ -1602,16 +1602,15 @@
             document.getElementById('new-auth-password').value = '';
         }
 
-        function updateAuthUI() {
-            const ADMIN_EMAIL = 'ken.c.1173.surf@gmail.com'; 
-
+                function updateAuthUI() {
             let portalControls = document.getElementById('portal-header-controls');
             if (portalControls) {
                 let html = '';
                 if (db.currentUser) {
                     html += `<button class="master-login-link-btn" style="color:#34d399; border-color:#34d399;" onclick="openAuthModal()">👤 ログイン中</button>`;
                     
-                    if (db.currentUser.email && db.currentUser.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                    // Supabase側で管理者判定された場合のみ表示
+                    if (isAdminUser) {
                         html += `<button class="master-login-link-btn" style="color:#f59e0b; border-color:#f59e0b;" onclick="openAdminContactsModal()">📮 運営問い合わせ</button>`;
                     }
                 } else {
@@ -1622,6 +1621,7 @@
                 portalControls.innerHTML = html;
             }
 
+            // (中略: カウンター側のコントロール生成部分はそのまま)
             let c = db.cafes.find(x => x.id === curId);
             let isOwner = c ? isMasterOwner(c.user_id) : false;
 
@@ -1642,6 +1642,7 @@
 
             updateBellBadge();
         }
+
 
         const SUPABASE_URL = 'https://rwkqhtvieictjlnwwndz.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3a3FodHZpZWljdGpsbnd3bmR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyOTkxNzMsImV4cCI6MjEwNzg3NTE3M30.JfuaXANkv_2TN_7OlhMXvQeumFfAlRPx0c6rEDA2nMw';
