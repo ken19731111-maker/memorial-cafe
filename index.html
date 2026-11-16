@@ -1553,6 +1553,14 @@
         function openAuthModal() {
             document.getElementById('modal-auth').style.display = 'flex';
         }
+        function openAccountModal() {
+            if (!db.currentUser) {
+                openAuthModal();
+                return;
+            }
+            document.getElementById('account-email-display').innerText = db.currentUser.email || 'ログイン中ユーザー';
+            document.getElementById('modal-account').style.display = 'flex';
+        }
 
         function switchAuthMode(mode) {
             isSignupMode = (mode === 'signup');
