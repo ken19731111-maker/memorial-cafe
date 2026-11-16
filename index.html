@@ -1631,13 +1631,18 @@
             let portalControls = document.getElementById('portal-header-controls');
             if (portalControls) {
                 let html = '';
-                if (db.currentUser) {
-                    html += `<button class="master-login-link-btn" style="color:#34d399; border-color:#34d399;" onclick="openAuthModal()">👤 ログイン中</button>`;
+                                if (db.currentUser) {
+                    // 👇 openAuthModal() から openAccountModal() に変更！
+                    html += `<button class="master-login-link-btn" style="color:#34d399; border-color:#34d399;" onclick="openAccountModal()">👤 ログイン中</button>`;
                     
                     // Supabase側で管理者判定された場合のみ表示
                     if (isAdminUser) {
                         html += `<button class="master-login-link-btn" style="color:#f59e0b; border-color:#f59e0b;" onclick="openAdminContactsModal()">📮 運営問い合わせ</button>`;
                     }
+                } else {
+                    html += `<button class="master-login-link-btn" onclick="openAuthModal()">🔒 ログイン</button>`;
+                }
+
                 } else {
                     html += `<button class="master-login-link-btn" onclick="openAuthModal()">🔒 ログイン</button>`;
                 }
