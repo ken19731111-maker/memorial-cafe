@@ -1409,6 +1409,7 @@
         let realTimeChannel = null;
         let unreadNotifications = [];
         let isSignupMode = false;
+        let isAdminUser = false; // 管理者かどうか
         let showOnlyFav = false; // お気に入りフィルターの状態
 
         const BGM_PLAYLIST = [
@@ -3170,6 +3171,29 @@
 
             document.getElementById('modal-admin-contacts').style.display = 'flex';
         }
+        async function checkAdminRole() {
+    isAdminUser = false;
+    if (!db.currentUser || !mySupabaseClient) {
+        updateAuthUI();
+        return;
+    }
+
+    try {
+        const { data, error } = await mySupabaseClient
+            .from('app_admins')
+            .select('*')
+            .eq('id', db.currentUser.id)
+            .maybeSingle();
+
+        if (!error && data) {
+            isAdminUser = true;
+        }
+    } catch (e) {
+        console.error("管理者チェックエラー:", e);
+    }
+    updateAuthUI();
+}
+
     </script>
 </body>
 </html>
