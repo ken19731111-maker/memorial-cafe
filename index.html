@@ -1604,13 +1604,15 @@
 
         }
 
-        async function signOutMaster() {
+                async function signOutMaster() {
             await mySupabaseClient.auth.signOut();
             db.currentUser = null;
+            isAdminUser = false; // 管理者フラグもリセット
             updateAuthUI();
             showToast("ログアウトしました");
             navTo('portal');
         }
+
 
         async function updateAuthPassword() {
             let newPass = document.getElementById('new-auth-password').value.trim();
